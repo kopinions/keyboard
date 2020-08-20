@@ -1,5 +1,4 @@
 EESchema Schematic File Version 4
-LIBS:keyboard-cache
 EELAYER 29 0
 EELAYER END
 $Descr A4 11693 8268
@@ -2421,18 +2420,6 @@ Wire Wire Line
 	5600 4600 8600 4600
 Wire Wire Line
 	11000 3100 11000 4300
-$Comp
-L keyboard:SW_SPST SW-1
-U 1 1 5E90312E
-P 3800 1300
-F 0 "SW-1" H 3800 1450 50  0001 C CNN
-F 1 "SW_SPST" H 3800 1200 50  0000 C CNN
-F 2 "keyboard:SW_Cherry_MX_1.00u_Plate" H 3800 1300 50  0001 C CNN
-F 3 "~" H 3800 1300 50  0001 C CNN
-F 4 "ESC" H 3800 1400 50  0000 C CNN "Key"
-	1    3800 1300
-	1    0    0    -1  
-$EndComp
 Text GLabel 1700 7150 2    50   Input ~ 0
 CAPS
 Text GLabel 1700 7050 2    50   Input ~ 0
@@ -2768,4 +2755,16 @@ Wire Wire Line
 	1700 6050 1700 6150
 Wire Wire Line
 	1700 5850 1950 5850
+$Comp
+L keyboard:SW_SPST SW-1
+U 1 1 5E90312E
+P 3800 1300
+F 0 "SW-1" H 3800 1450 50  0001 C CNN
+F 1 "SW_SPST" H 3800 1200 50  0000 C CNN
+F 2 "keyboard:SW_Cherry_MX_1.00u_Plate" H 3800 1300 50  0001 C CNN
+F 3 "~" H 3800 1300 50  0001 C CNN
+F 4 "Cxxx" H 3800 1300 50  0000 C CNN "LCSC"
+	1    3800 1300
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

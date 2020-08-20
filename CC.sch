@@ -747,7 +747,7 @@ U 1 1 5EC1F753
 P 9400 1750
 F 0 "J3" H 9450 525 50  0000 C CNN
 F 1 "Conn_02x20_Counter_Clockwise" H 9500 600 50  0000 C CNN
-F 2 "Connector_PinHeader_1.27mm:PinHeader_2x20_P1.27mm_Vertical_SMD" H 9400 1750 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_2x20_P2.54mm_Vertical_SMD" H 9400 1750 50  0001 C CNN
 F 3 "~" H 9400 1750 50  0001 C CNN
 	1    9400 1750
 	1    0    0    -1  
