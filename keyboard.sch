@@ -1,4 +1,5 @@
 EESchema Schematic File Version 4
+LIBS:keyboard-cache
 EELAYER 29 0
 EELAYER END
 $Descr A4 11693 8268
@@ -2731,7 +2732,7 @@ U 1 1 5F2DDE58
 P 1400 6250
 F 0 "J1" H 1450 7367 50  0000 C CNN
 F 1 "Conn_02x20_Odd_Even" H 1450 7276 50  0000 C CNN
-F 2 "Connector_PinSocket_1.27mm:PinSocket_2x20_P1.27mm_Vertical_SMD" H 1400 6250 50  0001 C CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_2x20_P2.54mm_Vertical_SMD" H 1400 6250 50  0001 C CNN
 F 3 "~" H 1400 6250 50  0001 C CNN
 	1    1400 6250
 	1    0    0    -1  
