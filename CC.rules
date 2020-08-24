@@ -1,0 +1,82 @@
+
+(rules PCB CC
+  (snap_angle 
+    fortyfive_degree
+  )
+  (autoroute_settings
+    (fanout off)
+    (eu.mihosoft.freerouting.autoroute on)
+    (postroute on)
+    (vias on)
+    (via_costs 50)
+    (plane_via_costs 5)
+    (start_ripup_costs 100)
+    (start_pass_no 16848)
+    (layer_rule F.Cu
+      (active on)
+      (preferred_direction horizontal)
+      (preferred_direction_trace_costs 1.0)
+      (against_preferred_direction_trace_costs 3.2)
+    )
+    (layer_rule B.Cu
+      (active on)
+      (preferred_direction vertical)
+      (preferred_direction_trace_costs 1.0)
+      (against_preferred_direction_trace_costs 1.5)
+    )
+  )
+  (rule
+    (width 250.0)
+    (clear 200.2)
+    (clear 125.0 (type smd_to_turn_gap))
+    (clear 50.0 (type smd_smd))
+  )
+  (padstack "Via[0-1]_800:400_um"
+    (shape
+      (circle F.Cu 800.0 0.0 0.0)
+    )
+    (shape
+      (circle B.Cu 800.0 0.0 0.0)
+    )
+    (attach off)
+  )
+  (via 
+    "Via[0-1]_800:400_um" "Via[0-1]_800:400_um" default
+  )
+  (via 
+    "Via[0-1]_800:400_um-kicad_default" "Via[0-1]_800:400_um" "kicad_default"
+  )
+  (via_rule
+    default "Via[0-1]_800:400_um"
+  )
+  (via_rule
+    "kicad_default" "Via[0-1]_800:400_um-kicad_default"
+  )
+  (class default
+    (clearance_class default)
+    (via_rule default)
+    (rule
+      (width 250.0)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+  (class "kicad_default"
+    GND VBUS VDD33 +BATT VDD5V /LX /DTR /RTS
+    /KRXD /KTXD /ACT /FTXD /FRXD /L1 /L2 /L3
+    "Net-(Q1-Pad5)" "Net-(Q1-Pad2)" /EN /IO0 /CAPS /SCLK /COL15 /COL14
+    /COL13 /COL12 /COL11 /COL10 /COL9 /COL8 /COL7 /COL6
+    /COL5 /COL4 /COL3 /COL2 /COL1 /ROW6 /ROW5 /ROW4
+    /ROW3 /ROW2 /ROW1 "Net-(C13-Pad2)" "Net-(R1-Pad2)" "Net-(C1-Pad2)" "Net-(C16-Pad2)" "Net-(C5-Pad1)"
+    "Net-(C4-Pad1)" "/USBD_N" "/USBD_P" "/KD_N" "/KD_P" "/FD_N" "/FD_P"
+    (clearance_class "kicad_default")
+    (via_rule kicad_default)
+    (rule
+      (width 250.0)
+    )
+    (circuit 
+      (use_layer F.Cu B.Cu)
+    )
+  )
+)

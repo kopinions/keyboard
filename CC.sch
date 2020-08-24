@@ -1,4 +1,5 @@
 EESchema Schematic File Version 4
+LIBS:CC-cache
 EELAYER 29 0
 EELAYER END
 $Descr A4 11693 8268
@@ -670,17 +671,6 @@ Wire Notes Line
 	8450 550  8450 3100
 Wire Notes Line
 	4400 7850 7450 7850
-$Comp
-L power:GND #PWR045
-U 1 1 5ED2C44E
-P 9850 850
-F 0 "#PWR045" H 9850 600 50  0001 C CNN
-F 1 "GND" H 10000 800 50  0000 C CNN
-F 2 "" H 9850 850 50  0001 C CNN
-F 3 "" H 9850 850 50  0001 C CNN
-	1    9850 850 
-	1    0    0    -1  
-$EndComp
 Wire Notes Line
 	3850 7650 6750 7650
 Wire Notes Line
@@ -707,14 +697,6 @@ Text Label 3700 1550 0    50   ~ 0
 L1
 Wire Wire Line
 	3550 1550 3700 1550
-Text Label 4850 3650 0    50   ~ 0
-L3
-Wire Wire Line
-	4850 3650 5000 3650
-Wire Wire Line
-	5000 3750 4850 3750
-Text Label 4850 3750 0    50   ~ 0
-L2
 Text Label 4850 4650 0    50   ~ 0
 L1
 Wire Wire Line
@@ -739,17 +721,6 @@ F 1 "MountingHole" H 10300 4705 50  0000 L CNN
 F 2 "MountingHole:MountingHole_2.2mm_M2_DIN965_Pad" H 10200 4750 50  0001 C CNN
 F 3 "~" H 10200 4750 50  0001 C CNN
 	1    10200 4750
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector_Generic:Conn_02x20_Counter_Clockwise J3
-U 1 1 5EC1F753
-P 9400 1750
-F 0 "J3" H 9450 525 50  0000 C CNN
-F 1 "Conn_02x20_Counter_Clockwise" H 9500 600 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_2x20_P2.54mm_Vertical_SMD" H 9400 1750 50  0001 C CNN
-F 3 "~" H 9400 1750 50  0001 C CNN
-	1    9400 1750
 	1    0    0    -1  
 $EndComp
 Text Label 9200 850  2    50   ~ 0
@@ -1073,23 +1044,6 @@ Wire Notes Line
 	8450 550  10950 550 
 Wire Notes Line
 	8450 3100 10950 3100
-Wire Wire Line
-	9700 1050 10250 1050
-Wire Wire Line
-	9700 850  9850 850 
-$Comp
-L keyboard:VDD33 #PWR046
-U 1 1 5F1AB03E
-P 10150 950
-F 0 "#PWR046" H 10150 900 50  0001 C CNN
-F 1 "VDD33" H 10167 1123 50  0000 C CNN
-F 2 "" H 10150 900 50  0001 C CNN
-F 3 "" H 10150 900 50  0001 C CNN
-	1    10150 950 
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	9700 950  10150 950 
 Wire Wire Line
 	1850 4950 1850 4900
 Wire Wire Line
@@ -1621,21 +1575,10 @@ Wire Wire Line
 	2850 750  2850 850 
 Wire Wire Line
 	1500 750  1500 1050
-Text Label 9700 2450 0    50   ~ 0
+Text Label 9700 2250 0    50   ~ 0
 USBD_P
 Text Label 9700 2350 0    50   ~ 0
 USBD_N
-$Comp
-L power:VBUS #PWR0101
-U 1 1 5F431944
-P 10250 1050
-F 0 "#PWR0101" H 10250 900 50  0001 C CNN
-F 1 "VBUS" H 10338 1087 50  0000 L CNN
-F 2 "" H 10250 1050 50  0001 C CNN
-F 3 "" H 10250 1050 50  0001 C CNN
-	1    10250 1050
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	1300 1900 1550 1900
 Connection ~ 1550 1900
@@ -1684,47 +1627,22 @@ Connection ~ 3850 850
 Wire Wire Line
 	3850 850  4250 850 
 Connection ~ 4250 850 
-Text Label 9700 2250 0    50   ~ 0
-CC1
-Text Label 9700 2150 0    50   ~ 0
-CC2
-Text Label 9700 2050 0    50   ~ 0
-TX_P
-Text Label 9700 1950 0    50   ~ 0
-TX_N
-Text Label 9700 1850 0    50   ~ 0
-RX_P
-Text Label 9700 1750 0    50   ~ 0
-RX_N
 $Comp
 L power:GND #PWR0103
 U 1 1 5F38EFF5
-P 10100 1500
-F 0 "#PWR0103" H 10100 1250 50  0001 C CNN
-F 1 "GND" H 10105 1327 50  0000 C CNN
-F 2 "" H 10100 1500 50  0001 C CNN
-F 3 "" H 10100 1500 50  0001 C CNN
-	1    10100 1500
+P 10050 2500
+F 0 "#PWR0103" H 10050 2250 50  0001 C CNN
+F 1 "GND" H 10055 2327 50  0000 C CNN
+F 2 "" H 10050 2500 50  0001 C CNN
+F 3 "" H 10050 2500 50  0001 C CNN
+	1    10050 2500
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	9700 1150 9700 1250
-Connection ~ 9700 1250
-Wire Wire Line
-	9700 1250 9700 1350
-Connection ~ 9700 1350
-Wire Wire Line
-	9700 1350 9700 1450
 Connection ~ 9700 1450
 Wire Wire Line
-	9700 1450 9700 1550
-Connection ~ 9700 1550
+	9700 1450 10050 1450
 Wire Wire Line
-	9700 1550 9700 1650
-Wire Wire Line
-	9700 1450 10100 1450
-Wire Wire Line
-	10100 1450 10100 1500
+	10050 2450 10050 2500
 $Comp
 L keyboard:BL1530-DPDT U5
 U 1 1 5F40662A
@@ -1736,10 +1654,90 @@ F 3 "" H 7800 5850 50  0001 C CNN
 	1    7900 5600
 	1    0    0    -1  
 $EndComp
-NoConn ~ 9700 1750
-NoConn ~ 9700 1850
-NoConn ~ 9700 1950
-NoConn ~ 9700 2050
-NoConn ~ 9700 2150
-NoConn ~ 9700 2250
+Wire Wire Line
+	9700 2450 10050 2450
+$Comp
+L Connector_Generic:Conn_02x20_Odd_Even J2
+U 1 1 5F447E72
+P 9400 1750
+F 0 "J2" H 9450 2867 50  0000 C CNN
+F 1 "Conn_02x20_Odd_Even" H 9450 2776 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_2x20_P2.54mm_Vertical_SMD" H 9400 1750 50  0001 C CNN
+F 3 "~" H 9400 1750 50  0001 C CNN
+	1    9400 1750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9700 1350 9700 1450
+$Comp
+L power:VBUS #PWR0101
+U 1 1 5F44AE22
+P 10050 2150
+F 0 "#PWR0101" H 10050 2000 50  0001 C CNN
+F 1 "VBUS" H 10138 2187 50  0000 L CNN
+F 2 "" H 10050 2150 50  0001 C CNN
+F 3 "" H 10050 2150 50  0001 C CNN
+	1    10050 2150
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9700 2150 10050 2150
+Text Label 4850 3750 0    50   ~ 0
+L2
+Wire Wire Line
+	5000 3750 4850 3750
+Wire Wire Line
+	4850 3650 5000 3650
+Text Label 4850 3650 0    50   ~ 0
+L3
+Text Label 9700 850  0    50   ~ 0
+L3
+Text Label 9700 950  0    50   ~ 0
+L2
+Text Label 9700 1050 0    50   ~ 0
+L1
+Wire Wire Line
+	9700 1150 10050 1150
+$Comp
+L keyboard:VDD33 #PWR0104
+U 1 1 5F488B89
+P 10050 1150
+F 0 "#PWR0104" H 10050 1100 50  0001 C CNN
+F 1 "VDD33" H 10067 1323 50  0000 C CNN
+F 2 "" H 10050 1100 50  0001 C CNN
+F 3 "" H 10050 1100 50  0001 C CNN
+	1    10050 1150
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9700 1250 9700 1350
+Wire Wire Line
+	9700 1450 9700 1550
+Connection ~ 9700 1350
+Connection ~ 9700 1550
+Wire Wire Line
+	9700 1550 9700 1650
+Connection ~ 9700 1650
+Wire Wire Line
+	9700 1650 9700 1750
+Connection ~ 9700 1750
+Wire Wire Line
+	9700 1750 9700 1850
+Connection ~ 9700 1850
+Wire Wire Line
+	9700 1850 9700 1950
+Connection ~ 9700 1950
+Wire Wire Line
+	9700 1950 9700 2050
+$Comp
+L power:GND #PWR0105
+U 1 1 5F4A3210
+P 10050 1450
+F 0 "#PWR0105" H 10050 1200 50  0001 C CNN
+F 1 "GND" H 10055 1277 50  0000 C CNN
+F 2 "" H 10050 1450 50  0001 C CNN
+F 3 "" H 10050 1450 50  0001 C CNN
+	1    10050 1450
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

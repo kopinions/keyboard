@@ -2733,18 +2733,10 @@ Wire Wire Line
 	1450 3500 1450 3600
 Wire Wire Line
 	1050 3500 1450 3500
-Text Label 1700 5550 0    50   ~ 0
-L1
-Text Label 1700 5450 0    50   ~ 0
-L2
-Text Label 1700 5350 0    50   ~ 0
-L3
 Wire Wire Line
 	1700 6650 1900 6650
 Wire Wire Line
 	1700 6950 2100 6950
-Wire Wire Line
-	1700 5650 1700 5750
 Wire Wire Line
 	1700 6050 1700 6150
 Wire Wire Line
@@ -2763,9 +2755,6 @@ $EndComp
 Connection ~ 1700 6050
 Wire Wire Line
 	1700 5750 1700 5850
-Wire Wire Line
-	1700 6050 1700 6150
-Connection ~ 1700 5750
 Connection ~ 1700 5850
 Wire Wire Line
 	1700 5850 1700 5950
@@ -2784,4 +2773,23 @@ Wire Wire Line
 Connection ~ 1700 6450
 Wire Wire Line
 	1700 6450 1700 6550
+Text Label 1700 5550 0    50   ~ 0
+L1
+Text Label 1700 5350 0    50   ~ 0
+L3
+Text Label 1700 5450 0    50   ~ 0
+L2
+$Comp
+L keyboard:VDD33 #PWR?
+U 1 1 5F92B702
+P 1900 5650
+F 0 "#PWR?" H 1900 5600 50  0001 C CNN
+F 1 "VDD33" H 1917 5823 50  0000 C CNN
+F 2 "" H 1900 5600 50  0001 C CNN
+F 3 "" H 1900 5600 50  0001 C CNN
+	1    1900 5650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1700 5650 1900 5650
 $EndSCHEMATC
