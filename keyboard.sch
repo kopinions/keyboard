@@ -2465,29 +2465,25 @@ Wire Wire Line
 $Comp
 L power:GND #PWR05
 U 1 1 5F06DE09
-P 1850 5350
-F 0 "#PWR05" H 1850 5100 50  0001 C CNN
-F 1 "GND" H 1850 5400 50  0000 C CNN
-F 2 "" H 1850 5350 50  0001 C CNN
-F 3 "" H 1850 5350 50  0001 C CNN
-	1    1850 5350
+P 2100 6950
+F 0 "#PWR05" H 2100 6700 50  0001 C CNN
+F 1 "GND" H 2100 7000 50  0000 C CNN
+F 2 "" H 2100 6950 50  0001 C CNN
+F 3 "" H 2100 6950 50  0001 C CNN
+	1    2100 6950
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:VBUS #PWR07
 U 1 1 5F08F9B9
-P 2350 5450
-F 0 "#PWR07" H 2350 5300 50  0001 C CNN
-F 1 "VBUS" H 2250 5600 50  0000 L CNN
-F 2 "" H 2350 5450 50  0001 C CNN
-F 3 "" H 2350 5450 50  0001 C CNN
-	1    2350 5450
+P 1900 6650
+F 0 "#PWR07" H 1900 6500 50  0001 C CNN
+F 1 "VBUS" H 1800 6800 50  0000 L CNN
+F 2 "" H 1900 6650 50  0001 C CNN
+F 3 "" H 1900 6650 50  0001 C CNN
+	1    1900 6650
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	1700 5450 2350 5450
-Wire Wire Line
-	1700 5350 1850 5350
 $Comp
 L power:GND #PWR04
 U 1 1 5F104AB7
@@ -2573,25 +2569,6 @@ F 3 "" H 1350 2525 50  0001 C CNN
 	1    1350 2500
 	1    0    0    -1  
 $EndComp
-Text Label 5100 5200 0    50   ~ 0
-CC1
-Text Label 5100 5300 0    50   ~ 0
-CC2
-Text Label 1700 6750 0    50   ~ 0
-CC1
-Text Label 1700 6650 0    50   ~ 0
-CC2
-$Comp
-L Connector:USB_C_Receptacle J2
-U 1 1 5F2677C5
-P 4200 6000
-F 0 "J2" H 4307 7267 50  0000 C CNN
-F 1 "USB_C_Receptacle" H 4307 7176 50  0000 C CNN
-F 2 "keyboard:USB_C_Receptacle" H 4350 6000 50  0001 C CNN
-F 3 "https://www.usb.org/sites/default/files/documents/usb_type-c.zip" H 4350 6000 50  0001 C CNN
-	1    4200 6000
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	4800 5700 4900 5700
 Wire Wire Line
@@ -2614,68 +2591,17 @@ Wire Wire Line
 Connection ~ 4900 5500
 Wire Wire Line
 	4900 5500 5100 5500
-Wire Wire Line
-	4800 5200 5100 5200
-Wire Wire Line
-	4800 5300 5100 5300
-Wire Wire Line
-	4800 6000 4900 6000
-Text Label 5100 6000 0    50   ~ 0
-RX_N
-Wire Wire Line
-	4800 6600 4900 6600
-Wire Wire Line
-	4900 6600 4900 6000
-Connection ~ 4900 6000
-Wire Wire Line
-	4900 6000 5100 6000
-Text Label 5100 6700 0    50   ~ 0
-RX_P
-Wire Wire Line
-	5100 6700 4950 6700
-Wire Wire Line
-	4800 6100 4950 6100
-Wire Wire Line
-	4950 6100 4950 6700
-Connection ~ 4950 6700
-Wire Wire Line
-	4950 6700 4800 6700
-Wire Wire Line
-	4800 6300 5000 6300
-Text Label 5100 6300 0    50   ~ 0
-TX_N
-Wire Wire Line
-	4800 6900 5000 6900
-Wire Wire Line
-	5000 6900 5000 6300
-Connection ~ 5000 6300
-Wire Wire Line
-	5000 6300 5100 6300
-Wire Wire Line
-	4800 7000 5050 7000
-Text Label 5100 7000 0    50   ~ 0
-TX_P
-Wire Wire Line
-	4800 6400 5050 6400
-Wire Wire Line
-	5050 6400 5050 7000
-Connection ~ 5050 7000
-Wire Wire Line
-	5050 7000 5100 7000
-Wire Wire Line
-	4200 7600 5000 7600
 $Comp
 L power:GND #PWR08
 U 1 1 5F3E8E25
-P 5000 7600
-F 0 "#PWR08" H 5000 7350 50  0001 C CNN
-F 1 "GND" H 5005 7427 50  0000 C CNN
-F 2 "" H 5000 7600 50  0001 C CNN
-F 3 "" H 5000 7600 50  0001 C CNN
-	1    5000 7600
+P 4050 7600
+F 0 "#PWR08" H 4050 7350 50  0001 C CNN
+F 1 "GND" H 4055 7427 50  0000 C CNN
+F 2 "" H 4050 7600 50  0001 C CNN
+F 3 "" H 4050 7600 50  0001 C CNN
+	1    4050 7600
 	1    0    0    -1  
 $EndComp
-Connection ~ 5000 7600
 $Comp
 L power:VBUS #PWR09
 U 1 1 5F3FAE2E
@@ -2689,73 +2615,21 @@ F 3 "" H 5100 5000 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	5100 5000 4800 5000
-Wire Wire Line
-	5000 7300 5000 7600
-Wire Wire Line
-	4800 7200 4900 7200
-Wire Wire Line
-	4900 7200 4900 7300
-Wire Wire Line
-	4900 7300 4800 7300
-Wire Wire Line
-	4900 7300 5000 7300
-Connection ~ 4900 7300
-Text Label 1700 6950 0    50   ~ 0
+Text Label 1700 6750 0    50   ~ 0
 USBD_P
 Text Label 1700 6850 0    50   ~ 0
 USBD_N
-Text Label 1700 6550 0    50   ~ 0
-TX_P
-Text Label 1700 6450 0    50   ~ 0
-TX_N
-Text Label 1700 6350 0    50   ~ 0
-RX_P
-Text Label 1700 6250 0    50   ~ 0
-RX_N
-Connection ~ 4200 7600
-Wire Wire Line
-	3900 7600 4200 7600
 $Comp
 L power:GND #PWR06
 U 1 1 5F2D2119
-P 1950 5850
-F 0 "#PWR06" H 1950 5600 50  0001 C CNN
-F 1 "GND" H 1950 5900 50  0000 C CNN
-F 2 "" H 1950 5850 50  0001 C CNN
-F 3 "" H 1950 5850 50  0001 C CNN
-	1    1950 5850
+P 1900 6050
+F 0 "#PWR06" H 1900 5800 50  0001 C CNN
+F 1 "GND" H 1900 6100 50  0000 C CNN
+F 2 "" H 1900 6050 50  0001 C CNN
+F 3 "" H 1900 6050 50  0001 C CNN
+	1    1900 6050
 	1    0    0    -1  
 $EndComp
-$Comp
-L Connector_Generic:Conn_02x20_Odd_Even J1
-U 1 1 5F2DDE58
-P 1400 6250
-F 0 "J1" H 1450 7367 50  0000 C CNN
-F 1 "Conn_02x20_Odd_Even" H 1450 7276 50  0000 C CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_2x20_P2.54mm_Vertical_SMD" H 1400 6250 50  0001 C CNN
-F 3 "~" H 1400 6250 50  0001 C CNN
-	1    1400 6250
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	1700 5550 1700 5650
-Connection ~ 1700 5650
-Wire Wire Line
-	1700 5650 1700 5750
-Connection ~ 1700 5750
-Wire Wire Line
-	1700 5750 1700 5850
-Connection ~ 1700 5850
-Wire Wire Line
-	1700 5850 1700 5950
-Connection ~ 1700 5950
-Wire Wire Line
-	1700 5950 1700 6050
-Connection ~ 1700 6050
-Wire Wire Line
-	1700 6050 1700 6150
-Wire Wire Line
-	1700 5850 1950 5850
 $Comp
 L keyboard:SW_SPST SW-1
 U 1 1 5E90312E
@@ -2768,4 +2642,146 @@ F 4 "Cxxx" H 3800 1300 50  0000 C CNN "LCSC"
 	1    3800 1300
 	1    0    0    -1  
 $EndComp
+NoConn ~ 4800 5200
+NoConn ~ 4800 5300
+NoConn ~ 4800 6000
+NoConn ~ 4800 6100
+NoConn ~ 4800 6300
+NoConn ~ 4800 6400
+NoConn ~ 4800 6600
+NoConn ~ 4800 6700
+NoConn ~ 4800 6900
+NoConn ~ 4800 7000
+Wire Wire Line
+	3900 7600 4050 7600
+$Comp
+L Connector:USB_C_Receptacle J2
+U 1 1 5F2677C5
+P 4200 6000
+F 0 "J2" H 4307 7267 50  0000 C CNN
+F 1 "USB_C_Receptacle" H 4307 7176 50  0000 C CNN
+F 2 "keyboard:USB_C_Receptacle" H 4350 6000 50  0001 C CNN
+F 3 "https://www.usb.org/sites/default/files/documents/usb_type-c.zip" H 4350 6000 50  0001 C CNN
+	1    4200 6000
+	1    0    0    -1  
+$EndComp
+NoConn ~ 4800 7200
+NoConn ~ 4800 7300
+Connection ~ 4050 7600
+Wire Wire Line
+	4050 7600 4200 7600
+$Comp
+L Device:LED_Small D3
+U 1 1 5F56C09F
+P 1050 3400
+F 0 "D3" V 1096 3332 50  0000 R CNN
+F 1 "D" V 1005 3332 50  0000 R CNN
+F 2 "LED_SMD:LED_0603_1608Metric" V 1050 3400 50  0001 C CNN
+F 3 "~" V 1050 3400 50  0001 C CNN
+	1    1050 3400
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	1450 3200 1450 3300
+Wire Wire Line
+	1050 3200 1050 3300
+$Comp
+L power:GND #PWR0101
+U 1 1 5F56C0B3
+P 1450 3600
+F 0 "#PWR0101" H 1450 3350 50  0001 C CNN
+F 1 "GND" H 1455 3427 50  0000 C CNN
+F 2 "" H 1450 3600 50  0001 C CNN
+F 3 "" H 1450 3600 50  0001 C CNN
+	1    1450 3600
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:LED_Small D5
+U 1 1 5F578C1D
+P 1800 3400
+F 0 "D5" V 1846 3332 50  0000 R CNN
+F 1 "D" V 1755 3332 50  0000 R CNN
+F 2 "LED_SMD:LED_0603_1608Metric" V 1800 3400 50  0001 C CNN
+F 3 "~" V 1800 3400 50  0001 C CNN
+	1    1800 3400
+	0    -1   -1   0   
+$EndComp
+Text Label 1800 3200 0    50   ~ 0
+L3
+Wire Wire Line
+	1800 3200 1800 3300
+Text Label 1450 3200 0    50   ~ 0
+L2
+Text Label 1050 3200 0    50   ~ 0
+L1
+$Comp
+L Device:LED_Small D4
+U 1 1 5F56C0A5
+P 1450 3400
+F 0 "D4" V 1496 3332 50  0000 R CNN
+F 1 "D" V 1405 3332 50  0000 R CNN
+F 2 "LED_SMD:LED_0603_1608Metric" V 1450 3400 50  0001 C CNN
+F 3 "~" V 1450 3400 50  0001 C CNN
+	1    1450 3400
+	0    -1   -1   0   
+$EndComp
+Connection ~ 1450 3500
+Wire Wire Line
+	1450 3500 1800 3500
+Wire Wire Line
+	1450 3500 1450 3600
+Wire Wire Line
+	1050 3500 1450 3500
+Text Label 1700 5550 0    50   ~ 0
+L1
+Text Label 1700 5450 0    50   ~ 0
+L2
+Text Label 1700 5350 0    50   ~ 0
+L3
+Wire Wire Line
+	1700 6650 1900 6650
+Wire Wire Line
+	1700 6950 2100 6950
+Wire Wire Line
+	1700 5650 1700 5750
+Wire Wire Line
+	1700 6050 1700 6150
+Wire Wire Line
+	1700 6050 1900 6050
+$Comp
+L Connector_Generic:Conn_02x20_Odd_Even J1
+U 1 1 5F8CE1E4
+P 1400 6250
+F 0 "J1" H 1450 7367 50  0000 C CNN
+F 1 "Conn_02x20_Odd_Even" H 1450 7276 50  0000 C CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_2x20_P2.54mm_Vertical_SMD" H 1400 6250 50  0001 C CNN
+F 3 "~" H 1400 6250 50  0001 C CNN
+	1    1400 6250
+	1    0    0    -1  
+$EndComp
+Connection ~ 1700 6050
+Wire Wire Line
+	1700 5750 1700 5850
+Wire Wire Line
+	1700 6050 1700 6150
+Connection ~ 1700 5750
+Connection ~ 1700 5850
+Wire Wire Line
+	1700 5850 1700 5950
+Connection ~ 1700 5950
+Wire Wire Line
+	1700 5950 1700 6050
+Connection ~ 1700 6150
+Wire Wire Line
+	1700 6150 1700 6250
+Connection ~ 1700 6250
+Wire Wire Line
+	1700 6250 1700 6350
+Connection ~ 1700 6350
+Wire Wire Line
+	1700 6350 1700 6450
+Connection ~ 1700 6450
+Wire Wire Line
+	1700 6450 1700 6550
 $EndSCHEMATC
