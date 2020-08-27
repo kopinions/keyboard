@@ -2570,51 +2570,51 @@ F 3 "" H 1350 2525 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	4800 5700 4900 5700
+	6400 5700 6500 5700
 Wire Wire Line
-	4800 5800 4900 5800
+	6400 5800 6500 5800
 Wire Wire Line
-	4900 5800 4900 5700
-Connection ~ 4900 5700
+	6500 5800 6500 5700
+Connection ~ 6500 5700
 Wire Wire Line
-	4900 5700 5100 5700
-Text Label 5100 5500 0    50   ~ 0
+	6500 5700 6700 5700
+Text Label 6700 5500 0    50   ~ 0
 USBD_N
-Text Label 5100 5700 0    50   ~ 0
+Text Label 6700 5700 0    50   ~ 0
 USBD_P
 Wire Wire Line
-	4800 5500 4900 5500
+	6400 5500 6500 5500
 Wire Wire Line
-	4800 5600 4900 5600
+	6400 5600 6500 5600
 Wire Wire Line
-	4900 5600 4900 5500
-Connection ~ 4900 5500
+	6500 5600 6500 5500
+Connection ~ 6500 5500
 Wire Wire Line
-	4900 5500 5100 5500
+	6500 5500 6700 5500
 $Comp
 L power:GND #PWR08
 U 1 1 5F3E8E25
-P 4050 7600
-F 0 "#PWR08" H 4050 7350 50  0001 C CNN
-F 1 "GND" H 4055 7427 50  0000 C CNN
-F 2 "" H 4050 7600 50  0001 C CNN
-F 3 "" H 4050 7600 50  0001 C CNN
-	1    4050 7600
+P 5650 7600
+F 0 "#PWR08" H 5650 7350 50  0001 C CNN
+F 1 "GND" H 5655 7427 50  0000 C CNN
+F 2 "" H 5650 7600 50  0001 C CNN
+F 3 "" H 5650 7600 50  0001 C CNN
+	1    5650 7600
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:VBUS #PWR09
 U 1 1 5F3FAE2E
-P 5100 5000
-F 0 "#PWR09" H 5100 4850 50  0001 C CNN
-F 1 "VBUS" H 5115 5173 50  0000 C CNN
-F 2 "" H 5100 5000 50  0001 C CNN
-F 3 "" H 5100 5000 50  0001 C CNN
-	1    5100 5000
+P 6700 5000
+F 0 "#PWR09" H 6700 4850 50  0001 C CNN
+F 1 "VBUS" H 6715 5173 50  0000 C CNN
+F 2 "" H 6700 5000 50  0001 C CNN
+F 3 "" H 6700 5000 50  0001 C CNN
+	1    6700 5000
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	5100 5000 4800 5000
+	6700 5000 6400 5000
 Text Label 1700 6750 0    50   ~ 0
 USBD_P
 Text Label 1700 6850 0    50   ~ 0
@@ -2642,34 +2642,6 @@ F 4 "Cxxx" H 3800 1300 50  0000 C CNN "LCSC"
 	1    3800 1300
 	1    0    0    -1  
 $EndComp
-NoConn ~ 4800 5200
-NoConn ~ 4800 5300
-NoConn ~ 4800 6000
-NoConn ~ 4800 6100
-NoConn ~ 4800 6300
-NoConn ~ 4800 6400
-NoConn ~ 4800 6600
-NoConn ~ 4800 6700
-NoConn ~ 4800 6900
-NoConn ~ 4800 7000
-Wire Wire Line
-	3900 7600 4050 7600
-$Comp
-L Connector:USB_C_Receptacle J2
-U 1 1 5F2677C5
-P 4200 6000
-F 0 "J2" H 4307 7267 50  0000 C CNN
-F 1 "USB_C_Receptacle" H 4307 7176 50  0000 C CNN
-F 2 "keyboard:USB_C_Receptacle" H 4350 6000 50  0001 C CNN
-F 3 "https://www.usb.org/sites/default/files/documents/usb_type-c.zip" H 4350 6000 50  0001 C CNN
-	1    4200 6000
-	1    0    0    -1  
-$EndComp
-NoConn ~ 4800 7200
-NoConn ~ 4800 7300
-Connection ~ 4050 7600
-Wire Wire Line
-	4050 7600 4200 7600
 $Comp
 L Device:LED_Small D3
 U 1 1 5F56C09F
@@ -2780,10 +2752,10 @@ L3
 Text Label 1700 5450 0    50   ~ 0
 L2
 $Comp
-L keyboard:VDD33 #PWR?
+L keyboard:VDD33 #PWR0102
 U 1 1 5F92B702
 P 1900 5650
-F 0 "#PWR?" H 1900 5600 50  0001 C CNN
+F 0 "#PWR0102" H 1900 5600 50  0001 C CNN
 F 1 "VDD33" H 1917 5823 50  0000 C CNN
 F 2 "" H 1900 5600 50  0001 C CNN
 F 3 "" H 1900 5600 50  0001 C CNN
@@ -2792,4 +2764,24 @@ F 3 "" H 1900 5600 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	1700 5650 1900 5650
+$Comp
+L keyboard:USB_C_Receptacle_16P J2
+U 1 1 5F4A4F71
+P 5800 6000
+F 0 "J2" H 5907 7267 50  0000 C CNN
+F 1 "USB_C_Receptacle_16P" H 5907 7176 50  0000 C CNN
+F 2 "keyboard:USB_C_Receptacle_16P" H 5950 6000 50  0001 C CNN
+F 3 "https://www.usb.org/sites/default/files/documents/usb_type-c.zip" H 5950 6000 50  0001 C CNN
+	1    5800 6000
+	1    0    0    -1  
+$EndComp
+NoConn ~ 6400 7200
+NoConn ~ 6400 7300
+Connection ~ 5650 7600
+Wire Wire Line
+	5650 7600 5800 7600
+Wire Wire Line
+	5500 7600 5650 7600
+NoConn ~ 6400 5200
+NoConn ~ 6400 5300
 $EndSCHEMATC
