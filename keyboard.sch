@@ -1,6 +1,5 @@
 EESchema Schematic File Version 4
-LIBS:keyboard-cache
-EELAYER 29 0
+EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
@@ -2570,27 +2569,13 @@ F 3 "" H 1350 2525 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	6400 5700 6500 5700
-Wire Wire Line
 	6400 5800 6500 5800
-Wire Wire Line
-	6500 5800 6500 5700
-Connection ~ 6500 5700
-Wire Wire Line
-	6500 5700 6700 5700
 Text Label 6700 5500 0    50   ~ 0
 USBD_N
 Text Label 6700 5700 0    50   ~ 0
 USBD_P
 Wire Wire Line
-	6400 5500 6500 5500
-Wire Wire Line
 	6400 5600 6500 5600
-Wire Wire Line
-	6500 5600 6500 5500
-Connection ~ 6500 5500
-Wire Wire Line
-	6500 5500 6700 5500
 $Comp
 L power:GND #PWR08
 U 1 1 5F3E8E25
@@ -2784,4 +2769,18 @@ Wire Wire Line
 	5500 7600 5650 7600
 NoConn ~ 6400 5200
 NoConn ~ 6400 5300
+Wire Wire Line
+	6400 5500 6500 5500
+Wire Wire Line
+	6400 5700 6500 5700
+Wire Wire Line
+	6500 5800 6500 5700
+Connection ~ 6500 5700
+Wire Wire Line
+	6500 5700 6700 5700
+Wire Wire Line
+	6500 5600 6500 5500
+Connection ~ 6500 5500
+Wire Wire Line
+	6500 5500 6700 5500
 $EndSCHEMATC
