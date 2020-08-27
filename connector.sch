@@ -1,5 +1,4 @@
 EESchema Schematic File Version 4
-LIBS:connector-cache
 EELAYER 29 0
 EELAYER END
 $Descr A4 11693 8268
@@ -15,17 +14,6 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L Connector_Generic_MountingPin:Conn_01x02_MountingPin J4
-U 1 1 5EB63D84
-P 4600 3700
-F 0 "J4" V 4476 3780 50  0000 L CNN
-F 1 "BAT_OUTPUT" V 4567 3780 50  0000 L CNN
-F 2 "Connector_JST:JST_PH_S2B-PH-SM4-TB_1x02-1MP_P2.00mm_Horizontal" H 4600 3700 50  0001 C CNN
-F 3 "~" H 4600 3700 50  0001 C CNN
-	1    4600 3700
-	0    -1   1    0   
-$EndComp
-$Comp
 L Switch:SW_Push SW1
 U 1 1 5EB63647
 P 4300 3100
@@ -36,13 +24,6 @@ F 3 "~" H 4300 3300 50  0001 C CNN
 	1    4300 3100
 	0    -1   -1   0   
 $EndComp
-Wire Wire Line
-	4700 3500 4900 3500
-Wire Wire Line
-	4900 3700 4900 3500
-Connection ~ 4900 3500
-Wire Wire Line
-	4900 3500 4950 3500
 Wire Wire Line
 	4950 2800 4950 3500
 Wire Wire Line
@@ -66,4 +47,18 @@ Wire Wire Line
 	4300 3300 4300 3500
 Wire Wire Line
 	4300 3500 4600 3500
+Wire Wire Line
+	4700 3500 4950 3500
+NoConn ~ 4900 3700
+$Comp
+L Connector_Generic:Conn_01x02 J1
+U 1 1 5F4556BC
+P 4700 3700
+F 0 "J1" V 4572 3513 50  0000 R CNN
+F 1 "Conn_01x02" V 4663 3513 50  0000 R CNN
+F 2 "Connector_JST:JST_XH_S2B-XH-A-1_1x02_P2.50mm_Horizontal" H 4700 3700 50  0001 C CNN
+F 3 "~" H 4700 3700 50  0001 C CNN
+	1    4700 3700
+	0    1    1    0   
+$EndComp
 $EndSCHEMATC

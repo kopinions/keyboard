@@ -1267,31 +1267,12 @@ F 3 "" H 3200 1850 50  0001 C CNN
 	1    3200 1650
 	1    0    0    -1  
 $EndComp
-$Comp
-L Connector_Generic_MountingPin:Conn_01x02_MountingPin J1
-U 1 1 5EC97154
-P 850 1300
-F 0 "J1" H 772 1517 50  0000 C CNN
-F 1 "BAT" H 772 1426 50  0000 C CNN
-F 2 "Connector_JST:JST_PH_S2B-PH-SM4-TB_1x02-1MP_P2.00mm_Horizontal" H 850 1300 50  0001 C CNN
-F 3 "~" H 850 1300 50  0001 C CNN
-F 4 "R" H 850 1300 50  0001 C CNN "Spice_Primitive"
-F 5 "0" H 850 1300 50  0001 C CNN "Spice_Model"
-F 6 "N" H 850 1300 50  0001 C CNN "Spice_Netlist_Enabled"
-	1    850  1300
-	-1   0    0    -1  
-$EndComp
 Wire Wire Line
 	1050 1300 1050 1050
 Wire Wire Line
 	1050 1050 1150 1050
 Wire Wire Line
 	1050 1400 1150 1400
-Wire Wire Line
-	850  1600 1050 1600
-Wire Wire Line
-	1050 1600 1050 1400
-Connection ~ 1050 1400
 $Comp
 L Device:C_Small C5
 U 1 1 5F253174
@@ -1739,5 +1720,16 @@ F 2 "" H 10050 1450 50  0001 C CNN
 F 3 "" H 10050 1450 50  0001 C CNN
 	1    10050 1450
 	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x02_Female J1
+U 1 1 5F473394
+P 850 1400
+F 0 "J1" H 742 1075 50  0000 C CNN
+F 1 "Conn_01x02_Female" H 742 1166 50  0000 C CNN
+F 2 "Connector_JST:JST_XH_S2B-XH-A-1_1x02_P2.50mm_Horizontal" H 850 1400 50  0001 C CNN
+F 3 "~" H 850 1400 50  0001 C CNN
+	1    850  1400
+	-1   0    0    1   
 $EndComp
 $EndSCHEMATC
