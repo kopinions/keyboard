@@ -118,94 +118,6 @@ Connection ~ 5100 1600
 Wire Wire Line
 	5100 1600 5600 1600
 Connection ~ 5600 1600
-Wire Wire Line
-	5000 750  5000 1300
-Wire Wire Line
-	5500 750  5500 1300
-Wire Wire Line
-	6000 750  6000 1300
-Text GLabel 4000 750  0    50   Input ~ 0
-COL1
-Text GLabel 4500 750  0    50   Input ~ 0
-COL2
-Text GLabel 5000 750  0    50   Input ~ 0
-COL3
-Text GLabel 5500 750  0    50   Input ~ 0
-COL4
-Text GLabel 6000 750  0    50   Input ~ 0
-COL5
-Text GLabel 6500 750  0    50   Input ~ 0
-COL6
-Text GLabel 7000 750  0    50   Input ~ 0
-COL7
-Text GLabel 7500 750  0    50   Input ~ 0
-COL8
-Text GLabel 2900 1600 0    50   Input ~ 0
-ROW1
-Text GLabel 8000 750  0    50   Input ~ 0
-COL9
-Text GLabel 8500 750  0    50   Input ~ 0
-COL10
-Text GLabel 9000 750  0    50   Input ~ 0
-COL11
-Text GLabel 9500 750  0    50   Input ~ 0
-COL12
-Text GLabel 10000 750  0    50   Input ~ 0
-COL13
-Text GLabel 10500 750  0    50   Input ~ 0
-COL14
-Text GLabel 11000 750  0    50   Input ~ 0
-COL15
-Text GLabel 2900 2200 0    50   Input ~ 0
-ROW2
-Text GLabel 2900 2800 0    50   Input ~ 0
-ROW3
-Text GLabel 2900 3400 0    50   Input ~ 0
-ROW4
-Text GLabel 2900 4000 0    50   Input ~ 0
-ROW5
-Text GLabel 1200 5350 0    50   Input ~ 0
-ROW1
-Text GLabel 1200 5450 0    50   Input ~ 0
-ROW2
-Text GLabel 1200 5550 0    50   Input ~ 0
-ROW3
-Text GLabel 1200 5650 0    50   Input ~ 0
-ROW4
-Text GLabel 1200 5750 0    50   Input ~ 0
-ROW5
-Text GLabel 1200 5850 0    50   Input ~ 0
-ROW6
-Text GLabel 1200 5950 0    50   Input ~ 0
-COL1
-Text GLabel 1200 6050 0    50   Input ~ 0
-COL2
-Text GLabel 1200 6150 0    50   Input ~ 0
-COL3
-Text GLabel 1200 6250 0    50   Input ~ 0
-COL4
-Text GLabel 1200 6350 0    50   Input ~ 0
-COL5
-Text GLabel 1200 6450 0    50   Input ~ 0
-COL6
-Text GLabel 1200 6550 0    50   Input ~ 0
-COL7
-Text GLabel 1200 6650 0    50   Input ~ 0
-COL8
-Text GLabel 1200 6750 0    50   Input ~ 0
-COL9
-Text GLabel 1200 6850 0    50   Input ~ 0
-COL10
-Text GLabel 1200 6950 0    50   Input ~ 0
-COL11
-Text GLabel 1200 7050 0    50   Input ~ 0
-COL12
-Text GLabel 1200 7150 0    50   Input ~ 0
-COL13
-Text GLabel 1200 7250 0    50   Input ~ 0
-COL14
-Text GLabel 1700 7250 2    50   Input ~ 0
-COL15
 $Comp
 L Diode:1N914 D-25
 U 1 1 5E91640B
@@ -219,8 +131,6 @@ F 3 "http://www.vishay.com/docs/85622/1n914.pdf" H 5600 1450 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	5600 1600 6100 1600
-Wire Wire Line
-	6500 750  6500 1300
 $Comp
 L keyboard:SW_SPST SW-31
 U 1 1 5E9D6F85
@@ -250,8 +160,6 @@ Wire Wire Line
 	2900 2200 3600 2200
 Wire Wire Line
 	2900 2800 3600 2800
-Wire Wire Line
-	2900 3400 3600 3400
 Wire Wire Line
 	2900 4000 3600 4000
 Wire Wire Line
@@ -355,16 +263,6 @@ F 3 "~" H 8800 1300 50  0001 C CNN
 	1    8800 1300
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	7000 750  7000 1300
-Wire Wire Line
-	7500 750  7500 1300
-Wire Wire Line
-	8000 750  8000 1300
-Wire Wire Line
-	8500 750  8500 1300
-Wire Wire Line
-	9000 750  9000 1300
 $Comp
 L Diode:1N914 D-55
 U 1 1 5EA16BB3
@@ -376,8 +274,6 @@ F 3 "http://www.vishay.com/docs/85622/1n914.pdf" H 8600 1450 50  0001 C CNN
 	1    8600 1450
 	0    -1   -1   0   
 $EndComp
-Wire Wire Line
-	9500 750  9500 1300
 $Comp
 L keyboard:SW_SPST SW-62
 U 1 1 5EA16BBE
@@ -451,10 +347,6 @@ F 3 "~" H 10300 1300 50  0001 C CNN
 	1    10300 1300
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	10000 750  10000 1300
-Wire Wire Line
-	10500 750  10500 1300
 $Comp
 L Diode:1N914 D-73
 U 1 1 5EA2C72F
@@ -871,51 +763,33 @@ Connection ~ 10100 2200
 Wire Wire Line
 	10100 2200 10600 2200
 Wire Wire Line
-	4000 750  4000 1300
-Connection ~ 4000 1300
-Wire Wire Line
 	4000 1300 4000 1900
-Wire Wire Line
-	4500 750  4500 1300
-Connection ~ 4500 1300
 Wire Wire Line
 	4500 1300 4500 1900
 Wire Wire Line
 	5000 1300 5000 1900
-Connection ~ 5000 1300
 Wire Wire Line
 	5500 1300 5500 1900
-Connection ~ 5500 1300
 Wire Wire Line
 	6000 1300 6000 1900
-Connection ~ 6000 1300
 Wire Wire Line
 	6500 1300 6500 1900
-Connection ~ 6500 1300
 Wire Wire Line
 	7000 1300 7000 1900
-Connection ~ 7000 1300
 Wire Wire Line
 	7500 1300 7500 1900
-Connection ~ 7500 1300
 Wire Wire Line
 	8500 1300 8500 1900
-Connection ~ 8500 1300
 Wire Wire Line
 	8000 1300 8000 1900
-Connection ~ 8000 1300
 Wire Wire Line
 	9000 1300 9000 1900
-Connection ~ 9000 1300
 Wire Wire Line
 	9500 1300 9500 1900
-Connection ~ 9500 1300
 Wire Wire Line
 	10000 1300 10000 1900
-Connection ~ 10000 1300
 Wire Wire Line
 	10500 1300 10500 1900
-Connection ~ 10500 1300
 Wire Wire Line
 	11000 1300 11000 1900
 $Comp
@@ -1697,7 +1571,6 @@ Wire Wire Line
 	10500 2500 10500 3100
 Wire Wire Line
 	11000 2500 11000 3100
-Connection ~ 3600 3400
 Wire Wire Line
 	3600 3400 4100 3400
 Connection ~ 4000 2500
@@ -2420,10 +2293,6 @@ Wire Wire Line
 	5600 4600 8600 4600
 Wire Wire Line
 	11000 3100 11000 4300
-Text GLabel 1700 7150 2    50   Input ~ 0
-CAPS
-Text GLabel 1700 7050 2    50   Input ~ 0
-SCLK
 $Comp
 L Device:LED_Small D1
 U 1 1 5EA70247
@@ -2453,10 +2322,6 @@ Wire Wire Line
 Connection ~ 1350 4550
 Wire Wire Line
 	1350 4550 1600 4550
-Text GLabel 1150 4250 2    50   Input ~ 0
-CAPS
-Text GLabel 1600 4250 2    50   Input ~ 0
-SCLK
 Wire Wire Line
 	1600 4250 1600 4350
 Wire Wire Line
@@ -2494,8 +2359,6 @@ F 3 "" H 1350 4650 50  0001 C CNN
 	1    1350 4650
 	1    0    0    -1  
 $EndComp
-Text GLabel 2900 4600 0    50   Input ~ 0
-ROW6
 $Comp
 L power:PWR_FLAG #FLG01
 U 1 1 5EB4F08E
@@ -2783,4 +2646,141 @@ Wire Wire Line
 Connection ~ 6500 5500
 Wire Wire Line
 	6500 5500 6700 5500
+Text Label 2900 1600 2    50   ~ 0
+ROW1
+Text Label 2900 2200 2    50   ~ 0
+ROW2
+Connection ~ 3600 3400
+Wire Wire Line
+	2900 3400 3600 3400
+Text Label 2900 2800 2    50   ~ 0
+ROW3
+Text Label 2900 3400 2    50   ~ 0
+ROW4
+Text Label 2900 4000 2    50   ~ 0
+ROW5
+Text Label 2900 4600 2    50   ~ 0
+ROW6
+Text Label 1200 5350 2    50   ~ 0
+ROW1
+Text Label 1200 5450 2    50   ~ 0
+ROW2
+Text Label 1200 5550 2    50   ~ 0
+ROW3
+Text Label 1200 5650 2    50   ~ 0
+ROW4
+Text Label 1200 5750 2    50   ~ 0
+ROW5
+Text Label 1200 5850 2    50   ~ 0
+ROW6
+Text Label 1200 5950 2    50   ~ 0
+COL1
+Text Label 1200 6050 2    50   ~ 0
+COL2
+Text Label 1200 6150 2    50   ~ 0
+COL3
+Text Label 1200 6250 2    50   ~ 0
+COL4
+Text Label 1200 6350 2    50   ~ 0
+COL5
+Text Label 1200 6450 2    50   ~ 0
+COL6
+Text Label 1200 6550 2    50   ~ 0
+COL7
+Text Label 1200 6650 2    50   ~ 0
+COL8
+Text Label 1200 6750 2    50   ~ 0
+COL9
+Text Label 1200 6850 2    50   ~ 0
+COL10
+Text Label 1200 6950 2    50   ~ 0
+COL11
+Text Label 1200 7050 2    50   ~ 0
+COL12
+Text Label 1200 7150 2    50   ~ 0
+COL13
+Text Label 1200 7250 2    50   ~ 0
+COL14
+Text Label 1700 7250 0    50   ~ 0
+COLO15
+Text Label 1700 7150 0    50   ~ 0
+CAPS
+Text Label 1700 7050 0    50   ~ 0
+SCLK
+Connection ~ 5000 1300
+Wire Wire Line
+	5000 750  5000 1300
+Connection ~ 5500 1300
+Wire Wire Line
+	5500 750  5500 1300
+Connection ~ 6000 1300
+Wire Wire Line
+	6000 750  6000 1300
+Connection ~ 6500 1300
+Wire Wire Line
+	6500 750  6500 1300
+Connection ~ 7000 1300
+Wire Wire Line
+	7000 750  7000 1300
+Connection ~ 7500 1300
+Wire Wire Line
+	7500 750  7500 1300
+Connection ~ 8000 1300
+Wire Wire Line
+	8000 750  8000 1300
+Connection ~ 8500 1300
+Wire Wire Line
+	8500 750  8500 1300
+Connection ~ 9000 1300
+Wire Wire Line
+	9000 750  9000 1300
+Connection ~ 9500 1300
+Wire Wire Line
+	9500 750  9500 1300
+Connection ~ 10000 1300
+Wire Wire Line
+	10000 750  10000 1300
+Connection ~ 10500 1300
+Wire Wire Line
+	10500 750  10500 1300
+Connection ~ 4000 1300
+Wire Wire Line
+	4000 750  4000 1300
+Connection ~ 4500 1300
+Wire Wire Line
+	4500 750  4500 1300
+Text Label 4000 750  2    50   ~ 0
+COL1
+Text Label 4500 750  2    50   ~ 0
+COL2
+Text Label 5000 750  2    50   ~ 0
+COL3
+Text Label 5500 750  2    50   ~ 0
+COL4
+Text Label 6000 750  2    50   ~ 0
+COL5
+Text Label 6500 750  2    50   ~ 0
+COL6
+Text Label 7000 750  2    50   ~ 0
+COL7
+Text Label 7500 750  2    50   ~ 0
+COL8
+Text Label 8000 750  2    50   ~ 0
+COL9
+Text Label 8500 750  2    50   ~ 0
+COL10
+Text Label 9000 750  2    50   ~ 0
+COL11
+Text Label 9500 750  2    50   ~ 0
+COL12
+Text Label 10000 750  2    50   ~ 0
+COL13
+Text Label 10500 750  2    50   ~ 0
+COL14
+Text Label 11000 750  2    50   ~ 0
+COL15
+Text Label 1150 4250 0    50   ~ 0
+CAPS
+Text Label 1600 4250 0    50   ~ 0
+SCLK
 $EndSCHEMATC
