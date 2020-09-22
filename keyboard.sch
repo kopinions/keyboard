@@ -2431,38 +2431,6 @@ F 3 "" H 1350 2525 50  0001 C CNN
 	1    1350 2500
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	6400 5800 6500 5800
-Text Label 6700 5500 0    50   ~ 0
-USBD_N
-Text Label 6700 5700 0    50   ~ 0
-USBD_P
-Wire Wire Line
-	6400 5600 6500 5600
-$Comp
-L power:GND #PWR08
-U 1 1 5F3E8E25
-P 5650 7600
-F 0 "#PWR08" H 5650 7350 50  0001 C CNN
-F 1 "GND" H 5655 7427 50  0000 C CNN
-F 2 "" H 5650 7600 50  0001 C CNN
-F 3 "" H 5650 7600 50  0001 C CNN
-	1    5650 7600
-	1    0    0    -1  
-$EndComp
-$Comp
-L power:VBUS #PWR09
-U 1 1 5F3FAE2E
-P 6700 5000
-F 0 "#PWR09" H 6700 4850 50  0001 C CNN
-F 1 "VBUS" H 6715 5173 50  0000 C CNN
-F 2 "" H 6700 5000 50  0001 C CNN
-F 3 "" H 6700 5000 50  0001 C CNN
-	1    6700 5000
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	6700 5000 6400 5000
 Text Label 1700 6750 0    50   ~ 0
 USBD_P
 Text Label 1700 6850 0    50   ~ 0
@@ -2612,40 +2580,6 @@ F 3 "" H 1900 5600 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	1700 5650 1900 5650
-$Comp
-L keyboard:USB_C_Receptacle_16P J2
-U 1 1 5F4A4F71
-P 5800 6000
-F 0 "J2" H 5907 7267 50  0000 C CNN
-F 1 "USB_C_Receptacle_16P" H 5907 7176 50  0000 C CNN
-F 2 "keyboard:USB_C_Receptacle_16P" H 5950 6000 50  0001 C CNN
-F 3 "https://www.usb.org/sites/default/files/documents/usb_type-c.zip" H 5950 6000 50  0001 C CNN
-	1    5800 6000
-	1    0    0    -1  
-$EndComp
-NoConn ~ 6400 7200
-NoConn ~ 6400 7300
-Connection ~ 5650 7600
-Wire Wire Line
-	5650 7600 5800 7600
-Wire Wire Line
-	5500 7600 5650 7600
-NoConn ~ 6400 5200
-NoConn ~ 6400 5300
-Wire Wire Line
-	6400 5500 6500 5500
-Wire Wire Line
-	6400 5700 6500 5700
-Wire Wire Line
-	6500 5800 6500 5700
-Connection ~ 6500 5700
-Wire Wire Line
-	6500 5700 6700 5700
-Wire Wire Line
-	6500 5600 6500 5500
-Connection ~ 6500 5500
-Wire Wire Line
-	6500 5500 6700 5500
 Text Label 2900 1600 2    50   ~ 0
 ROW1
 Text Label 2900 2200 2    50   ~ 0
@@ -2783,4 +2717,70 @@ Text Label 1150 4250 0    50   ~ 0
 CAPS
 Text Label 1600 4250 0    50   ~ 0
 SCLK
+Wire Wire Line
+	6500 5600 6500 5500
+Wire Wire Line
+	6500 5800 6500 5700
+Wire Wire Line
+	6400 5700 6500 5700
+Wire Wire Line
+	6400 5500 6500 5500
+NoConn ~ 6400 5300
+NoConn ~ 6400 5200
+NoConn ~ 6400 7300
+NoConn ~ 6400 7200
+Wire Wire Line
+	6400 5600 6500 5600
+Wire Wire Line
+	6400 5800 6500 5800
+Wire Wire Line
+	5500 7600 5650 7600
+Wire Wire Line
+	5650 7600 5800 7600
+Connection ~ 5650 7600
+$Comp
+L power:GND #PWR08
+U 1 1 5F3E8E25
+P 5650 7600
+F 0 "#PWR08" H 5650 7350 50  0001 C CNN
+F 1 "GND" H 5655 7427 50  0000 C CNN
+F 2 "" H 5650 7600 50  0001 C CNN
+F 3 "" H 5650 7600 50  0001 C CNN
+	1    5650 7600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6700 5000 6400 5000
+$Comp
+L power:VBUS #PWR09
+U 1 1 5F3FAE2E
+P 6700 5000
+F 0 "#PWR09" H 6700 4850 50  0001 C CNN
+F 1 "VBUS" H 6715 5173 50  0000 C CNN
+F 2 "" H 6700 5000 50  0001 C CNN
+F 3 "" H 6700 5000 50  0001 C CNN
+	1    6700 5000
+	1    0    0    -1  
+$EndComp
+Connection ~ 6500 5500
+Connection ~ 6500 5700
+Wire Wire Line
+	6500 5500 6700 5500
+Wire Wire Line
+	6500 5700 6700 5700
+Text Label 6700 5700 0    50   ~ 0
+USBD_P
+Text Label 6700 5500 0    50   ~ 0
+USBD_N
+$Comp
+L keyboard:USB_C_Receptacle_16P J2
+U 1 1 5F4A4F71
+P 5800 6000
+F 0 "J2" H 5907 7267 50  0000 C CNN
+F 1 "USB_C_Receptacle_16P" H 5907 7176 50  0000 C CNN
+F 2 "keyboard:USB_C_Receptacle_16P" H 5950 6000 50  0001 C CNN
+F 3 "https://www.usb.org/sites/default/files/documents/usb_type-c.zip" H 5950 6000 50  0001 C CNN
+	1    5800 6000
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

@@ -1,6 +1,5 @@
 EESchema Schematic File Version 4
-LIBS:CC-cache
-EELAYER 29 0
+EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
@@ -1727,7 +1726,7 @@ U 1 1 5F473394
 P 850 1400
 F 0 "J1" H 742 1075 50  0000 C CNN
 F 1 "Conn_01x02_Female" H 742 1166 50  0000 C CNN
-F 2 "Connector_JST:JST_XH_S2B-XH-A-1_1x02_P2.50mm_Horizontal" H 850 1400 50  0001 C CNN
+F 2 "keyboard:JST_XH_S2B-XH-A-1_1x02_P2.50mm_Horizontal" H 850 1400 50  0001 C CNN
 F 3 "~" H 850 1400 50  0001 C CNN
 	1    850  1400
 	-1   0    0    1   

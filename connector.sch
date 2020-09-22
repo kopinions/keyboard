@@ -1,5 +1,5 @@
 EESchema Schematic File Version 4
-EELAYER 29 0
+EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
@@ -56,7 +56,7 @@ U 1 1 5F4556BC
 P 4700 3700
 F 0 "J1" V 4572 3513 50  0000 R CNN
 F 1 "Conn_01x02" V 4663 3513 50  0000 R CNN
-F 2 "Connector_JST:JST_XH_S2B-XH-A-1_1x02_P2.50mm_Horizontal" H 4700 3700 50  0001 C CNN
+F 2 "keyboard:JST_XH_S2B-XH-A-1_1x02_P2.50mm_Horizontal" H 4700 3700 50  0001 C CNN
 F 3 "~" H 4700 3700 50  0001 C CNN
 	1    4700 3700
 	0    1    1    0   
