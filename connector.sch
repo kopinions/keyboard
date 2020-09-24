@@ -49,7 +49,6 @@ Wire Wire Line
 	4300 3500 4600 3500
 Wire Wire Line
 	4700 3500 4950 3500
-NoConn ~ 4900 3700
 $Comp
 L Connector_Generic:Conn_01x02 J1
 U 1 1 5F4556BC
