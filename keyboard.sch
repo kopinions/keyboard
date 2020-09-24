@@ -2431,9 +2431,9 @@ F 3 "" H 1350 2525 50  0001 C CNN
 	1    1350 2500
 	1    0    0    -1  
 $EndComp
-Text Label 1700 6750 0    50   ~ 0
-USBD_P
 Text Label 1700 6850 0    50   ~ 0
+USBD_P
+Text Label 1700 6750 0    50   ~ 0
 USBD_N
 $Comp
 L power:GND #PWR06

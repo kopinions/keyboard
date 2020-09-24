@@ -11,7 +11,7 @@
     (via_costs 50)
     (plane_via_costs 5)
     (start_ripup_costs 100)
-    (start_pass_no 13252)
+    (start_pass_no 17649)
     (layer_rule F.Cu
       (active on)
       (preferred_direction horizontal)
@@ -63,21 +63,21 @@
     )
   )
   (class "kicad_default"
-    ROW1 COL2 COL3 COL4 COL5 COL6 COL7 COL8
-    ROW2 ROW3 ROW4 ROW5 ROW6 COL15 COL14 COL13
-    COL12 COL11 COL10 COL9 COL1 SCLK CAPS GND
-    VBUS "/USBD_P" "/USBD_N" "Net-(D-SPACE1-Pad2)" "Net-(D-1-Pad2)" "Net-(D-2-Pad2)" "Net-(D-3-Pad2)" "Net-(D-4-Pad2)"
-    "Net-(D-5-Pad2)" "Net-(D-6-Pad2)" "Net-(D-7-Pad2)" "Net-(D-8-Pad2)" "Net-(D-9-Pad2)" "Net-(D-10-Pad2)" "Net-(D-11-Pad2)" "Net-(D-12-Pad2)"
-    "Net-(D-13-Pad2)" "Net-(D-14-Pad2)" "Net-(D-15-Pad2)" "Net-(D-16-Pad2)" "Net-(D-17-Pad2)" "Net-(D-18-Pad2)" "Net-(D-19-Pad2)" "Net-(D-20-Pad2)"
-    "Net-(D-21-Pad2)" "Net-(D-22-Pad2)" "Net-(D-23-Pad2)" "Net-(D-24-Pad2)" "Net-(D-25-Pad2)" "Net-(D-26-Pad2)" "Net-(D-27-Pad2)" "Net-(D-28-Pad2)"
-    "Net-(D-29-Pad2)" "Net-(D-30-Pad2)" "Net-(D-31-Pad2)" "Net-(D-32-Pad2)" "Net-(D-33-Pad2)" "Net-(D-34-Pad2)" "Net-(D-35-Pad2)" "Net-(D-36-Pad2)"
-    "Net-(D-37-Pad2)" "Net-(D-38-Pad2)" "Net-(D-39-Pad2)" "Net-(D-40-Pad2)" "Net-(D-41-Pad2)" "Net-(D-42-Pad2)" "Net-(D-43-Pad2)" "Net-(D-44-Pad2)"
-    "Net-(D-45-Pad2)" "Net-(D-46-Pad2)" "Net-(D-47-Pad2)" "Net-(D-48-Pad2)" "Net-(D-49-Pad2)" "Net-(D-50-Pad2)" "Net-(D-51-Pad2)" "Net-(D-52-Pad2)"
-    "Net-(D-53-Pad2)" "Net-(D-54-Pad2)" "Net-(D-55-Pad2)" "Net-(D-56-Pad2)" "Net-(D-57-Pad2)" "Net-(D-58-Pad2)" "Net-(D-59-Pad2)" "Net-(D-60-Pad2)"
-    "Net-(D-61-Pad2)" "Net-(D-62-Pad2)" "Net-(D-63-Pad2)" "Net-(D-64-Pad2)" "Net-(D-65-Pad2)" "Net-(D-66-Pad2)" "Net-(D-67-Pad2)" "Net-(D-68-Pad2)"
-    "Net-(D-69-Pad2)" "Net-(D-70-Pad2)" "Net-(D-71-Pad2)" "Net-(D-72-Pad2)" "Net-(D-73-Pad2)" "Net-(D-74-Pad2)" "Net-(D-75-Pad2)" "Net-(D-76-Pad2)"
-    "Net-(D-77-Pad2)" "Net-(D-78-Pad2)" "Net-(D-79-Pad2)" "Net-(D-80-Pad2)" "Net-(D-81-Pad2)" "Net-(D-82-Pad2)" "Net-(D-83-Pad2)" /L1
-    /L2 /L3
+    GND VBUS "/USBD_P" "/USBD_N" "Net-(D-SPACE1-Pad2)" "Net-(D-1-Pad2)" "Net-(D-2-Pad2)" "Net-(D-3-Pad2)"
+    "Net-(D-4-Pad2)" "Net-(D-5-Pad2)" "Net-(D-6-Pad2)" "Net-(D-7-Pad2)" "Net-(D-8-Pad2)" "Net-(D-9-Pad2)" "Net-(D-10-Pad2)" "Net-(D-11-Pad2)"
+    "Net-(D-12-Pad2)" "Net-(D-13-Pad2)" "Net-(D-14-Pad2)" "Net-(D-15-Pad2)" "Net-(D-16-Pad2)" "Net-(D-17-Pad2)" "Net-(D-18-Pad2)" "Net-(D-19-Pad2)"
+    "Net-(D-20-Pad2)" "Net-(D-21-Pad2)" "Net-(D-22-Pad2)" "Net-(D-23-Pad2)" "Net-(D-24-Pad2)" "Net-(D-25-Pad2)" "Net-(D-26-Pad2)" "Net-(D-27-Pad2)"
+    "Net-(D-28-Pad2)" "Net-(D-29-Pad2)" "Net-(D-30-Pad2)" "Net-(D-31-Pad2)" "Net-(D-32-Pad2)" "Net-(D-33-Pad2)" "Net-(D-34-Pad2)" "Net-(D-35-Pad2)"
+    "Net-(D-36-Pad2)" "Net-(D-37-Pad2)" "Net-(D-38-Pad2)" "Net-(D-39-Pad2)" "Net-(D-40-Pad2)" "Net-(D-41-Pad2)" "Net-(D-42-Pad2)" "Net-(D-43-Pad2)"
+    "Net-(D-44-Pad2)" "Net-(D-45-Pad2)" "Net-(D-46-Pad2)" "Net-(D-47-Pad2)" "Net-(D-48-Pad2)" "Net-(D-49-Pad2)" "Net-(D-50-Pad2)" "Net-(D-51-Pad2)"
+    "Net-(D-52-Pad2)" "Net-(D-53-Pad2)" "Net-(D-54-Pad2)" "Net-(D-55-Pad2)" "Net-(D-56-Pad2)" "Net-(D-57-Pad2)" "Net-(D-58-Pad2)" "Net-(D-59-Pad2)"
+    "Net-(D-60-Pad2)" "Net-(D-61-Pad2)" "Net-(D-62-Pad2)" "Net-(D-63-Pad2)" "Net-(D-64-Pad2)" "Net-(D-65-Pad2)" "Net-(D-66-Pad2)" "Net-(D-67-Pad2)"
+    "Net-(D-68-Pad2)" "Net-(D-69-Pad2)" "Net-(D-70-Pad2)" "Net-(D-71-Pad2)" "Net-(D-72-Pad2)" "Net-(D-73-Pad2)" "Net-(D-74-Pad2)" "Net-(D-75-Pad2)"
+    "Net-(D-76-Pad2)" "Net-(D-77-Pad2)" "Net-(D-78-Pad2)" "Net-(D-79-Pad2)" "Net-(D-80-Pad2)" "Net-(D-81-Pad2)" "Net-(D-82-Pad2)" "Net-(D-83-Pad2)"
+    /L1 /L2 /L3 /CAPS /SCLK /ROW1 /ROW2 /ROW3
+    /ROW4 /ROW5 /ROW6 /COL14 /COL13 /COL12 /COL11 /COL10
+    /COL9 /COL8 /COL7 /COL6 /COL5 /COL4 /COL3 /COL2
+    /COL1 /COL15
     (clearance_class "kicad_default")
     (via_rule kicad_default)
     (rule

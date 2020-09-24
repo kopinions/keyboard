@@ -1556,8 +1556,6 @@ Wire Wire Line
 Wire Wire Line
 	1500 750  1500 1050
 Text Label 9700 2250 0    50   ~ 0
-USBD_P
-Text Label 9700 2350 0    50   ~ 0
 USBD_N
 Wire Wire Line
 	1300 1900 1550 1900
@@ -1731,4 +1729,6 @@ F 3 "~" H 850 1400 50  0001 C CNN
 	1    850  1400
 	-1   0    0    1   
 $EndComp
+Text Label 9700 2350 0    50   ~ 0
+USBD_P
 $EndSCHEMATC
