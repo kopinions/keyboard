@@ -545,21 +545,19 @@ F 3 "" H 2150 7550 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Text Label 8350 5850 0    50   ~ 0
-USBD_N
+USBD-
 Text Label 7500 5750 2    50   ~ 0
-USBD_P
+USBD+
 Text Label 8350 5650 0    50   ~ 0
-FD_N
+FD-
 Text Label 8350 5750 0    50   ~ 0
-KD_N
+KD-
 Text Label 7500 5550 2    50   ~ 0
-FD_P
-Text Label 7500 5650 2    50   ~ 0
-KD_P
+FD+
 Text Label 1450 3750 2    50   ~ 0
-KD_P
+KD+
 Text Label 1450 3850 2    50   ~ 0
-KD_N
+KD-
 Text Label 1250 3350 2    50   ~ 0
 KTXD
 Text Label 1250 3450 2    50   ~ 0
@@ -567,9 +565,9 @@ KRXD
 Wire Wire Line
 	1250 3350 1450 3350
 Text Label 1400 5650 2    50   ~ 0
-FD_P
+FD+
 Text Label 1400 5750 2    50   ~ 0
-FD_N
+FD-
 Text Label 2150 3250 0    50   ~ 0
 ACT
 Connection ~ 2700 1150
@@ -1555,8 +1553,6 @@ Wire Wire Line
 	2850 750  2850 850 
 Wire Wire Line
 	1500 750  1500 1050
-Text Label 9700 2250 0    50   ~ 0
-USBD_N
 Wire Wire Line
 	1300 1900 1550 1900
 Connection ~ 1550 1900
@@ -1730,5 +1726,9 @@ F 3 "~" H 850 1400 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 Text Label 9700 2350 0    50   ~ 0
-USBD_P
+USBD+
+Text Label 7500 5650 2    50   ~ 0
+KD+
+Text Label 9700 2250 0    50   ~ 0
+USBD-
 $EndSCHEMATC
