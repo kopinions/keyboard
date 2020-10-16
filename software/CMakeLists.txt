@@ -5,5 +5,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS, ON)
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 #include(cmake/gtest.cmake)
+set(ENV{IDF_PATH} /Volumes/data/workspace/1si/iot/esp-idf)
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(kbd)
