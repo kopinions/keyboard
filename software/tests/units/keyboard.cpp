@@ -1,7 +1,8 @@
 #include "keyboard.hpp"
 
 #include <memory>
-
+#include "common/matchers.hpp"
+#include "common/test.hpp"
 #include "gpios.hpp"
 
 class fake_gpio : public gpio {
@@ -25,6 +26,6 @@ int main() {
     std::shared_ptr<fake_gpios> sharedPtr;
     sharedPtr = std::make_shared<fake_gpios>();
     keyboard kbd{sharedPtr};
-    expect(true);
+    expect_that<bool>(true, matchers::eq(true));
   };
 }

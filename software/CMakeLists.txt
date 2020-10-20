@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.14)
-#set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-g -std=c++2a")
 set(CMAKE_EXPORT_COMPILE_COMMANDS, ON)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
@@ -9,3 +8,9 @@ add_subdirectory(tests)
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(kbd)
+
+include_directories(3rdparty/di/include)
+add_custom_target(units)
+add_custom_command(TARGET units
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tests
+        COMMAND cmake --build build --target all && cmake --build build --target test)
