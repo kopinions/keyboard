@@ -1,8 +1,10 @@
 #ifndef GPIO_HPP
 #define GPIO_HPP
+#include "pin.hpp"
+
 class gpio {
  public:
-  virtual status current();
-  virtual void assert(status target);
+  virtual pin::status current() = 0;
+  virtual void set(pin::status target) = 0;
 };
 #endif  // GPIO_HPP
