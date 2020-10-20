@@ -1,31 +1,21 @@
 #include "keyboard.hpp"
 
 #include <memory>
+
+#include "gpios.hpp"
+#include "common/mocks_provider.hpp"
 #include "common/matchers.hpp"
 #include "common/test.hpp"
-#include "gpios.hpp"
 
-class fake_gpio : public gpio {
- public:
-  fake_gpio() = default;
-  pin::status current() override { return pin::status(); }
-  void set(pin::status target) override {}
-};
-
-class fake_gpios : public gpios {
- public:
-  explicit fake_gpios(){
-
-  };
-
-  std::shared_ptr<gpio> open(const pin& p, const pin::opt& opt) override { return std::make_shared<fake_gpio>(); }
-};
 
 int main() {
   "dummy"_test = [] {
-    std::shared_ptr<fake_gpios> sharedPtr;
-    sharedPtr = std::make_shared<fake_gpios>();
-    keyboard kbd{sharedPtr};
+//    auto injector = di::make_injector<mocks_provider>();
+    auto&& gpio_stub = mock<gpio>();
+    auto&& gpios_stub = mock<gpios>();
+
+//    auto kbd = injector.create<keyboard>();
+
     expect_that<bool>(true, matchers::eq(true));
   };
 }

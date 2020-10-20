@@ -7,5 +7,6 @@
 class gpios {
  public:
   virtual std::shared_ptr<gpio> open(const pin& p, const pin::opt& opt) = 0;
+  virtual ~gpios() = default;
 };
 #endif  // GPIOS_HPP

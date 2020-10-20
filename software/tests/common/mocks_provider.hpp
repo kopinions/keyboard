@@ -5,11 +5,12 @@
 
 template<typename T>
 auto& mock(bool reset=false) {
-  static fakeit::Mock<T> mock;
+  using namespace fakeit;
+  static Mock<T> mock;
   if (reset) {
     mock.Reset();
   }
-  fakeit::When(Dtor(mock)).AlwaysDo([] {});
+  When(Dtor(mock)).AlwaysDo([] {});
 
   return mock;
 }
