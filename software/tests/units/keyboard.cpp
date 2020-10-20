@@ -1,6 +1,5 @@
-
 int main() {
-  "xxx"_test = [] {
+  "dummy"_test = [] {
     expect(false);
   };
 }

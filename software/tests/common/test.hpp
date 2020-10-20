@@ -1,14 +1,14 @@
 #ifndef TEST_HPP
 #define TEST_HPP
 
-//#include <iostream>
-//
+#include <iostream>
+
 void expect_fail__(const char* file, int line) {
-//  std::printf("%s:%d:%s\n", file, line, file);
-//  std::exit(-1);
+  std::printf("%s:%d\n", file, line);
+  std::exit(-1);
 }
 template <typename T>
-constexpr void expect(T val, int loc = __LINE__, const char* file = __FILE__) {
+constexpr void expect(T val, const char* file = __FILE__, int loc = __LINE__) {
   (void)(val || (expect_fail__(file, loc), 0));
 }
 
@@ -22,8 +22,12 @@ class test {
   }
 };
 
-template <typename T, T... Chars>
+#if defined(__clang__)
+#pragma clang diagnostic ignored "-Wgnu-string-literal-operator-template"
+#endif
+
+template <typename T, T... chars>
 constexpr auto operator""_test() {
-  return test<Chars...>{};
+  return test<chars...>{};
 }
 #endif  // TEST_HPP

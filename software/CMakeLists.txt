@@ -8,4 +8,3 @@ set(ENV{IDF_PATH} /Volumes/data/workspace/1si/iot/esp-idf)
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(kbd)
 
-add_subdirectory(tests)
