@@ -1,0 +1,3 @@
+[submodule "software/3rdparty/di"]
+	path = software/3rdparty/di
+	url = https://github.com/boost-ext/di.git

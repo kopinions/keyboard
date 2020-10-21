@@ -4,12 +4,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS, ON)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 set(ENV{IDF_PATH} /Volumes/data/workspace/1si/iot/esp-idf)
+
+include_directories(3rdparty/di/include)
 add_subdirectory(tests)
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(kbd)
 
-include_directories(3rdparty/di/include)
 add_custom_target(units)
 add_custom_command(TARGET units
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tests
