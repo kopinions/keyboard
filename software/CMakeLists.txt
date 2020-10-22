@@ -14,4 +14,4 @@ project(kbd)
 add_custom_target(units)
 add_custom_command(TARGET units
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tests
-        COMMAND cmake --build build --target all && cmake --build build --target test)
+        COMMAND mkdir -p build && pushd build && cmake .. && popd && cmake --build build --target all && cmake --build build --target test)

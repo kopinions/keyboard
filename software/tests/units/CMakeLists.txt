@@ -1,1 +1,1 @@
-unit(keyboard keyboard.cpp)
+add_subdirectory(keyboard)
