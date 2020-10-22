@@ -21,7 +21,9 @@ class keyboard {
   std::vector<key> scan();
 };
 
-std::vector<keyboard::key> keyboard::scan() {}
+std::vector<keyboard::key> keyboard::scan() {
+  return std::vector<keyboard::key>{};
+}
 keyboard::keyboard(std::shared_ptr<gpios> gpios, std::shared_ptr<config>, std::shared_ptr<matrix>,
                    std::shared_ptr<layout>) {}
 #endif  // KEYBOARD_HPP
