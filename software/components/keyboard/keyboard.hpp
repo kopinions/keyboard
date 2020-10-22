@@ -5,25 +5,26 @@
 
 #include "config.hpp"
 #include "gpios.hpp"
+#include "key.hpp"
 #include "layout.hpp"
 #include "matrix.hpp"
 
 class keyboard {
  public:
-  class key {
-   public:
-    enum class id { A, B, C, D };
-
-    enum class status { RELEASED, PRESSED };
-  };
-
-  keyboard(std::shared_ptr<gpios> gpios, std::shared_ptr<config>, std::shared_ptr<matrix>, std::shared_ptr<layout>);
+  keyboard(std::shared_ptr<layout>, std::shared_ptr<matrix>, std::shared_ptr<config>);
   std::vector<key> scan();
+
+ private:
+  std::shared_ptr<matrix> m_matrix;
+  std::shared_ptr<layout> m_layout;
+  std::shared_ptr<config> m_config;
 };
 
-std::vector<keyboard::key> keyboard::scan() {
-  return std::vector<keyboard::key>{};
+std::vector<key> keyboard::scan() {
+  auto&& result = m_matrix->scan(m_config);
+  return m_layout->mapping(result);
 }
-keyboard::keyboard(std::shared_ptr<gpios> gpios, std::shared_ptr<config>, std::shared_ptr<matrix>,
-                   std::shared_ptr<layout>) {}
+
+keyboard::keyboard(std::shared_ptr<layout> layout, std::shared_ptr<matrix> mat, std::shared_ptr<config> conf)
+    : m_matrix{std::move(mat)}, m_layout{std::move(layout)}, m_config{std::move(conf)} {}
 #endif  // KEYBOARD_HPP

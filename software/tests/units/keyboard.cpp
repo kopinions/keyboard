@@ -15,6 +15,10 @@ int main() {
 
     auto kbd = injector.create<keyboard>();
 
+    using namespace fakeit;
+    auto &&mock_layout = mock<layout>();
+    When(Method(mock_layout, mapping)).Return(std::vector<key>{});
+
     expect_that<int>(kbd.scan().size(), matchers::eq(0));
   };
 }

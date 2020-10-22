@@ -2,6 +2,7 @@
 
 class config {
  public:
+  config() { m_debounce = 4; }
   unsigned int debounce() const noexcept { return m_debounce; }
 
  private:
