@@ -21,7 +21,7 @@ class keyboard {
 };
 
 std::vector<key> keyboard::scan() {
-  auto&& result = m_matrix->scan(m_config);
+  auto&& result = m_matrix->scan();
   return m_layout->mapping(result);
 }
 

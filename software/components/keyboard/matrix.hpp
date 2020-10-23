@@ -1,14 +1,45 @@
 #pragma once
+#include <memory>
+#include <vector>
+#include "gpios.hpp"
+#include "pin.hpp"
 
 class matrix {
  public:
-  explicit matrix(std::shared_ptr<gpios> gpios) noexcept;
-  virtual std::vector<std::pair<uint16_t, uint16_t>> scan(const std::shared_ptr<config>& conf);
+  class conf {
+   public:
+    conf(std::vector<pin::id> row, std::vector<pin::id> col);
+
+   public:
+    [[nodiscard]] const std::vector<pin::id>& row() const noexcept;
+
+    [[nodiscard]] const std::vector<pin::id>& col() const noexcept;
+
+   private:
+    std::vector<pin::id> m_row;
+    std::vector<pin::id> m_col;
+  };
+
+  explicit matrix(std::shared_ptr<conf>, std::shared_ptr<gpios> gpios) noexcept;
+
+  virtual std::vector<std::pair<uint16_t, uint16_t>> scan();
+
   virtual ~matrix() = default;
+
+ private:
+  std::shared_ptr<gpios> m_gpios;
+  std::shared_ptr<conf> m_conf;
 };
 
-std::vector<std::pair<uint16_t, uint16_t>> matrix::scan(const std::shared_ptr<config>& conf) {
+matrix::conf::conf(std::vector<pin::id> row, std::vector<pin::id> col) : m_row(std::move(row)), m_col(std::move(col)) {}
+
+const std::vector<pin::id>& matrix::conf::row() const noexcept { return m_row; }
+
+const std::vector<pin::id>& matrix::conf::col() const noexcept { return m_col; }
+
+std::vector<std::pair<uint16_t, uint16_t>> matrix::scan() {
   return std::vector<std::pair<uint16_t, uint16_t>>{};
 }
 
-matrix::matrix(std::shared_ptr<gpios> gpios) noexcept {};
+matrix::matrix(std::shared_ptr<conf> conf, std::shared_ptr<gpios> gpios) noexcept
+    : m_conf{std::move(conf)}, m_gpios{std::move(gpios)} {}
