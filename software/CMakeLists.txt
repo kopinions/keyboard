@@ -5,11 +5,16 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 set(ENV{IDF_PATH} /Volumes/data/workspace/1si/iot/esp-idf)
 
+if ($ENV{CLION_IDE})
+    include_directories(3rdparty/di/include)
+    add_subdirectory(tests)
+endif ()
 include_directories(3rdparty/di/include)
-add_subdirectory(tests)
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(kbd)
+
+include_directories(3rdparty/di/include)
 
 add_custom_target(units)
 add_custom_command(TARGET units

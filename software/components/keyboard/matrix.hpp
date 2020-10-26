@@ -52,7 +52,7 @@ std::vector<std::pair<uint16_t, uint16_t>> matrix::scan() {
 }
 
 matrix::matrix(std::shared_ptr<conf> conf, std::shared_ptr<gpios> gpios) noexcept
-    : m_conf{std::move(conf)}, m_gpios{std::move(gpios)} {
+    : m_gpios{std::move(gpios)}, m_conf{std::move(conf)} {
   for (auto row_id : m_conf->row()) {
     auto io = m_gpios->select(row_id);
     io->option(pin::opt{.mode = pin::mode_t::INOUT});

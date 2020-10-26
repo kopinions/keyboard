@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "config.hpp"
-#include "gpios.hpp"
 #include "key.hpp"
 #include "layout.hpp"
 #include "matrix.hpp"

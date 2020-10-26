@@ -1,5 +1,4 @@
-#ifndef PINS_HPP
-#define PINS_HPP
+#pragma once
 class pin {
  public:
   enum class id { GPIO0, GPIO1 };
@@ -24,4 +23,3 @@ class pin {
  private:
   id m_id;
 };
-#endif  // PINS_HPP

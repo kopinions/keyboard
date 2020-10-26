@@ -1,5 +1,4 @@
-#ifndef GPIO_HPP
-#define GPIO_HPP
+#pragma once
 #include "pin.hpp"
 
 class gpio {
@@ -9,4 +8,3 @@ class gpio {
   virtual void set(pin::status target) = 0;
   virtual ~gpio() = default;
 };
-#endif  // GPIO_HPP

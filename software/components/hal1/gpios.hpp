@@ -1,5 +1,4 @@
-#ifndef GPIOS_HPP
-#define GPIOS_HPP
+#pragma once
 #include <memory>
 
 #include "gpio.hpp"
@@ -9,4 +8,3 @@ class gpios {
   virtual std::shared_ptr<gpio> select(const pin::id& p) = 0;
   virtual ~gpios() = default;
 };
-#endif  // GPIOS_HPP
