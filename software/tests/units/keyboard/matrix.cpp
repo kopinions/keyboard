@@ -17,8 +17,15 @@ int main() {
         },
         std::vector<pin::id>{pin::id::GPIO1})));
     auto&& gpio_stub = mock<gpio>();
+    When(Method(gpio_stub, option)).AlwaysDo([](auto opt) {
+
+    });
+    When(Method(gpio_stub, set)).AlwaysDo([](auto status) {
+
+    });
+    When(Method(gpio_stub, current)).AlwaysDo([]() { return pin::status::HIGH; });
     auto&& gpios_stub = mock<gpios>();
-    When(Method(gpios_stub, open)).AlwaysDo([&gpio_stub](auto pin, auto opt) {
+    When(Method(gpios_stub, select)).AlwaysDo([&gpio_stub](auto pin) {
       return std::shared_ptr<gpio>{&(gpio_stub.get())};
     });
 

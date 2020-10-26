@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <vector>
+
 #include "gpios.hpp"
 #include "pin.hpp"
 
@@ -38,8 +39,29 @@ const std::vector<pin::id>& matrix::conf::row() const noexcept { return m_row; }
 const std::vector<pin::id>& matrix::conf::col() const noexcept { return m_col; }
 
 std::vector<std::pair<uint16_t, uint16_t>> matrix::scan() {
+  for (auto row_id : m_conf->row()) {
+    auto row_io = m_gpios->select(row_id);
+    row_io->set(pin::status::HIGH);
+    for (auto col_id : m_conf->col()) {
+      auto col_io = m_gpios->select(col_id);
+      auto status = col_io->current();
+    }
+  }
+
   return std::vector<std::pair<uint16_t, uint16_t>>{};
 }
 
 matrix::matrix(std::shared_ptr<conf> conf, std::shared_ptr<gpios> gpios) noexcept
-    : m_conf{std::move(conf)}, m_gpios{std::move(gpios)} {}
+    : m_conf{std::move(conf)}, m_gpios{std::move(gpios)} {
+  for (auto row_id : m_conf->row()) {
+    auto io = m_gpios->select(row_id);
+    io->option(pin::opt{.mode = pin::mode_t::INOUT});
+    io->set(pin::status::LOW);
+  }
+
+  for (auto col_id : m_conf->col()) {
+    auto io = m_gpios->select(col_id);
+    io->option(pin::opt{.mode = pin::mode_t::INOUT, .cap = pin::capability_t::WEAK});
+    io->set(pin::status::LOW);
+  }
+}
