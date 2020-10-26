@@ -1,8 +1,9 @@
 #pragma once
 #include "gpios.hpp"
+#include "gpio.hpp"
 
-class esp_gpios : public gpios {
+class gpios_if : public gpios {
  public:
   std::shared_ptr<gpio> select(const pin::id& p) override;
-  ~esp_gpios() override;
+  ~gpios_if() override ;
 };

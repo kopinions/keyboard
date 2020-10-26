@@ -13,7 +13,7 @@ endmacro()
 
 include_directories(.)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../components/keyboard)
-include_directories(${CMAKE_CURRENT_LIST_DIR}/../components/hal)
+include_directories(${CMAKE_CURRENT_LIST_DIR}/../components/vif)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../3rdparty/di/include)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 add_subdirectory(units)

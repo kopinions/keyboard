@@ -3,7 +3,7 @@
 #include "common/matchers.hpp"
 #include "common/mocks_provider.hpp"
 #include "common/test.hpp"
-#include "gpios.hpp"
+#include "gpio.hpp"
 
 namespace di = boost::di;
 
@@ -16,7 +16,7 @@ int main() {
     auto kbd = injector.create<keyboard>();
 
     using namespace fakeit;
-    auto &&mock_layout = mock<layout>();
+    auto&& mock_layout = mock<layout>();
     When(Method(mock_layout, mapping)).Return(std::vector<key>{});
 
     expect_that<int>(kbd.scan().size(), matchers::eq(0));

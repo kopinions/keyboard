@@ -1,5 +1,5 @@
 #include <boost/di.hpp>
-#include <esp_gpios.hpp>
+#include <gpios_if.hpp>
 #include <keyboard.hpp>
 #include <vector>
 
@@ -19,7 +19,7 @@ void app_main() {
   while (1) {
     i++;
     auto injector = di ::make_injector<>(
-        di::bind<gpios>.to<esp_gpios>(),
+        di::bind<gpios>.to<gpios_if>(),
         di::bind<>.to(std::make_shared<matrix::conf>(
         std::vector<pin::id>{
             pin::id::GPIO0,
