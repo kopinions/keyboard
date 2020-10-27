@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <sstream>
 #include <string>
 
 namespace matchers {
@@ -10,7 +11,13 @@ class matcher {
   virtual std::string message(const T&) const = 0;
   virtual ~matcher() = default;
 };
-
+template <typename... Args>
+std::string sstr(Args&&... args) {
+  std::ostringstream sbuf;
+  // fold expression
+  ((sbuf << std::dec) << ... << args);
+  return sbuf.str();
+}
 template <typename T>
 class equal : public matcher<T> {
  public:
@@ -18,12 +25,13 @@ class equal : public matcher<T> {
       : m_expected{expected}, m_file{file}, m_location{location} {}
 
   bool match(const T& actual) const override { return m_expected == actual; }
+
   std::string message(const T& actual) const override {
-    return std::string{m_file} + ":" + std::to_string(m_location) + "\nExpected: " + std::to_string(m_expected) +
-           "\nActual : " + std::to_string(actual);
+    return sstr(std::string(m_file), ":", std::to_string(m_location), "\nExpected: ", m_expected, "\nActual: ", actual);
+    //    return std::string{m_file} + ":" + std::to_string(m_location) + "\nExpected: " + std::to_string(m_expected) +
+    //           "\nActual : " + std::to_string(actual);
   }
   virtual ~equal() = default;
-  ;
 
  private:
   T m_expected;

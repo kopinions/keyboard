@@ -24,7 +24,7 @@ class matrix {
 
   explicit matrix(std::shared_ptr<conf>, std::shared_ptr<gpios> gpios) noexcept;
 
-  virtual std::vector<std::pair<uint16_t, uint16_t>> scan();
+  virtual std::vector<std::pair<pin::id, pin::id>> scan();
 
   virtual ~matrix() = default;
 
@@ -39,8 +39,8 @@ const std::vector<pin::id> &matrix::conf::row() const noexcept { return m_row; }
 
 const std::vector<pin::id> &matrix::conf::col() const noexcept { return m_col; }
 
-std::vector<std::pair<uint16_t, uint16_t>> matrix::scan() {
-  std::vector<std::pair<uint16_t, uint16_t>> pressed;
+std::vector<std::pair<pin::id, pin::id>> matrix::scan() {
+  std::vector<std::pair<pin::id, pin::id>> pressed;
   for (auto row_id : m_conf->row()) {
     auto row_io = m_gpios->select(row_id);
     row_io->set(pin::status::HIGH);
@@ -48,8 +48,7 @@ std::vector<std::pair<uint16_t, uint16_t>> matrix::scan() {
       auto col_io = m_gpios->select(col_id);
       auto status = col_io->current();
       if (status == pin::status::HIGH) {
-        const std::pair<unsigned short, unsigned short> &args = std::make_pair<uint16_t, uint16_t>(0, 0);
-        pressed.emplace_back(args);
+        pressed.emplace_back(std::pair<pin::id, pin::id>{row_id, col_id});
       }
     }
   }

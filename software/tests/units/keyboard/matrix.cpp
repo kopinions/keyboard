@@ -55,5 +55,7 @@ int main() {
     auto points = mat.scan();
 
     expect_that<int>(points.size(), matchers::eq(2));
+    expect_that<pin::id>(points.at(0).first, matchers::eq(pin::id::GPIO0));
+    expect_that<pin::id>(points.at(0).second, matchers::eq(pin::id::GPIO4));
   };
 }
