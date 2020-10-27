@@ -11,13 +11,20 @@ class matcher {
   virtual std::string message(const T&) const = 0;
   virtual ~matcher() = default;
 };
+
 template <typename... Args>
-std::string sstr(Args&&... args) {
+std::string concat(Args&&... args) {
   std::ostringstream sbuf;
   // fold expression
   ((sbuf << std::dec) << ... << args);
   return sbuf.str();
 }
+
+template <typename T>
+std::ostream& operator<<(typename std::enable_if<std::is_enum<T>::value, std::ostream>::type& stream, const T& e) {
+  return stream << static_cast<typename std::underlying_type<T>::type>(e);
+}
+
 template <typename T>
 class equal : public matcher<T> {
  public:
@@ -27,9 +34,7 @@ class equal : public matcher<T> {
   bool match(const T& actual) const override { return m_expected == actual; }
 
   std::string message(const T& actual) const override {
-    return sstr(std::string(m_file), ":", std::to_string(m_location), "\nExpected: ", m_expected, "\nActual: ", actual);
-    //    return std::string{m_file} + ":" + std::to_string(m_location) + "\nExpected: " + std::to_string(m_expected) +
-    //           "\nActual : " + std::to_string(actual);
+    return concat(std::string(m_file), ":", std::to_string(m_location), "\nExpected: ", m_expected, "\nActual: ", actual);
   }
   virtual ~equal() = default;
 
