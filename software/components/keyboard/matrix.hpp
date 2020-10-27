@@ -1,4 +1,5 @@
 #pragma once
+
 #include <memory>
 #include <vector>
 
@@ -12,9 +13,9 @@ class matrix {
     conf(std::vector<pin::id> row, std::vector<pin::id> col);
 
    public:
-    [[nodiscard]] const std::vector<pin::id>& row() const noexcept;
+    [[nodiscard]] const std::vector<pin::id> &row() const noexcept;
 
-    [[nodiscard]] const std::vector<pin::id>& col() const noexcept;
+    [[nodiscard]] const std::vector<pin::id> &col() const noexcept;
 
    private:
     std::vector<pin::id> m_row;
@@ -34,21 +35,26 @@ class matrix {
 
 matrix::conf::conf(std::vector<pin::id> row, std::vector<pin::id> col) : m_row(std::move(row)), m_col(std::move(col)) {}
 
-const std::vector<pin::id>& matrix::conf::row() const noexcept { return m_row; }
+const std::vector<pin::id> &matrix::conf::row() const noexcept { return m_row; }
 
-const std::vector<pin::id>& matrix::conf::col() const noexcept { return m_col; }
+const std::vector<pin::id> &matrix::conf::col() const noexcept { return m_col; }
 
 std::vector<std::pair<uint16_t, uint16_t>> matrix::scan() {
+  std::vector<std::pair<uint16_t, uint16_t>> pressed;
   for (auto row_id : m_conf->row()) {
     auto row_io = m_gpios->select(row_id);
     row_io->set(pin::status::HIGH);
     for (auto col_id : m_conf->col()) {
       auto col_io = m_gpios->select(col_id);
       auto status = col_io->current();
+      if (status == pin::status::HIGH) {
+        const std::pair<unsigned short, unsigned short> &args = std::make_pair<uint16_t, uint16_t>(0, 0);
+        pressed.emplace_back(args);
+      }
     }
   }
 
-  return std::vector<std::pair<uint16_t, uint16_t>>{};
+  return pressed;
 }
 
 matrix::matrix(std::shared_ptr<conf> conf, std::shared_ptr<gpios> gpios) noexcept
