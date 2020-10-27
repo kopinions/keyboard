@@ -1,23 +1,13 @@
-
 #include <matrix.hpp>
 
 #include "common/matchers.hpp"
 #include "common/mocks_provider.hpp"
 #include "common/test.hpp"
+#include "fake_gpio.hpp"
 #include "gpios.hpp"
-#include "keyboard.hpp"
 
 namespace di = boost::di;
 using namespace fakeit;
-
-gpio& mock_gpio(pin::status status) {
-  auto&& gpio_stub = mock<gpio>();
-  When(Method(gpio_stub, option)).AlwaysDo([](auto opt) {});
-  When(Method(gpio_stub, set)).AlwaysDo([](auto status) {});
-  When(Method(gpio_stub, current)).Return(status);
-
-  return gpio_stub.get();
-}
 
 int main() {
   "matrix_scan_change"_test = [] {
@@ -27,14 +17,43 @@ int main() {
         },
         std::vector<pin::id>{pin::id::GPIO1})));
 
-    auto&& always_high = mock_gpio(pin::status::HIGH);
     auto&& gpios_stub = mock<gpios>();
-    const std::shared_ptr<gpio>& ptr = std::shared_ptr<gpio>(&always_high);
-    When(Method(gpios_stub, select)).AlwaysDo([&ptr](auto&& id) { return ptr; });
+
+    auto high_ptr = keep(pin::status::HIGH);
+    When(Method(gpios_stub, select)).AlwaysDo([&high_ptr](auto&& id) { return high_ptr; });
 
     auto&& mat = injector.create<matrix>();
     auto points = mat.scan();
 
     expect_that<int>(points.size(), matchers::eq(1));
+  };
+
+  "matrix_scan_change_for_multiple_gpios"_test = [] {
+    auto injector = di::make_injector<mocks_provider>(di::bind<>.to(std::make_shared<matrix::conf>(
+        std::vector<pin::id>{
+            pin::id::GPIO0,
+            pin::id::GPIO1,
+        },
+        std::vector<pin::id>{
+            pin::id::GPIO3,
+            pin::id::GPIO4,
+        })));
+
+    auto&& gpios_stub = mock<gpios>();
+    auto high_ptr = keep(pin::status::HIGH);
+    auto low_ptr = keep(pin::status::LOW);
+
+    When(Method(gpios_stub, select)).AlwaysDo([&high_ptr, &low_ptr](auto&& id) {
+      if (id == pin::id::GPIO3) {
+        return low_ptr;
+      } else {
+        return high_ptr;
+      }
+    });
+
+    auto&& mat = injector.create<matrix>();
+    auto points = mat.scan();
+
+    expect_that<int>(points.size(), matchers::eq(2));
   };
 }

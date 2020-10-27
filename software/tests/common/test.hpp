@@ -30,9 +30,9 @@ template <char...>
 class test {
  public:
   template <typename T>
-  bool operator=(const T& test) {
+  test& operator=(const T& test) {
     test();
-    return true;
+    return *this;
   }
 };
 
