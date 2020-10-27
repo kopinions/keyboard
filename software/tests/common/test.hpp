@@ -6,24 +6,14 @@
 
 #include "matchers.hpp"
 
-void expect_fail__(const char* file, int line, const std::string& message = "") {
-  std::printf("%s:%d---%s\n", file, line, message.c_str());
+void fail(const std::string& message = "") {
+  std::cerr << message << std::endl;
   std::exit(-1);
-}
-
-void expect_fail__(const std::string& message = "") {
-  std::cout << message << std::endl;
-  std::exit(-1);
-}
-
-template <typename T>
-constexpr void expect(T val, const char* file = __FILE__, int loc = __LINE__) {
-  (void)(val || (expect_fail__(file, loc), 0));
 }
 
 template <typename T>
 constexpr void expect_that(const T& val, const std::unique_ptr<matchers::matcher<T>>& m) {
-  (void)(m->match(val) || (expect_fail__(m->message(val)), 0));
+  (void)(m->match(val) || (fail(m->message(val)), 0));
 }
 
 template <char...>

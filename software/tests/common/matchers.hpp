@@ -19,15 +19,11 @@ class equal : public matcher<T> {
 
   bool match(const T& actual) const override { return m_expected == actual; }
   std::string message(const T& actual) const override {
-    return std::string{m_file} + ":" + std::to_string(m_location) +
-           "\n"
-           "Expected: " +
-           std::to_string(m_expected) +
-           "\n"
-           "Actual: " +
-           std::to_string(actual);
+    return std::string{m_file} + ":" + std::to_string(m_location) + "\nExpected: " + std::to_string(m_expected) +
+           "\nActual : " + std::to_string(actual);
   }
-  virtual ~equal()= default;;
+  virtual ~equal() = default;
+  ;
 
  private:
   T m_expected;
