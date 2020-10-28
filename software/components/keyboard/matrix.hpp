@@ -1,8 +1,11 @@
 #pragma once
 
+#include <map>
 #include <memory>
+#include <utility>
 #include <vector>
 
+#include "chrono.hpp"
 #include "gpios.hpp"
 #include "pin.hpp"
 
@@ -10,19 +13,22 @@ class matrix {
  public:
   class conf {
    public:
-    conf(std::vector<pin::id> row, std::vector<pin::id> col);
+    conf(std::vector<pin::id> row, std::vector<pin::id> col, unsigned int bounce);
 
    public:
     [[nodiscard]] const std::vector<pin::id> &row() const noexcept;
 
     [[nodiscard]] const std::vector<pin::id> &col() const noexcept;
 
+    [[nodiscard]] unsigned int tolerance() const noexcept;
+
    private:
     std::vector<pin::id> m_row;
     std::vector<pin::id> m_col;
+    unsigned int m_bounce;
   };
 
-  explicit matrix(std::shared_ptr<conf>, std::shared_ptr<gpios> gpios) noexcept;
+  explicit matrix(std::shared_ptr<conf>, std::shared_ptr<gpios>, std::shared_ptr<kopinions::clock>) noexcept;
 
   virtual std::vector<std::pair<pin::id, pin::id>> scan();
 
@@ -31,33 +37,48 @@ class matrix {
  private:
   std::shared_ptr<gpios> m_gpios;
   std::shared_ptr<conf> m_conf;
+  std::shared_ptr<kopinions::clock> m_clk;
+  std::map<std::pair<pin::id, pin::id>, uint64_t> m_debounce;
+  std::map<std::pair<pin::id, pin::id>, pin::status> m_prev;
+  std::map<std::pair<pin::id, pin::id>, pin::status> m_current;
 };
 
-matrix::conf::conf(std::vector<pin::id> row, std::vector<pin::id> col) : m_row(std::move(row)), m_col(std::move(col)) {}
+matrix::conf::conf(std::vector<pin::id> row, std::vector<pin::id> col, unsigned int bounce)
+    : m_row{std::move(row)}, m_col{std::move(col)}, m_bounce{bounce} {}
 
 const std::vector<pin::id> &matrix::conf::row() const noexcept { return m_row; }
 
 const std::vector<pin::id> &matrix::conf::col() const noexcept { return m_col; }
+unsigned int matrix::conf::tolerance() const noexcept { return m_bounce; }
 
 std::vector<std::pair<pin::id, pin::id>> matrix::scan() {
   std::vector<std::pair<pin::id, pin::id>> pressed;
   for (auto row_id : m_conf->row()) {
     auto row_io = m_gpios->select(row_id);
     row_io->set(pin::status::HIGH);
+
     for (auto col_id : m_conf->col()) {
       auto col_io = m_gpios->select(col_id);
       auto status = col_io->current();
-      if (status == pin::status::HIGH) {
-        pressed.emplace_back(std::pair<pin::id, pin::id>{row_id, col_id});
+      auto &&id = std::pair<pin::id, pin::id>{row_id, col_id};
+      if (m_prev[id] != status) {
+        m_debounce[id] = m_clk->now().millis();
       }
+      m_prev[id] = status;
+      if ((m_clk->now().millis() - m_debounce[id]) >= m_conf->tolerance()) {
+          if (m_current[id] != status) {
+            pressed.emplace_back(id);
+            m_current[id] = status;
+          }
+        }
     }
   }
 
   return pressed;
 }
 
-matrix::matrix(std::shared_ptr<conf> conf, std::shared_ptr<gpios> gpios) noexcept
-    : m_gpios{std::move(gpios)}, m_conf{std::move(conf)} {
+matrix::matrix(std::shared_ptr<conf> conf, std::shared_ptr<gpios> gpios, std::shared_ptr<kopinions::clock> clk) noexcept
+    : m_gpios{gpios}, m_conf{conf}, m_clk{clk} {
   for (auto row_id : m_conf->row()) {
     auto io = m_gpios->select(row_id);
     io->option(pin::opt{.mode = pin::mode_t::INOUT});
@@ -68,5 +89,13 @@ matrix::matrix(std::shared_ptr<conf> conf, std::shared_ptr<gpios> gpios) noexcep
     auto io = m_gpios->select(col_id);
     io->option(pin::opt{.mode = pin::mode_t::INOUT, .cap = pin::capability_t::WEAK});
     io->set(pin::status::LOW);
+  }
+  for (auto row_id : m_conf->row()) {
+    for (auto col_id : m_conf->col()) {
+      auto &&id = std::pair<pin::id, pin::id>{row_id, col_id};
+      m_debounce[id] = m_clk->now().millis();
+      m_prev[id] = pin::status::LOW;
+      m_current[id] = pin::status::LOW;
+    }
   }
 }
