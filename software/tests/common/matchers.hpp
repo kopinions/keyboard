@@ -3,14 +3,10 @@
 #include <sstream>
 #include <string>
 
-namespace matchers {
 template <typename T>
-class matcher {
- public:
-  virtual bool match(const T&) const = 0;
-  virtual std::string message(const T&) const = 0;
-  virtual ~matcher() = default;
-};
+std::ostream& operator<<(typename std::enable_if<std::is_enum<T>::value, std::ostream>::type& stream, const T& e) {
+  return stream << static_cast<typename std::underlying_type<T>::type>(e);
+}
 
 template <typename... Args>
 std::string concat(Args&&... args) {
@@ -20,10 +16,14 @@ std::string concat(Args&&... args) {
   return sbuf.str();
 }
 
+namespace matchers {
 template <typename T>
-std::ostream& operator<<(typename std::enable_if<std::is_enum<T>::value, std::ostream>::type& stream, const T& e) {
-  return stream << static_cast<typename std::underlying_type<T>::type>(e);
-}
+class matcher {
+ public:
+  virtual bool match(const T&) const = 0;
+  virtual std::string message(const T&) const = 0;
+  virtual ~matcher() = default;
+};
 
 template <typename T>
 class equal : public matcher<T> {
