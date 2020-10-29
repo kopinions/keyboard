@@ -1,8 +1,7 @@
 #pragma once
-
-namespace kopinions {
 #include <cstdint>
 
+namespace kopinions {
 class time {
  public:
   [[nodiscard]] uint64_t millis() const { return m_millis; }

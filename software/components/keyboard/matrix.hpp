@@ -82,13 +82,13 @@ matrix::matrix(std::shared_ptr<conf> conf, std::shared_ptr<gpios> gpios, std::sh
     : m_gpios{gpios}, m_conf{conf}, m_clk{clk} {
   for (auto row_id : m_conf->row()) {
     auto io = m_gpios->select(row_id);
-    io->option(pin::opt{.mode = pin::mode_t::INOUT});
+    io->option(pin::opt{.mode = pin::mode_t::BIDIRECTIONAL});
     io->set(pin::status::LOW);
   }
 
   for (auto col_id : m_conf->col()) {
     auto io = m_gpios->select(col_id);
-    io->option(pin::opt{.mode = pin::mode_t::INOUT, .cap = pin::capability_t::WEAK});
+    io->option(pin::opt{.mode = pin::mode_t::BIDIRECTIONAL, .cap = pin::capability_t::WEAK});
     io->set(pin::status::LOW);
   }
   for (auto row_id : m_conf->row()) {
