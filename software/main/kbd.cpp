@@ -1,11 +1,9 @@
 #include <boost/di.hpp>
 #include <vector>
 
-#include "chrono_if.hpp"
-#include "gpios_if.hpp"
+#include "esp_if.hpp"
 #include "keyboard.hpp"
 #include "matrix.hpp"
-#include "pin.hpp"
 
 namespace di = boost::di;
 using namespace kopinions;
@@ -27,5 +25,15 @@ void app_main() {
   auto injector =
       di ::make_injector<>(di::bind<gpios>.to<gpios_if>(), di::bind<kopinions::clock>.to<kopinions::clock_if>(),
                            di::bind<>.to(std::make_shared<matrix::conf>(rows, cols, 4)));
-  auto &&kbd = injector.create<keyboard>();
+  auto&& kbd = injector.create<keyboard>();
+
+  auto&& tasks_creator = injector.create<std::shared_ptr<tasks>>();
+  auto&& sche = injector.create<std::shared_ptr<scheduler>>();
+  auto&& tsk = tasks_creator->create<int>("scan", std::function<void(int)>{[&kbd](int a) {
+                                 auto&& res = kbd.scan();
+                                 for (auto b : res) {
+                                   auto status = b.current();
+                                 }
+                               }});
+  sche->taken<int>(tsk, 1);
 }
