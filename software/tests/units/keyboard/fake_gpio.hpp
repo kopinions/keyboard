@@ -1,6 +1,6 @@
 #pragma once
-#include "gpio.hpp"
-#include "pin.hpp"
+#include "vif.hpp"
+using namespace kopinions;
 
 class fake_gpio : public gpio {
  public:

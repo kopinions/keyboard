@@ -8,7 +8,7 @@
 #include "chrono.hpp"
 #include "gpios.hpp"
 #include "pin.hpp"
-
+namespace kopinions {
 class matrix {
  public:
   class conf {
@@ -82,7 +82,7 @@ matrix::matrix(std::shared_ptr<conf> conf, std::shared_ptr<gpios> gpios, std::sh
     : m_gpios{gpios}, m_conf{conf}, m_clk{clk} {
   for (auto row_id : m_conf->row()) {
     auto io = m_gpios->select(row_id);
-    io->option(pin::opt{.mode = pin::mode_t::BIDIRECTIONAL});
+    io->option(pin::opt{.mode = pin::mode_t::BIDIRECTIONAL, .cap = pin::capability_t::MEDIUM});
     io->set(pin::status::LOW);
   }
 
@@ -100,3 +100,4 @@ matrix::matrix(std::shared_ptr<conf> conf, std::shared_ptr<gpios> gpios, std::sh
     }
   }
 }
+}  // namespace kopinions

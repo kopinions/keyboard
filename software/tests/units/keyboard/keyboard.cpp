@@ -1,11 +1,10 @@
 #include "keyboard.hpp"
 
-#include "common/matchers.hpp"
 #include "common/mocks_provider.hpp"
-#include "common/test.hpp"
-#include "gpio.hpp"
+#include "vif.hpp"
 
 namespace di = boost::di;
+using namespace kopinions;
 
 int main() {
   "dummy"_test = [] {

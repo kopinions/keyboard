@@ -3,7 +3,7 @@
 #include "gpio_if.hpp"
 #include "gpios.hpp"
 #include "pin.hpp"
-
+namespace kopinions {
 class gpios_if : public gpios {
  public:
   std::shared_ptr<gpio> select(const pin::id& p) override;
@@ -12,3 +12,4 @@ class gpios_if : public gpios {
 
 std::shared_ptr<gpio> gpios_if::select(const pin::id& p) { return std::shared_ptr<gpio_if>(); }
 gpios_if::~gpios_if() {}
+}  // namespace kopinions

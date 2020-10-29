@@ -8,6 +8,7 @@
 #include "pin.hpp"
 
 namespace di = boost::di;
+using namespace kopinions;
 
 extern "C" {
 void app_main();
@@ -24,8 +25,7 @@ void app_main() {
   };
 
   auto injector =
-      di ::make_injector<>(di::bind<gpios>.to<gpios_if>(),
-          di::bind<kopinions::clock>.to<kopinions::clock_if>(),
+      di ::make_injector<>(di::bind<gpios>.to<gpios_if>(), di::bind<kopinions::clock>.to<kopinions::clock_if>(),
                            di::bind<>.to(std::make_shared<matrix::conf>(rows, cols, 4)));
   auto &&kbd = injector.create<keyboard>();
 }

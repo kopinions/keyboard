@@ -1,4 +1,5 @@
 #pragma once
+namespace kopinions {
 
 class config {
  public:
@@ -8,3 +9,5 @@ class config {
  private:
   unsigned int m_debounce;
 };
+
+}  // namespace kopinions

@@ -1,4 +1,5 @@
 #pragma once
+namespace kopinions {
 
 class key {
  public:
@@ -6,3 +7,4 @@ class key {
 
   enum class status { RELEASED, PRESSED };
 };
+}  // namespace kopinions

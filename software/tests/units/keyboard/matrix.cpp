@@ -1,12 +1,11 @@
-#include <matrix.hpp>
+#include "matrix.hpp"
 
-#include "common/matchers.hpp"
 #include "common/mocks_provider.hpp"
-#include "common/test.hpp"
 #include "fake_gpio.hpp"
-#include "gpios.hpp"
+#include "vif.hpp"
 
 namespace di = boost::di;
+using namespace kopinions;
 using namespace fakeit;
 
 int main() {

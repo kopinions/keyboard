@@ -1,15 +1,19 @@
 #pragma once
+#include <iostream>
 #include <memory>
 #include <sstream>
 #include <string>
 
+namespace kopinions {
 template <typename T>
-std::ostream& operator<<(typename std::enable_if<std::is_enum<T>::value, std::ostream>::type& stream, const T& e) {
+inline std::ostream& operator<<(typename std::enable_if<std::is_enum<T>::value, std::ostream>::type& stream,
+                                const T& e) {
   return stream << static_cast<typename std::underlying_type<T>::type>(e);
 }
+}  // namespace kopinions
 
 template <typename... Args>
-std::string concat(Args&&... args) {
+inline std::string concat(Args&&... args) {
   std::ostringstream sbuf;
   // fold expression
   ((sbuf << std::dec) << ... << args);
@@ -34,7 +38,8 @@ class equal : public matcher<T> {
   bool match(const T& actual) const override { return m_expected == actual; }
 
   std::string message(const T& actual) const override {
-    return concat(std::string(m_file), ":", std::to_string(m_location), "\nExpected: ", m_expected, "\nActual: ", actual);
+    return concat(std::string(m_file), ":", std::to_string(m_location), "\nExpected: ", m_expected,
+                  "\nActual: ", actual);
   }
   virtual ~equal() = default;
 

@@ -1,9 +1,4 @@
-#ifndef TEST_HPP
-#define TEST_HPP
-
-#include <iostream>
-#include <memory>
-
+#pragma once
 #include "matchers.hpp"
 
 void fail(const std::string& message = "") {
@@ -34,4 +29,3 @@ template <typename T, T... chars>
 constexpr auto operator""_test() {
   return test<chars...>{};
 }
-#endif  // TEST_HPP

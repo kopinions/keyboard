@@ -1,5 +1,7 @@
 #pragma once
 #include <cstdint>
+
+namespace kopinions {
 class pin {
  public:
   enum class id : uint8_t {
@@ -67,3 +69,4 @@ class pin {
  private:
   id m_id;
 };
+}  // namespace kopinions

@@ -1,5 +1,4 @@
-#ifndef KEYBOARD_HPP
-#define KEYBOARD_HPP
+#pragma once
 #include <memory>
 #include <vector>
 
@@ -7,7 +6,7 @@
 #include "key.hpp"
 #include "layout.hpp"
 #include "matrix.hpp"
-
+namespace kopinions {
 class keyboard {
  public:
   keyboard(std::shared_ptr<layout>, std::shared_ptr<matrix>, std::shared_ptr<config>);
@@ -19,10 +18,8 @@ class keyboard {
   std::shared_ptr<config> m_config;
 };
 
-std::vector<key> keyboard::scan() {
-  return m_layout->mapping(m_matrix->scan());
-}
+std::vector<key> keyboard::scan() { return m_layout->mapping(m_matrix->scan()); }
 
 keyboard::keyboard(std::shared_ptr<layout> layout, std::shared_ptr<matrix> mat, std::shared_ptr<config> conf)
     : m_matrix{std::move(mat)}, m_layout{std::move(layout)}, m_config{std::move(conf)} {}
-#endif  // KEYBOARD_HPP
+}
