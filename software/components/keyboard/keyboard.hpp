@@ -20,8 +20,7 @@ class keyboard {
 };
 
 std::vector<key> keyboard::scan() {
-  auto&& result = m_matrix->scan();
-  return m_layout->mapping(result);
+  return m_layout->mapping(m_matrix->scan());
 }
 
 keyboard::keyboard(std::shared_ptr<layout> layout, std::shared_ptr<matrix> mat, std::shared_ptr<config> conf)

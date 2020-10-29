@@ -30,7 +30,7 @@ class matrix {
 
   explicit matrix(std::shared_ptr<conf>, std::shared_ptr<gpios>, std::shared_ptr<kopinions::clock>) noexcept;
 
-  virtual std::vector<std::pair<pin::id, pin::id>> scan();
+  std::map<std::pair<pin::id, pin::id>, pin::status> scan();
 
   virtual ~matrix() = default;
 
@@ -51,8 +51,8 @@ const std::vector<pin::id> &matrix::conf::row() const noexcept { return m_row; }
 const std::vector<pin::id> &matrix::conf::col() const noexcept { return m_col; }
 unsigned int matrix::conf::tolerance() const noexcept { return m_bounce; }
 
-std::vector<std::pair<pin::id, pin::id>> matrix::scan() {
-  std::vector<std::pair<pin::id, pin::id>> pressed;
+std::map<std::pair<pin::id, pin::id>, pin::status> matrix::scan() {
+  std::map<std::pair<pin::id, pin::id>, pin::status> changes;
   for (auto row_id : m_conf->row()) {
     auto row_io = m_gpios->select(row_id);
     row_io->set(pin::status::HIGH);
@@ -66,15 +66,16 @@ std::vector<std::pair<pin::id, pin::id>> matrix::scan() {
       }
       m_prev[id] = status;
       if ((m_clk->now().millis() - m_debounce[id]) >= m_conf->tolerance()) {
-          if (m_current[id] != status) {
-            pressed.emplace_back(id);
-            m_current[id] = status;
-          }
+        if (m_current[id] != status) {
+          m_current[id] = status;
+          changes[id] = status;
         }
+      }
     }
+    row_io->set(pin::status::LOW);
   }
 
-  return pressed;
+  return changes;
 }
 
 matrix::matrix(std::shared_ptr<conf> conf, std::shared_ptr<gpios> gpios, std::shared_ptr<kopinions::clock> clk) noexcept

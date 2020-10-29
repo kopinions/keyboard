@@ -60,8 +60,8 @@ int main() {
     auto points = mat.scan();
 
     expect_that<int>(points.size(), matchers::eq(2));
-    expect_that<pin::id>(points.at(0).first, matchers::eq(pin::id::GPIO0));
-    expect_that<pin::id>(points.at(0).second, matchers::eq(pin::id::GPIO4));
+    auto id = std::pair<pin::id, pin::id>{pin::id::GPIO0, pin::id::GPIO4};
+    expect_that<pin::status>(points[id], matchers::eq(pin::status::HIGH));
   };
 
   "matrix_scan_ignore_debounce_in_tolerable_range"_test = [] {
@@ -90,7 +90,7 @@ int main() {
       if (id == pin::id::GPIO3) {
         return low_ptr;
       } else {
-          return high_ptr;
+        return high_ptr;
       }
     });
 
