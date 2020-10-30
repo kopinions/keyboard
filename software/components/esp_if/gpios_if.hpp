@@ -10,6 +10,6 @@ class gpios_if : public gpios {
   ~gpios_if() override;
 };
 
-std::shared_ptr<gpio> gpios_if::select(const pin::id& p) { return std::shared_ptr<gpio_if>(); }
-gpios_if::~gpios_if() {}
+std::shared_ptr<gpio> gpios_if::select(const pin::id& p) { return std::make_shared<gpio_if>(p); }
+gpios_if::~gpios_if() = default;
 }  // namespace kopinions

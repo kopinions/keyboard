@@ -16,8 +16,9 @@ int main() {
         },
         std::vector<pin::id>{pin::id::IO1}, 0)));
 
-    auto&& gpios_stub = mock<gpios>();
-    auto&& clk = mock<kopinions::clock>();
+    auto&& gpios_stub = mock<gpios>(true);
+    auto&& clk = mock<kopinions::clock>(true);
+
     When(Method(clk, now)).AlwaysDo([]() { return kopinions::time{0}; });
 
     auto high_ptr = keep(pin::status::HIGH);
@@ -41,10 +42,10 @@ int main() {
         },
         0)));
 
-    auto&& gpios_stub = mock<gpios>();
+    auto&& gpios_stub = mock<gpios>(true);
+    auto&& clk = mock<kopinions::clock>(true);
     auto high_ptr = keep(pin::status::HIGH);
     auto low_ptr = keep(pin::status::LOW);
-    auto&& clk = mock<kopinions::clock>();
     When(Method(clk, now)).AlwaysDo([]() { return kopinions::time{0}; });
 
     When(Method(gpios_stub, select)).AlwaysDo([&high_ptr, &low_ptr](auto&& id) {
@@ -75,14 +76,15 @@ int main() {
         },
         4)));
 
-    auto&& gpios_stub = mock<gpios>();
+    auto&& gpios_stub = mock<gpios>(true);
+    auto&& clk = mock<kopinions::clock>(true);
+
     auto high_ptr = keep(pin::status::HIGH);
     auto low_ptr = keep(pin::status::LOW);
-    auto&& clk = mock<kopinions::clock>();
 
     auto idx = 0;
     When(Method(clk, now)).AlwaysDo([&idx]() {
-      std::vector<kopinions::time> times{kopinions::time{0}, kopinions::time{5}};
+      std::vector<kopinions::time> times{kopinions::time{0}, kopinions::time{5000}};
       return times[idx];
     });
     When(Method(gpios_stub, select)).AlwaysDo([&high_ptr, &low_ptr, &idx](auto&& id) {

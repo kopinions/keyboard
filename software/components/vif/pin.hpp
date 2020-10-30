@@ -49,6 +49,7 @@ class pin {
   };
 
   enum class mode_t {
+    DISABLED,
     INPUT,
     OUTPUT,
     BIDIRECTIONAL,

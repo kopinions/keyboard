@@ -4,8 +4,9 @@
 namespace kopinions {
 class time {
  public:
+  explicit time(uint64_t macroseconds) noexcept : m_millis{macroseconds / 1000} {};
+
   [[nodiscard]] uint64_t millis() const { return m_millis; }
-  explicit time(uint64_t millis) noexcept : m_millis{millis} {};
 
  private:
   uint64_t m_millis;
