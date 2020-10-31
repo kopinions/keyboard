@@ -3,24 +3,12 @@
 #include <string>
 
 namespace kopinions {
-
-template <typename T>
-inline std::ostream& operator<<(typename std::enable_if<std::is_enum<T>::value, std::ostream>::type& stream,
-                                const T& e) {
-  return stream << static_cast<typename std::underlying_type<T>::type>(e);
-}
-
 class formatter {
  public:
-  formatter(std::string fmt) : m_fmt{fmt} {}
+  explicit formatter(std::string fmt) noexcept;
 
   template <typename... Args>
-  std::string format(Args... args) {
-    std::ostringstream sbuf;
-    // fold expression
-    ((sbuf << std::dec) << ... << args);
-    return sbuf.str();
-  };
+  std::string format(Args... args);
 
  private:
   std::string m_fmt;
@@ -36,13 +24,10 @@ class sink {
 class logger {
  public:
   enum level { DEBUG, INFO, WARN, ERROR, FATAL };
-  logger(level root, std::shared_ptr<sink> sk) : m_root{root}, m_sink{sk} {};
+  logger(level root, std::shared_ptr<sink> sk) noexcept;
 
   template <typename... Args>
-  void log(const level& lvl, std::string fmt, Args... args) {
-    // TODO consume when lvl >= root
-    m_sink->consume(record{lvl, formatter{fmt}, std::forward<Args>(args)...});
-  };
+  void log(const level& lvl, std::string fmt, Args... args) const;
 
  private:
   level m_root;
@@ -52,17 +37,46 @@ class logger {
 class record {
  public:
   template <typename... Args>
-  record(logger::level lvl, formatter&& fmt, Args&&... args) : m_lvl{lvl} {
-    m_message = fmt.format(std::forward<Args>(args)...);
-  }
+  record(logger::level lvl, formatter&& fmt, Args&&... args) noexcept;
 
-  const logger::level& lvl() const { return m_lvl; }
+  const logger::level& lvl() const;
 
-  const std::string& message() const { return m_message; }
+  const std::string& message() const;
 
  private:
   logger::level m_lvl;
   std::string m_message;
 };
+
+template <typename T>
+inline std::ostream& operator<<(typename std::enable_if<std::is_enum<T>::value, std::ostream>::type& stream,
+                                const T& e) {
+  return stream << static_cast<typename std::underlying_type<T>::type>(e);
+}
+
+formatter::formatter(std::string fmt) noexcept : m_fmt{fmt} {}
+
+template <typename... Args>
+std::string formatter::format(Args... args) {
+  std::ostringstream sbuf;
+  // fold expression
+  ((sbuf << std::dec) << ... << args);
+  return sbuf.str();
+}
+
+logger::logger(logger::level root, std::shared_ptr<sink> sk) noexcept : m_root{root}, m_sink{sk} {};
+
+template <typename... Args>
+void logger::log(const logger::level& lvl, std::string fmt, Args... args) const {
+  // TODO consume when lvl >= root
+  m_sink->consume(record{lvl, formatter{fmt}, std::forward<Args>(args)...});
+}
+
+template <typename... Args>
+record::record(logger::level lvl, formatter&& fmt, Args&&... args) noexcept : m_lvl{lvl} {
+  m_message = fmt.format(std::forward<Args>(args)...);
+}
+const logger::level& record::lvl() const { return m_lvl; }
+const std::string& record::message() const { return m_message; }
 
 }  // namespace kopinions
