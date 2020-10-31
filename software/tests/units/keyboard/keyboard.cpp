@@ -1,5 +1,6 @@
 #include "keyboard.hpp"
 
+#include "supporting/mapping.hpp"
 #include "common/mocks_provider.hpp"
 #include "vif.hpp"
 
@@ -8,7 +9,7 @@ using namespace kopinions;
 
 int main() {
   "dummy"_test = [] {
-    auto injector = di::make_injector<mocks_provider>();
+    auto injector = di::make_injector<mocks_provider>(layout_mapping());
     auto&& gpio_stub = mock<gpio>();
     auto&& gpios_stub = mock<gpios>();
 
