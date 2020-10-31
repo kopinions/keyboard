@@ -22,18 +22,22 @@ void app_main() {
       pin::id::IO19, pin::id::IO21, pin::id::IO22, pin::id::IO23, pin::id::IO25,
   };
 
-  auto injector = di ::make_injector<>(
-      di::bind<gpios>.to<gpios_if>(), di::bind<kopinions::clock>.to<kopinions::clock_if>(),
-      di::bind<scheduler>.to<scheduler_if>(), di::bind<>.to(std::make_shared<matrix::conf>(rows, cols, 4)));
+  auto injector =
+      di ::make_injector<>(di::bind<gpios>.to<gpios_if>(), di::bind<kopinions::clock>.to<kopinions::clock_if>(),
+                           di::bind<scheduler>.to<scheduler_if>(), di::bind<sink>.to<esp_log_sink>().in(di::singleton),
+                           di::bind<logger::level>.to(logger::level::DEBUG),
+                           di::bind<>.to(std::make_shared<matrix::conf>(rows, cols, 4)));
   auto&& kbd = injector.create<keyboard>();
 
   auto&& tasks_creator = injector.create<std::shared_ptr<tasks>>();
-  auto&& disp = injector.create<std::shared_ptr<dispatcher>>();
-  auto&& tsk = tasks_creator->create<int>("scan", std::function<void(int)>{[&kbd](int a) {
+  auto&& lg = injector.create<std::shared_ptr<logger>>();
+  auto&& tsk = tasks_creator->create<int>("scan", std::function<void(int)>{[&kbd, &lg](int a) {
                                             auto&& res = kbd.scan();
                                             for (auto b : res) {
                                               auto status = b.current();
+                                              lg->log(logger::level::DEBUG, "%s", status);
                                             }
                                           }});
+  auto&& disp = injector.create<std::shared_ptr<dispatcher>>();
   disp->dispatch<int>(tsk, 1);
 }
