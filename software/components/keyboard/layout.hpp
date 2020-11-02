@@ -1,6 +1,8 @@
 #pragma once
 #include <map>
+#include <vector>
 
+#include "key.hpp"
 #include "pin.hpp"
 namespace kopinions {
 
@@ -15,6 +17,8 @@ class layout {
 };
 layout::layout(const std::map<std::pair<pin::id, pin::id>, key::id> &mapping) noexcept : m_mapping{mapping} {}
 
-std::vector<key> layout::mapping(std::map<std::pair<pin::id, pin::id>, pin::status> &&) { return std::vector<key>(); }
+std::vector<kopinions::key> layout::mapping(std::map<std::pair<pin::id, pin::id>, pin::status> &&) {
+  return std::vector<key>();
+}
 
 }  // namespace kopinions
