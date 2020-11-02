@@ -2561,12 +2561,6 @@ Wire Wire Line
 Connection ~ 1700 6450
 Wire Wire Line
 	1700 6450 1700 6550
-Text Label 1700 5550 0    50   ~ 0
-L1
-Text Label 1700 5350 0    50   ~ 0
-L3
-Text Label 1700 5450 0    50   ~ 0
-L2
 $Comp
 L keyboard:VDD33 #PWR0102
 U 1 1 5F92B702
@@ -2783,4 +2777,13 @@ F 3 "https://www.usb.org/sites/default/files/documents/usb_type-c.zip" H 5950 60
 	1    5800 6000
 	1    0    0    -1  
 $EndComp
+Connection ~ 1700 5650
+Wire Wire Line
+	1700 5350 1700 5450
+Connection ~ 1700 5450
+Wire Wire Line
+	1700 5450 1700 5550
+Connection ~ 1700 5550
+Wire Wire Line
+	1700 5550 1700 5650
 $EndSCHEMATC
