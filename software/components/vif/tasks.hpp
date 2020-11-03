@@ -18,11 +18,13 @@ class task {
 class scheduled {
  public:
   virtual void cancel() = 0;
+  virtual ~scheduled() = default;
 };
 
 class scheduler {
  public:
   virtual std::shared_ptr<scheduled> schedule(const std::string& id, std::function<void(void)> f) = 0;
+  virtual ~scheduler() = default;
 };
 
 class dispatcher {
@@ -31,7 +33,7 @@ class dispatcher {
   template <typename... Args>
   std::shared_ptr<scheduled> dispatch(std::shared_ptr<task<Args...>> t, Args... args) {
     return m_sc->schedule(t->id(),
-                          std::function<void(void)>{[&args..., t]() { t->undertaken(std::forward<Args>(args)...); }});
+                          std::function<void(void)>{[&args..., &t]() { t->undertaken(std::forward<Args>(args)...); }});
   }
 
  private:
