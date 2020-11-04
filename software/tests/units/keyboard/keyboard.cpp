@@ -1,15 +1,14 @@
 #include "keyboard.hpp"
 
-#include "supporting/mapping.hpp"
 #include "common/mocks_provider.hpp"
-#include "vif.hpp"
+#include "supporting/mapping.hpp"
 
 namespace di = boost::di;
 using namespace kopinions;
 
 int main() {
   "dummy"_test = [] {
-    auto injector = di::make_injector<mocks_provider>(layout_mapping());
+    auto injector = di::make_injector<mocks_provider>(mapping());
     auto&& gpio_stub = mock<gpio>();
     auto&& gpios_stub = mock<gpios>();
 

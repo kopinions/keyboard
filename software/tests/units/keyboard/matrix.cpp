@@ -2,7 +2,6 @@
 
 #include "common/mocks_provider.hpp"
 #include "fake_gpio.hpp"
-#include "vif.hpp"
 
 namespace di = boost::di;
 using namespace kopinions;

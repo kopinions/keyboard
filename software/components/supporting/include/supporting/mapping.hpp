@@ -6,7 +6,7 @@
 #include "pin.hpp"
 using namespace kopinions;
 
-std::map<std::pair<pin::id, pin::id>, key::id> mapping{
+static const std::map<std::pair<pin::id, pin::id>, key::id> layout_mapping{
     // first row
     {{pin::id::IO26, pin::id::IO2}, key::id::ESC},
     {{pin::id::IO26, pin::id::IO4}, key::id::F1},
@@ -106,4 +106,6 @@ std::map<std::pair<pin::id, pin::id>, key::id> mapping{
 };
 
 namespace di = boost::di;
-auto layout_mapping = [] { return di::make_injector(di::bind<std::map<std::pair<pin::id, pin::id>, key::id>>.to(mapping)); };
+constexpr auto mapping = [] {
+  return di::make_injector(di::bind<std::map<std::pair<pin::id, pin::id>, key::id>>.to(layout_mapping));
+};
