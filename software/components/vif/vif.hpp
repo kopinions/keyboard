@@ -6,4 +6,5 @@
 #include "gpios.hpp"
 #include "logger.hpp"
 #include "pin.hpp"
+#include "serializer.hpp"
 #include "tasks.hpp"

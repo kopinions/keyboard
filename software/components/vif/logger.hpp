@@ -48,12 +48,6 @@ class record {
   std::string m_message;
 };
 
-template <typename T>
-inline std::ostream& operator<<(typename std::enable_if<std::is_enum<T>::value, std::ostream>::type& stream,
-                                const T& e) {
-  return stream << static_cast<typename std::underlying_type<T>::type>(e);
-}
-
 formatter::formatter(std::string fmt) noexcept : m_fmt{fmt} {}
 
 template <typename... Args>

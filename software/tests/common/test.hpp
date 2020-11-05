@@ -1,4 +1,5 @@
 #pragma once
+#include "serializer.hpp"
 #include "matchers.hpp"
 
 void fail(const std::string& message = "") {

@@ -161,7 +161,14 @@ class key {
 
   [[nodiscard]] const status& current() const { return m_status; }
 
+  id identity() {
+    return m_id;
+  }
+
+  key(key::id id, status status): m_id{id},  m_status{status} {}
+
  private:
+  id m_id;
   status m_status;
 };
 }  // namespace kopinions
