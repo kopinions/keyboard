@@ -22,4 +22,4 @@ std::vector<key> keyboard::scan() { return m_layout->mapping(m_matrix->scan()); 
 
 keyboard::keyboard(std::shared_ptr<layout> layout, std::shared_ptr<matrix> mat, std::shared_ptr<config> conf)
     : m_matrix{std::move(mat)}, m_layout{std::move(layout)}, m_config{std::move(conf)} {}
-}
+}  // namespace kopinions

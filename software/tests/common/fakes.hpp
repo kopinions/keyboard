@@ -48,5 +48,4 @@ constexpr auto fakes = [] {
       di::bind<logger::level>.to(logger::level::DEBUG));
 };
 
-
 std::shared_ptr<gpio> keep(pin::status s) { return std::shared_ptr<fake_gpio>(new fake_gpio(s)); }
