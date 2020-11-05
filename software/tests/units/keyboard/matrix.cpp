@@ -1,7 +1,7 @@
 #include "matrix.hpp"
 
+#include "common/fakes.hpp"
 #include "common/mocks_provider.hpp"
-#include "fake_gpio.hpp"
 
 namespace di = boost::di;
 using namespace kopinions;

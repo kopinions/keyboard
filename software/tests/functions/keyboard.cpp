@@ -1,6 +1,6 @@
 #include "keyboard.hpp"
 
-#include "fakes.hpp"
+#include "common/fakes.hpp"
 #include "supporting/mapping.hpp"
 #include "supporting/matrix_conf.hpp"
 #include "vif.hpp"
