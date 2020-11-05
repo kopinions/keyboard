@@ -1,6 +1,6 @@
 #pragma once
-#include "serializer.hpp"
 #include "matchers.hpp"
+#include "serializer.hpp"
 
 void fail(const std::string& message = "") {
   std::cerr << message << std::endl;

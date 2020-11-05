@@ -17,7 +17,7 @@ add_custom_target(format
 
 add_custom_target(format-changed ALL
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-        COMMAND git status -s --porcelain=v2 |awk '{print $$9}' | grep -E "\\.cpp\\|\\.hpp" | xargs clang-format -i)
+        COMMAND git status -s --porcelain=v2 |awk '{print $$NF}' | grep -E "\\.cpp\\|\\.hpp" | xargs clang-format -i)
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(kbd)

@@ -1,4 +1,5 @@
 #pragma once
+#include <any>
 #include <iostream>
 #include <memory>
 #include <sstream>
@@ -13,6 +14,7 @@ inline std::string concat(Args&&... args) {
 }
 
 namespace matchers {
+
 template <typename T>
 class matcher {
  public:
@@ -42,8 +44,40 @@ class equal : public matcher<T> {
 };
 
 template <typename T>
+class contains : public matcher<T> {
+ public:
+  explicit contains(const T& expected, const char* file, int location) noexcept
+      : m_expected{expected}, m_file{file}, m_location{location} {}
+
+  bool match(const T& actual) const override {
+    for (auto e : actual) {
+      if (e == m_expected) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  std::string message(const T& actual) const override {
+    return concat(std::string(m_file), ":", std::to_string(m_location), "\nExpected: ", m_expected,
+                  "\nActual: ", actual);
+  }
+  virtual ~contains() = default;
+
+ private:
+  T m_expected;
+  const char* m_file;
+  int m_location;
+};
+
+template <typename T>
 inline auto eq(const T& t, const char* file = __FILE__, int location = __LINE__) {
   return std::move(std::make_unique<equal<T>>(t, file, location));
+}
+
+template <typename T>
+inline auto contain(const T& t, const char* file = __FILE__, int location = __LINE__) {
+  return std::move(std::make_unique<contains<T>>(t, file, location));
 }
 
 }  // namespace matchers

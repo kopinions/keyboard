@@ -17,12 +17,11 @@ class layout {
 };
 layout::layout(const std::map<std::pair<pin::id, pin::id>, key::id> &mapping) noexcept : m_mapping{mapping} {}
 
-std::vector<kopinions::key> layout::mapping(std::map<std::pair<pin::id, pin::id>, pin::status> && sequence) {
+std::vector<kopinions::key> layout::mapping(std::map<std::pair<pin::id, pin::id>, pin::status> &&sequence) {
   std::vector<kopinions::key> pressed;
   for (auto [coord, status] : sequence) {
-    if (status == pin::status::HIGH) {
-      pressed.emplace_back(key{m_mapping[coord], key::status::PRESSED});
-    }
+    pressed.emplace_back(
+        key{m_mapping[coord], status == pin::status::HIGH ? key::status::PRESSED : key::status::RELEASED});
   }
   return pressed;
 }

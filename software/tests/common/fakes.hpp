@@ -34,13 +34,15 @@ class fake_scheduled : public kopinions::scheduled {
   void cancel() override {}
 };
 
-class fake_scheduler : public kopinions::scheduler {
+template <typename... Args>
+class fake_scheduler : public kopinions::scheduler<Args...> {
  public:
-  std::shared_ptr<scheduled> schedule(const std::string& id, std::function<void(void)> f) override {
+  std::shared_ptr<scheduled> schedule(const std::string& id, kopinions::task<void(Args...)> f, Args... args) override {
     auto tfunc = [](void* d) {
-      auto& callback = *reinterpret_cast<std::function<void(void)>*>(d);
+      auto& callback = *reinterpret_cast<kopinions::task<void(void)>*>(d);
       callback();
     };
+    std::bind(f, std::forward<Args...>(args)...);
 
     tfunc(&f);
     return std::make_shared<fake_scheduled>();
@@ -55,7 +57,7 @@ class fake_sink : public kopinions::sink {
 constexpr auto fakes = [] {
   return di::make_injector(
       di::bind<gpios>.to<fake_gpios>().in(di::singleton), di::bind<kopinions::clock>.to<fake_clk>().in(di::singleton),
-      di::bind<scheduler>.to<fake_scheduler>().in(di::singleton), di::bind<sink>.to<fake_sink>().in(di::singleton),
+      di::bind<scheduler<>>.to<fake_scheduler<>>().in(di::singleton), di::bind<sink>.to<fake_sink>().in(di::singleton),
       di::bind<logger::level>.to(logger::level::DEBUG));
 };
 
