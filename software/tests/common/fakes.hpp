@@ -29,16 +29,27 @@ class fake_gpios : public kopinions::gpios {
   std::shared_ptr<gpio> select(const pin::id& p) override { return std::make_shared<fake_gpio>(pin::status::HIGH); }
 };
 
+class fake_scheduled : public kopinions::scheduled {
+ public:
+  void cancel() override {}
+};
+
 class fake_scheduler : public kopinions::scheduler {
  public:
   std::shared_ptr<scheduled> schedule(const std::string& id, std::function<void(void)> f) override {
-    return std::shared_ptr<scheduled>();
+    auto tfunc = [](void* d) {
+      auto& callback = *reinterpret_cast<std::function<void(void)>*>(d);
+      callback();
+    };
+
+    tfunc(&f);
+    return std::make_shared<fake_scheduled>();
   }
 };
 
 class fake_sink : public kopinions::sink {
  public:
-  void consume(record&& record) override {}
+  void consume(record&& record) override { std::cout << record.message() << std::endl; }
 };
 
 constexpr auto fakes = [] {

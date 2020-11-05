@@ -16,6 +16,7 @@ int main() {
     auto&& tasks_creator = injector.create<std::shared_ptr<tasks>>();
     auto&& lg = injector.create<std::shared_ptr<logger>>();
     auto&& tsk = tasks_creator->create<int>("scan", std::function<void(int)>{[&kbd, &lg](int a) {
+                                              lg->log(logger::level::DEBUG, "%s", "started by scheduler");
                                               auto&& res = kbd.scan();
                                               for (auto b : res) {
                                                 auto status = b.current();
