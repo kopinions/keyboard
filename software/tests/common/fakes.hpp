@@ -37,14 +37,15 @@ class fake_scheduled : public kopinions::scheduled {
 template <typename... Args>
 class fake_scheduler : public kopinions::scheduler<Args...> {
  public:
-  std::shared_ptr<scheduled> schedule(const std::string& id, kopinions::task<void(Args...)> f, Args... args) override {
+  std::shared_ptr<scheduled> schedule(const std::string& id, kopinions::task<void(Args...)>& f, Args... args) override {
+    auto a = [&f, &args...]() -> void { f(std::forward<Args...>(args)...); };
     auto tfunc = [](void* d) {
-      auto& callback = *reinterpret_cast<kopinions::task<void(void)>*>(d);
+      auto& callback = *reinterpret_cast<decltype(a)*>(d);
       callback();
     };
-    std::bind(f, std::forward<Args...>(args)...);
 
-    tfunc(&f);
+    const void* ptr = &a;
+    tfunc(const_cast<void*>(ptr));
     return std::make_shared<fake_scheduled>();
   }
 };

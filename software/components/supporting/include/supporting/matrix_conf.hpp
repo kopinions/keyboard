@@ -2,7 +2,7 @@
 
 static const auto rows = std::vector<pin::id>{
     // row1-row6
-    pin::id::IO26, pin::id::IO27, pin::id::IO32, pin::id::IO33, pin::id::IO34, pin::id::IO35,
+    pin::id::IO26, pin::id::IO27, pin::id::IO32, pin::id::IO33
 };
 static const auto cols = std::vector<pin::id>{
     // col1-col15

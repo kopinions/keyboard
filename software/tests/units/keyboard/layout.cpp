@@ -36,6 +36,8 @@ int main() {
 
     expect_that<int>(mapped.size(), matchers::eq(5));
     expect_that<key::status>(mapped[0].current(), matchers::eq(key::status::PRESSED));
-    expect_that<key>(mapped, matchers::contain(key{key::id::CTRL, key::status::PRESSED}));
+
+    auto ctrl = std::find_if(mapped.begin(), mapped.end(), [](auto&& $) { return $.identity() == key::id::CTRL; });
+    expect_that<key::status>(ctrl->current(), matchers::eq(key::status::PRESSED));
   };
 }

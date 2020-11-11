@@ -26,7 +26,7 @@ int main() {
     auto&& mat = injector.create<matrix>();
     auto points = mat.scan();
 
-    expect_that(points.size(), matchers::eq(1));
+    expect_that<int>(points.size(), matchers::eq(1));
   };
 
   "matrix_scan_change_for_multiple_gpios"_test = [] {

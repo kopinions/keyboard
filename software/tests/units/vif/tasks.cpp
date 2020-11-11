@@ -18,11 +18,11 @@ int main() {
     auto&& sche = mock<scheduler<int>>();
     auto&& sched = mock<scheduled>();
     When(Method(sched, cancel)).AlwaysDo([]() {});
-    sche.get().schedule(
-        "xx", [](int) -> void { std::cout << "xxxx" << std::endl; }, 1);
+    task<void(int)> t = [](int) -> void { std::cout << "xxxx" << std::endl; };
+    sche.get().schedule("xx", t, 1);
 
-    When(Method(sche, schedule)).AlwaysDo([](const std::string& id, auto&& a, auto c) -> std::shared_ptr<scheduled> {
-
+    When(Method(sche, schedule)).AlwaysDo([](const std::string& id, auto& a, auto c) -> std::shared_ptr<scheduled> {
+      return std::shared_ptr<scheduled>();
     });
     auto&& creator = injector.create<std::shared_ptr<scheduler<>>>();
     bool called = false;

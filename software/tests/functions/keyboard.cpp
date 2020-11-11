@@ -13,15 +13,17 @@ int main() {
     auto injector = di ::make_injector<>(mapping(), conf(), fakes());
 
     auto&& kbd = injector.create<keyboard>();
-    auto&& sched = injector.create < std::shared_ptr<scheduler<>>();
+    auto&& sched = injector.create<std::shared_ptr<scheduler<>>>();
     auto&& lg = injector.create<std::shared_ptr<logger>>();
-    auto&& tsk = sched->schedule("scan", [&kbd, &lg]() {
+    task<void()> t = [&kbd, &lg]() {
       lg->log(logger::level::DEBUG, "%s", "started by scheduler");
       auto&& res = kbd.scan();
+      lg->log(logger::level::DEBUG, "%s", res.size());
       for (auto b : res) {
         auto status = b.current();
         lg->log(logger::level::DEBUG, "%s", status);
       }
-    });
+    };
+    auto&& tsk = sched->schedule("scan", t);
   };
 }

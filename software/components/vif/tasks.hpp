@@ -20,10 +20,11 @@ struct task<R(TArgs...)> {
     other.data_ = {};
   }
 
-  constexpr task(const task& other)
-      : invoke_{static_cast<decltype(other.invoke_)>(other.invoke_)},
-        destroy_{static_cast<decltype(other.destroy_)>(other.destroy_)},
-        data_{static_cast<decltype(other.data_)>(other.data_)} {}
+  constexpr task(const task& other) {
+    invoke_ = decltype(other.invoke_){};
+    destroy_ = decltype(other.destroy_){};
+    data_ = new decltype(other.data_){other.data_};
+  }
   constexpr task& operator=(const task&) = delete;
   constexpr task& operator=(task&&) = delete;
   ~task() { destroy_(data_); }
@@ -43,8 +44,8 @@ struct task<R(TArgs...)> {
   }
 
  private:
-  R (*invoke_)(void*, TArgs...);
-  void (*destroy_)(void*);
+  R (*invoke_)(void*, TArgs...){};
+  void (*destroy_)(void*){};
 
   void* data_{};
 };
@@ -92,12 +93,10 @@ class scheduled {
   virtual ~scheduled() = default;
 };
 
-class ischeduler {};
-
 template <typename... Args>
-class scheduler : public ischeduler {
+class scheduler {
  public:
-  virtual std::shared_ptr<scheduled> schedule(const std::string&, const kopinions::task<void(Args...)>&, Args...) = 0;
+  virtual std::shared_ptr<scheduled> schedule(const std::string&, kopinions::task<void(Args...)>&, Args...) = 0;
   virtual ~scheduler() = default;
 };
 };  // namespace kopinions

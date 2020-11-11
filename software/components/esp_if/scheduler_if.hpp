@@ -22,26 +22,22 @@ class scheduled_if : public scheduled {
 template <typename... Args>
 class scheduler_if : public scheduler<Args...> {
  public:
-  std::shared_ptr<scheduled> schedule(const std::string& id, const kopinions::task<void(Args...)>& f,
-                                      Args... args) override;
+  std::shared_ptr<scheduled> schedule(const std::string& id, kopinions::task<void(Args...)>& f, Args... args) override;
 
  private:
 };
 
 template <typename... Args>
-std::shared_ptr<scheduled> scheduler_if<Args...>::schedule(const std::string& id,
-                                                           const kopinions::task<void(Args...)>& f, Args... args) {
-  std::bind(f, std::forward<Args...>(args)...);
+std::shared_ptr<scheduled> scheduler_if<Args...>::schedule(const std::string& id, kopinions::task<void(Args...)>& f,
+                                                           Args... args) {
+  auto closure = [&f, &args...]() -> void { f(std::forward<Args...>(args)...); };
 
-  auto tfunc = [](void* d) {
-    auto& callback = *reinterpret_cast<kopinions::task<void(Args...)>*>(d);
-    //    callback();
-  };
+  auto tf = [](void* d) -> void { (*reinterpret_cast<decltype(closure)*>(d))(); };
+
   auto ptr = std::make_shared<scheduled_if>();
 
-  const void* parameters = &f;
-
-  xTaskCreate(tfunc, id.c_str(), 10000, const_cast<void*>(parameters), 1, &ptr->m_handle);
+  const void* fp = &closure;
+  xTaskCreate(tf, id.c_str(), 10000, const_cast<void*>(fp), 1, &ptr->m_handle);
 
   return ptr;
 }

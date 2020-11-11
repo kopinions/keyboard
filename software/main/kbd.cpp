@@ -20,7 +20,11 @@ void app_main() {
   auto&& kbd = injector.create<keyboard>();
   auto&& lg = injector.create<std::shared_ptr<logger>>();
 
-  auto&& sche = injector.create<std::shared_ptr<scheduler<int>>>();
-  task<void(int)> pFunction = [](int) {};
-  sche->schedule("xxx", pFunction, 1);
+  auto&& sche = injector.create<std::shared_ptr<scheduler<>>>();
+  task<void()> tf = []() {
+    while (true) {
+      std::cout << "test" << std::endl;
+    }
+  };
+  sche->schedule("test", tf);
 }
