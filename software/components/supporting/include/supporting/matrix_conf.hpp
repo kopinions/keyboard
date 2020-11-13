@@ -1,9 +1,8 @@
 #pragma once
+#include "matrix.hpp"
 
-static const auto rows = std::vector<pin::id>{
-    // row1-row6
-    pin::id::IO26, pin::id::IO27, pin::id::IO32, pin::id::IO33
-};
+static const auto rows = std::vector<pin::id>{// row1-row6
+                                              pin::id::IO26, pin::id::IO27, pin::id::IO32, pin::id::IO33};
 static const auto cols = std::vector<pin::id>{
     // col1-col15
     pin::id::IO2,  pin::id::IO4,  pin::id::IO5,  pin::id::IO12, pin::id::IO13,

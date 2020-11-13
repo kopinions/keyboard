@@ -1,32 +1,23 @@
-#include "common/mocks_provider.hpp"
+#include "common/fakes.hpp"
+#include "supporting/mapping.hpp"
+#include "supporting/matrix_conf.hpp"
 #include "vif.hpp"
 
 namespace di = boost::di;
 using namespace kopinions;
-using namespace fakeit;
-template <typename X>
-auto fun() -> task<void(int)> {
-  return [](int) -> void {
-    []<class... Args>(type_traits::list<Args...>){
 
-    }(typename type_traits::task_traits<X>::args{});
-  };
-}
 int main() {
   "should_able_to_dispatch_the_task"_test = [] {
-    auto injector = di::make_injector<mocks_provider>();
-    auto&& sche = mock<scheduler<int>>();
-    auto&& sched = mock<scheduled>();
-    When(Method(sched, cancel)).AlwaysDo([]() {});
-    task<void(int)> t = [](int) -> void { std::cout << "xxxx" << std::endl; };
-    sche.get().schedule("xx", t, 1);
-
-    When(Method(sche, schedule)).AlwaysDo([](const std::string& id, auto& a, auto c) -> std::shared_ptr<scheduled> {
-      return std::shared_ptr<scheduled>();
-    });
-    auto&& creator = injector.create<std::shared_ptr<scheduler<>>>();
-    bool called = false;
+    auto injector = di::make_injector<>(mapping(), conf(), fakes());
+    auto&& s = injector.create<std::shared_ptr<scheduler<int>>>();
     int arg = 0;
+    task<void(int)> t = [&arg](int actual) -> void {
+      std::cout << "task callback called" << std::endl;
+      arg = actual;
+    };
+
+    s->schedule("test task", t, 1);
+
     expect_that<int>(arg, matchers::eq(1));
   };
 }

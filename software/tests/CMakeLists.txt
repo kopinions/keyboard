@@ -7,8 +7,8 @@ project(kbd_test)
 enable_testing()
 
 macro(unit TESTNAME)
-    add_executable(${TESTNAME} ${ARGN})
-    add_test(${TESTNAME} ${TESTNAME})
+    add_executable(${TESTNAME}.ut ${ARGN})
+    add_test(${TESTNAME}.ut ${TESTNAME}.ut)
 endmacro()
 
 macro(functional TESTNAME)

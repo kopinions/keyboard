@@ -1,9 +1,9 @@
 #include <boost/di.hpp>
 #include <supporting/implementation.hpp>
-#include <vector>
 
 #include "esp_if.hpp"
 #include "keyboard.hpp"
+#include "layout.hpp"
 #include "matrix.hpp"
 #include "supporting/mapping.hpp"
 #include "supporting/matrix_conf.hpp"
@@ -21,6 +21,8 @@ void app_main() {
   auto&& lg = injector.create<std::shared_ptr<logger>>();
 
   auto&& sche = injector.create<std::shared_ptr<scheduler<>>>();
+  auto x = injector.create<layout>();
+
   task<void()> tf = []() {
     while (true) {
       std::cout << "test" << std::endl;

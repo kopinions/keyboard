@@ -19,8 +19,8 @@ int main() {
     auto mapped = lay.mapping(std::move(esc_pressed));
 
     expect_that<int>(mapped.size(), matchers::eq(1));
-    expect_that<key::status>(mapped[0].current(), matchers::eq(key::status::PRESSED));
-    expect_that<key::id>(mapped[0].identity(), matchers::eq(key::id::ESC));
+    expect_that<key::status>(mapped[0].sts, matchers::eq(key::status::PRESSED));
+    expect_that<key::identification>(mapped[0].id, matchers::eq(key::identification::ESC));
   };
 
   "should_parse_keyboard_layout_for_multiple_keys"_test = [] {
@@ -35,9 +35,9 @@ int main() {
     auto mapped = lay.mapping(std::move(ctrl_alt_gui_shift_a));
 
     expect_that<int>(mapped.size(), matchers::eq(5));
-    expect_that<key::status>(mapped[0].current(), matchers::eq(key::status::PRESSED));
+    expect_that<key::status>(mapped[0].sts, matchers::eq(key::status::PRESSED));
 
-    auto ctrl = std::find_if(mapped.begin(), mapped.end(), [](auto&& $) { return $.identity() == key::id::CTRL; });
-    expect_that<key::status>(ctrl->current(), matchers::eq(key::status::PRESSED));
+    auto ctrl = std::find_if(mapped.begin(), mapped.end(), [](auto&& $) { return $.id == key::identification::CTRL; });
+    expect_that<key::status>(ctrl->sts, matchers::eq(key::status::PRESSED));
   };
 }

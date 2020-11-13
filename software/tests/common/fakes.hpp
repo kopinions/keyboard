@@ -58,7 +58,9 @@ class fake_sink : public kopinions::sink {
 constexpr auto fakes = [] {
   return di::make_injector(
       di::bind<gpios>.to<fake_gpios>().in(di::singleton), di::bind<kopinions::clock>.to<fake_clk>().in(di::singleton),
-      di::bind<scheduler<>>.to<fake_scheduler<>>().in(di::singleton), di::bind<sink>.to<fake_sink>().in(di::singleton),
+      di::bind<sink>.to<fake_sink>().in(di::singleton),
+      di::bind<scheduler<>>.to<fake_scheduler<>>().in(di::singleton),
+      di::bind<scheduler<int>>.to<fake_scheduler<int>>().in(di::singleton),
       di::bind<logger::level>.to(logger::level::DEBUG));
 };
 

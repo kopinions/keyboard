@@ -20,7 +20,7 @@ int main() {
       auto&& res = kbd.scan();
       lg->log(logger::level::DEBUG, "%s", res.size());
       for (auto b : res) {
-        auto status = b.current();
+        auto status = b.sts;
         lg->log(logger::level::DEBUG, "%s", status);
       }
     };
