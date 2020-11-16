@@ -53,13 +53,12 @@ unsigned int matrix::conf::tolerance() const noexcept { return m_bounce; }
 
 std::map<std::pair<pin::id, pin::id>, pin::status> matrix::scan() {
   std::map<std::pair<pin::id, pin::id>, pin::status> changes;
-  for (auto row_id : m_conf->row()) {
-    auto row_io = m_gpios->select(row_id);
-    row_io->set(pin::status::HIGH);
-
-    for (auto col_id : m_conf->col()) {
-      auto col_io = m_gpios->select(col_id);
-      auto status = col_io->current();
+  for (auto col_id : m_conf->col()) {
+    auto col_io = m_gpios->select(col_id);
+    col_io->set(pin::status::HIGH);
+    for (auto row_id : m_conf->row()) {
+      auto row_io = m_gpios->select(col_id);
+      auto status = row_io->current();
       auto &&id = std::pair<pin::id, pin::id>{row_id, col_id};
       if (m_prev[id] != status) {
         m_debounce[id] = m_clk->now().millis();
@@ -72,7 +71,7 @@ std::map<std::pair<pin::id, pin::id>, pin::status> matrix::scan() {
         }
       }
     }
-    row_io->set(pin::status::LOW);
+    col_io->set(pin::status::LOW);
   }
 
   return changes;
