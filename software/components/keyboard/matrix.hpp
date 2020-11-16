@@ -53,11 +53,12 @@ unsigned int matrix::conf::tolerance() const noexcept { return m_bounce; }
 
 std::map<std::pair<pin::id, pin::id>, pin::status> matrix::scan() {
   std::map<std::pair<pin::id, pin::id>, pin::status> changes;
+  std::cout << "matrix scan" << std::endl;
   for (auto col_id : m_conf->col()) {
     auto col_io = m_gpios->select(col_id);
     col_io->set(pin::status::HIGH);
     for (auto row_id : m_conf->row()) {
-      auto row_io = m_gpios->select(col_id);
+      auto row_io = m_gpios->select(row_id);
       auto status = row_io->current();
       auto &&id = std::pair<pin::id, pin::id>{row_id, col_id};
       if (m_prev[id] != status) {

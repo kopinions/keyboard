@@ -5,8 +5,10 @@
 #include "keyboard.hpp"
 #include "layout.hpp"
 #include "matrix.hpp"
+#include "reporter.hpp"
 #include "supporting/mapping.hpp"
 #include "supporting/matrix_conf.hpp"
+
 namespace di = boost::di;
 using namespace kopinions;
 
@@ -19,14 +21,16 @@ void app_main() {
 
   auto&& kbd = injector.create<keyboard>();
   auto&& lg = injector.create<std::shared_ptr<logger>>();
-
   auto&& sche = injector.create<std::shared_ptr<scheduler<>>>();
-  auto x = injector.create<layout>();
-
-  task<void()> tf = []() {
+  sche->schedule("test", [&kbd, &lg]() -> void {
     while (true) {
       std::cout << "test" << std::endl;
+      auto&& res = kbd.scan();
+      for (auto b : res) {
+        auto status = b.sts;
+        lg->log(logger::level::DEBUG, "%s", status);
+      }
+      vTaskDelay(10);
     }
-  };
-  sche->schedule("test", tf);
+  });
 }

@@ -2,7 +2,7 @@
 #include "matrix.hpp"
 // row1-row6
 static const auto rows = std::vector<pin::id>{
-    pin::id::IO26, pin::id::IO27, pin::id::IO32, pin::id::IO33, pin::id::IO34, pin::id::IO35,
+    pin::id::IO26, pin::id::IO27, pin::id::IO32, pin::id::IO33
 };
 
 // col1-col15
