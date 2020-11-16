@@ -1,32 +1,35 @@
 * keyboard firmware
 ** 构建
+*** 依赖工具
+    - clang-format
 *** 准备环境
     #+BEGIN_SRC shell :eval never :exports code
       git clone --recursive https://github.com/espressif/esp-idf.git
       cd esp-idf
       export IDF_TOOLS_PATH=${HOME}/.local/espressif
       export IDF_PATH=`pwd`
-      ./install.sh
-      if [ -d "$HOME/.local" ]; then
-	  LOCAL_PATH=$(find -L $HOME/.local -name bin -type d| paste -sd: -)
+      python -m pip install --user -r $IDF_PATH/requirements.txt
+      if [ -d "$HOME/.local/espressif" ]; then
+	  LOCAL_PATH=$(find -L $HOME/.local/espressif/tools -name bin -type d| paste -sd: -)
 	  export PATH="${LOCAL_PATH}:$PATH"; 
       fi
     #+END_SRC
 
 *** 编译
     #+BEGIN_SRC shell :eval never :exports code
-      cmake -G "Unix Makefiles" -DENABLE_TESTS=true -B build
-      make -C build -j `nproc` units
+      cmake -G "Unix Makefiles" -B build
+      make -C build -j `nproc`
+      make -C build -j `nproc` tests
     #+END_SRC
 
 ** 开发
 *** IDE(CLion) 配置
     - CMake options
       #+BEGIN_SRC shell :eval never :exports code
-	-DENABLE_TESTS=true \
-		      -DCMAKE_C_COMPILER=${HOME}/.local/espressif/tools/xtensa-esp32-elf/esp-2020r3-8.4.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc \
-		      -DCMAKE_CXX_COMPILER=${HOME}/.local/espressif/tools/xtensa-esp32-elf/esp-2020r3-8.4.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-g++ \
-		      -DCMAKE_SYSTEM_NAME=Generic
+	-DIDE=true \
+	     -DCMAKE_C_COMPILER=${HOME}/.local/espressif/tools/xtensa-esp32-elf/esp-2020r3-8.4.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc \
+	     -DCMAKE_CXX_COMPILER=${HOME}/.local/espressif/tools/xtensa-esp32-elf/esp-2020r3-8.4.0/xtensa-esp32-elf/bin/xtensa-esp32-elf-g++ \
+	     -DCMAKE_SYSTEM_NAME=Generic
       #+END_SRC
     - Environment
       #+BEGIN_SRC shell :eval never :exports code
