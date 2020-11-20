@@ -38,7 +38,6 @@ std::shared_ptr<scheduled> scheduler_if<Args...>::schedule(const std::string& id
   m_f = f;
 
   closure = [this, &args...]() -> void { m_f(std::forward<Args...>(args)...); };
-  closure();
   auto tf = [](void* d) -> void { (*static_cast<decltype(closure)*>(d))(); };
 
   auto ptr = std::make_shared<scheduled_if>();

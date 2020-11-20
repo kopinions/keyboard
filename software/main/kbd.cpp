@@ -25,11 +25,11 @@ void app_main() {
   sche->schedule("test", [&kbd, &lg]() -> void {
     while (true) {
       std::cout << "test" << std::endl;
-      auto&& res = kbd.scan();
-      for (auto b : res) {
-        auto status = b.sts;
-        lg->log(logger::level::DEBUG, "%s", status);
-      }
+      //      auto&& res = kbd.scan();
+      //      for (auto b : res) {
+      //        auto status = b.sts;
+      //        lg->log(logger::level::DEBUG, "%s", status);
+      //      }
       vTaskDelay(10);
     }
   });
