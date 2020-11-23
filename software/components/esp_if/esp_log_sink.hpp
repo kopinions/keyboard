@@ -2,12 +2,16 @@
 
 #include "esp_log.h"
 #include "logger.hpp"
-namespace kopinions {
+namespace kopinions::logging {
 class esp_log_sink : public sink {
  public:
-  void consume(record&& rd) override {
-    const char* msg = rd.message().c_str();
-    ESP_LOGI("KEY", "%s", msg);
-  }
+  void consume(const record& rd) override;
+  ~esp_log_sink() override;
 };
-}  // namespace kopinions
+
+void esp_log_sink::consume(const record& rd) {
+  ESP_LOGI("KEY", "%s", (rd.message().c_str()));
+}
+esp_log_sink::~esp_log_sink() = default;
+
+}  // namespace kopinions::logging

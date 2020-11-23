@@ -10,26 +10,29 @@
 
 namespace di = boost::di;
 using namespace kopinions;
+using namespace kopinions::logging;
 
 extern "C" {
 void app_main();
 }
 
 void app_main() {
-  auto injector = di::make_injector<>(mapping(), conf(), implementation());
+  auto container = di::make_injector<>(mapping(), conf(), implementation());
 
-  auto&& kbd = injector.create<keyboard>();
-  auto&& lg = injector.create<std::shared_ptr<logger>>();
-  auto&& sche = injector.create<std::shared_ptr<scheduler<>>>();
-  sche->schedule("test", [&kbd, &lg]() -> void {
+  auto sche = container.create<std::shared_ptr<scheduler<>>>();
+
+  sche->schedule("test", [&container]() -> void {
+    // auto kbd = container.create<keyboard>();
+    auto lg = container.create<std::shared_ptr<logger>>();
     while (true) {
-      std::cout << "test" << std::endl;
-      auto&& res = kbd.scan();
-      for (auto b : res) {
-        auto status = b.sts;
-        lg->log(logger::level::DEBUG, "%s", status);
-      }
-      vTaskDelay(10);
+      lg->log(level::DEBUG, "%s", "xxx1111");
+
+      //      auto&& res = kbd.scan();
+      //      for (auto b : res) {
+      //        auto status = b.sts;
+      //        lg->log(level::DEBUG, "%s", status);
+      //      }
+      vTaskDelay(100);
     }
   });
 }
