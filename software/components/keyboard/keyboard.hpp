@@ -9,7 +9,7 @@
 namespace kopinions {
 class keyboard {
  public:
-  keyboard(std::shared_ptr<layout>, std::shared_ptr<matrix>, std::shared_ptr<config>);
+  keyboard(const std::shared_ptr<layout>&, const std::shared_ptr<matrix>&, const std::shared_ptr<config>&);
   std::vector<key> scan();
 
  private:
@@ -20,6 +20,7 @@ class keyboard {
 
 std::vector<key> keyboard::scan() { return m_layout->mapping(m_matrix->scan()); }
 
-keyboard::keyboard(std::shared_ptr<layout> layout, std::shared_ptr<matrix> mat, std::shared_ptr<config> conf)
-    : m_matrix{std::move(mat)}, m_layout{std::move(layout)}, m_config{std::move(conf)} {}
+keyboard::keyboard(const std::shared_ptr<layout>& layout, const std::shared_ptr<matrix>& mat,
+                   const std::shared_ptr<config>& conf)
+    : m_matrix{mat}, m_layout{layout}, m_config{conf} {}
 }  // namespace kopinions

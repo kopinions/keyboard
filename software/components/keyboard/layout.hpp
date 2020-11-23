@@ -9,16 +9,17 @@ namespace kopinions {
 class layout {
  public:
   explicit layout(const std::map<std::pair<pin::id, pin::id>, key::identification> &) noexcept;
-  virtual std::vector<key> mapping(std::map<std::pair<pin::id, pin::id>, pin::status> &&);
-  virtual ~layout() = default;
+  std::vector<key> mapping(const std::map<std::pair<pin::id, pin::id>, pin::status> &);
+  ~layout() = default;
 
  private:
   std::map<std::pair<pin::id, pin::id>, key::identification> m_mapping;
 };
+
 layout::layout(const std::map<std::pair<pin::id, pin::id>, key::identification> &mapping) noexcept
     : m_mapping{mapping} {}
 
-std::vector<kopinions::key> layout::mapping(std::map<std::pair<pin::id, pin::id>, pin::status> &&sequence) {
+std::vector<kopinions::key> layout::mapping(const std::map<std::pair<pin::id, pin::id>, pin::status> &sequence) {
   std::vector<kopinions::key> pressed;
   for (auto [coord, status] : sequence) {
     pressed.emplace_back(

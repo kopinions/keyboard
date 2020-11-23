@@ -1,6 +1,7 @@
 #pragma once
 #include "esp_if.hpp"
 #include "vif.hpp"
+#include "layout.hpp"
 namespace di = boost::di;
 using namespace kopinions;
 
