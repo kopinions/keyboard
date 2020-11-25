@@ -5,29 +5,13 @@
 #include <utility>
 #include <vector>
 
+#include "config.hpp"
 #include "vif.hpp"
 
 namespace kopinions {
 class matrix {
  public:
-  class conf {
-   public:
-    conf(std::vector<pin::id> row, std::vector<pin::id> col, unsigned int bounce);
-
-   public:
-    [[nodiscard]] const std::vector<pin::id> &row() const noexcept;
-
-    [[nodiscard]] const std::vector<pin::id> &col() const noexcept;
-
-    [[nodiscard]] unsigned int tolerance() const noexcept;
-
-   private:
-    std::vector<pin::id> m_row;
-    std::vector<pin::id> m_col;
-    unsigned int m_bounce;
-  };
-
-  explicit matrix(conf, std::shared_ptr<gpios>, std::shared_ptr<kopinions::clock>) noexcept;
+  explicit matrix(matrix_config, std::shared_ptr<gpios>, std::shared_ptr<kopinions::clock>) noexcept;
 
   std::map<std::pair<pin::id, pin::id>, pin::status> scan();
 
@@ -35,20 +19,12 @@ class matrix {
 
  private:
   std::shared_ptr<gpios> m_gpios;
-  conf m_conf;
+  matrix_config m_conf;
   std::shared_ptr<kopinions::clock> m_clk;
   std::map<std::pair<pin::id, pin::id>, uint64_t> m_debounce;
   std::map<std::pair<pin::id, pin::id>, pin::status> m_prev;
   std::map<std::pair<pin::id, pin::id>, pin::status> m_current;
 };
-
-matrix::conf::conf(std::vector<pin::id> row, std::vector<pin::id> col, unsigned int bounce)
-    : m_row{std::move(row)}, m_col{std::move(col)}, m_bounce{bounce} {}
-
-const std::vector<pin::id> &matrix::conf::row() const noexcept { return m_row; }
-
-const std::vector<pin::id> &matrix::conf::col() const noexcept { return m_col; }
-unsigned int matrix::conf::tolerance() const noexcept { return m_bounce; }
 
 std::map<std::pair<pin::id, pin::id>, pin::status> matrix::scan() {
   std::map<std::pair<pin::id, pin::id>, pin::status> changes;
@@ -78,7 +54,7 @@ std::map<std::pair<pin::id, pin::id>, pin::status> matrix::scan() {
   return changes;
 }
 
-matrix::matrix(conf conf, std::shared_ptr<gpios> gpios, std::shared_ptr<kopinions::clock> clk) noexcept
+matrix::matrix(matrix_config conf, std::shared_ptr<gpios> gpios, std::shared_ptr<kopinions::clock> clk) noexcept
     : m_gpios{gpios}, m_conf{conf}, m_clk{clk} {
   for (auto row_id : m_conf.row()) {
     auto io = m_gpios->select(row_id);

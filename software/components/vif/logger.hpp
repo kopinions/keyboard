@@ -54,6 +54,12 @@ class logger {
     m_sink->consume(record(lvl, formatter{fmt}, std::forward<Args>(args)...));
   };
 
+  template <typename... Args>
+  void info(const std::string& fmt, Args... args) const {
+    // TODO consume when lvl >= root
+    m_sink->consume(record(level::INFO, formatter{fmt}, std::forward<Args>(args)...));
+  };
+
  private:
   level m_root;
   std::shared_ptr<sink> m_sink;

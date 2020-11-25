@@ -4,9 +4,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS, ON)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 include_directories(3rdparty/di)
-if (${IDE})
-    add_subdirectory(tests)
-endif ()
+#add_subdirectory(tests)
 
 add_custom_target(tests
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tests

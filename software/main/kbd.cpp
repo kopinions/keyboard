@@ -17,15 +17,16 @@ void app_main();
 }
 
 void app_main() {
-  auto container = di::make_injector<>(mapping(), conf(), implementation());
+  auto container = di::make_injector<>(di::bind<matrix_config>.to(matrix_config(rows, cols, 4)), implementation());
 
   auto sche = container.create<std::shared_ptr<scheduler<>>>();
 
   sche->schedule("test", [&container]() -> void {
-    // auto kbd = container.create<keyboard>();
+    auto kbd = container.create<matrix>();
+    kbd.scan();
     auto lg = container.create<std::shared_ptr<logger>>();
     while (true) {
-      lg->log(level::DEBUG, "%s", "xxx1111");
+      //      lg->log(level::DEBUG, "%s", "xxx1111");
 
       //      auto&& res = kbd.scan();
       //      for (auto b : res) {
