@@ -12,7 +12,7 @@ class config {
 
 class matrix_config {
  public:
-  matrix_config(std::vector<pin::id> row, std::vector<pin::id> col, unsigned int bounce);
+  matrix_config(const std::vector<pin::id> &row, const std::vector<pin::id> &col, unsigned int bounce);
 
  public:
   [[nodiscard]] const std::vector<pin::id> &row() const noexcept;
@@ -27,7 +27,7 @@ class matrix_config {
   unsigned int m_bounce;
 };
 
-matrix_config::matrix_config(std::vector<pin::id> row, std::vector<pin::id> col, unsigned int bounce)
+matrix_config::matrix_config(const std::vector<pin::id> &row, const std::vector<pin::id> &col, unsigned int bounce)
     : m_row{row}, m_col{col}, m_bounce{bounce} {}
 
 const std::vector<pin::id> &matrix_config::row() const noexcept { return m_row; }

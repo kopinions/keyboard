@@ -4,7 +4,7 @@
 namespace kopinions {
 class pin {
  public:
-  enum class id : uint8_t {
+  enum id : uint8_t {
     IO0,
     IO1,
     IO2,

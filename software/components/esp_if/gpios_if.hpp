@@ -5,14 +5,14 @@
 namespace kopinions {
 class gpios_if : public gpios {
  public:
-  std::shared_ptr<gpio> select(const pin::id& p) override;
+  std::shared_ptr<gpio> select(pin::id p) override;
   ~gpios_if() override;
 
  private:
   std::map<pin::id, std::shared_ptr<gpio_if>> m_gpios;
 };
 
-std::shared_ptr<gpio> gpios_if::select(const pin::id& p) {
+std::shared_ptr<gpio> gpios_if::select(pin::id p) {
   if (auto it = m_gpios.find(p); it != m_gpios.end()) {
     return it->second;
   }
