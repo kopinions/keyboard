@@ -1,5 +1,9 @@
 * Keyboard
 
+** 键盘布局
+[[file:assets/imgs/layout.jpg]]
+
+
 ** 硬件
 
 硬件部分主要包含电路原理图，以及电路板设计图。
