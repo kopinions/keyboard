@@ -374,7 +374,7 @@ U 1 1 5E98B11F
 P 1950 6250
 F 0 "U2" H 1600 7750 50  0000 C CNN
 F 1 "CP2102N-A01-GQFN28" H 2000 7850 50  0000 C CNN
-F 2 "Package_DFN_QFN:QFN-28-1EP_5x5mm_P0.5mm_EP3.35x3.35mm" H 2400 5050 50  0001 L CNN
+F 2 "keyboard:QFP-28_5x5_Pitch0.5mm" H 2400 5050 50  0001 L CNN
 F 3 "https://www.silabs.com/documents/public/data-sheets/cp2102n-datasheet.pdf" H 2000 5500 50  0001 C CNN
 	1    1950 6250
 	1    0    0    -1  
