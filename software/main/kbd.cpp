@@ -17,6 +17,7 @@ extern "C" void app_main() {
     auto cfg = std::make_shared<config>();
     auto kbd = std::make_shared<keyboard>(lay, mtx, cfg);
     auto lg = std::make_shared<logger>(level::INFO, std::make_shared<esp_log_sink>());
+//    const std::shared_ptr<endpoint>& ep = std::make_shared<endpoint>();
     while (true) {
       lg->log(level::DEBUG, "%s", "xxx1111");
 
@@ -25,6 +26,7 @@ extern "C" void app_main() {
         auto status = b.sts;
         lg->log(level::DEBUG, "%s", status);
       }
+
       vTaskDelay(100);
     }
   });

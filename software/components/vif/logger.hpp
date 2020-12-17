@@ -60,6 +60,24 @@ class logger {
     m_sink->consume(record(level::INFO, formatter{fmt}, std::forward<Args>(args)...));
   };
 
+  template <typename... Args>
+  void error(const std::string& fmt, Args... args) const {
+    // TODO consume when lvl >= root
+    m_sink->consume(record(level::ERROR, formatter{fmt}, std::forward<Args>(args)...));
+  };
+
+  template <typename... Args>
+  void debug(const std::string& fmt, Args... args) const {
+    // TODO consume when lvl >= root
+    m_sink->consume(record(level::DEBUG, formatter{fmt}, std::forward<Args>(args)...));
+  };
+
+  template <typename... Args>
+  void warn(const std::string& fmt, Args... args) const {
+    // TODO consume when lvl >= root
+    m_sink->consume(record(level::WARN, formatter{fmt}, std::forward<Args>(args)...));
+  };
+
  private:
   level m_root;
   std::shared_ptr<sink> m_sink;
