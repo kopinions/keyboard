@@ -48,7 +48,7 @@ ble::ble(std::shared_ptr<kopinions::logging::logger> lg) {
 
   esp_ble_gap_register_callback(ble::gap_event_handler);
 
-  esp_ble_gatts_register_callback(gatts_event_handler);
+  esp_ble_gatts_register_callback(ble::gatts_event_handler);
   //  if (!hidd_le_env.enabled) {
   //    memset(&hidd_le_env, 0, sizeof(hidd_le_env_t));
   //    hidd_le_env.enabled = true;
@@ -119,8 +119,8 @@ void ble::gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t
   }
 }
 
-#define PROFILE_NUM            1
-#define PROFILE_APP_IDX        0
+#define PROFILE_NUM 1
+#define PROFILE_APP_IDX 0
 
 struct gatts_profile_inst {
   esp_gatts_cb_t gatts_cb;
@@ -130,23 +130,122 @@ struct gatts_profile_inst {
 };
 
 static struct gatts_profile_inst heart_rate_profile_tab[PROFILE_NUM] = {
-    [PROFILE_APP_IDX] = { .gatts_cb = esp_hidd_prf_cb_hdl, .gatts_if =
-    ESP_GATT_IF_NONE, /* Not get the gatt_if, so initial is ESP_GATT_IF_NONE */
-    },
+    [PROFILE_APP_IDX] =
+        {
+            .gatts_cb = esp_hidd_prf_cb_hdl,
+            .gatts_if = ESP_GATT_IF_NONE, /* Not get the gatt_if, so initial is ESP_GATT_IF_NONE */
+        },
 
 };
 
-void ble::gatts_event_handler(esp_gatts_cb_event_t event,
-                              esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param) {
+
+void esp_hidd_prf_cb_hdl(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
+                         esp_ble_gatts_cb_param_t *param) {
+
+  switch (event) {
+
+    case ESP_GATTS_REG_EVT: {
+      esp_ble_gap_config_local_icon(ESP_BLE_APPEARANCE_GENERIC_HID);
+      esp_hidd_cb_param_t hidd_param;
+      hidd_param.init_finish.state = param->reg.status;
+      if (param->reg.app_id == HIDD_APP_ID) {
+        hidd_le_env.gatt_if = gatts_if;
+        if (hidd_le_env.hidd_cb != NULL) {
+          (hidd_le_env.hidd_cb)(ESP_HIDD_EVENT_REG_FINISH, &hidd_param);
+          hidd_le_create_service(hidd_le_env.gatt_if);
+        }
+      }
+      if (param->reg.app_id == BATTRAY_APP_ID) {
+        hidd_param.init_finish.gatts_if = gatts_if;
+        if (hidd_le_env.hidd_cb != NULL) {
+          (hidd_le_env.hidd_cb)(ESP_BAT_EVENT_REG, &hidd_param);
+        }
+
+      }
+
+      break;
+    }
+    case ESP_GATTS_CONF_EVT:
+      break;
+
+    case ESP_GATTS_CREATE_EVT:
+      break;
+
+    case ESP_GATTS_CONNECT_EVT: {
+      esp_hidd_cb_param_t cb_param = { 0 };
+      ESP_LOGI(HID_LE_PRF_TAG, "HID connection establish, conn_id = %x",
+               param->connect.conn_id);
+
+      memcpy(cb_param.connect.remote_bda, param->connect.remote_bda,
+             sizeof(esp_bd_addr_t));
+      cb_param.connect.conn_id = param->connect.conn_id;
+      hidd_clcb_alloc(param->connect.conn_id, param->connect.remote_bda);
+      esp_ble_set_encryption(param->connect.remote_bda,
+                             ESP_BLE_SEC_ENCRYPT_NO_MITM);
+      if (hidd_le_env.hidd_cb != NULL) {
+        (hidd_le_env.hidd_cb)(ESP_HIDD_EVENT_BLE_CONNECT, &cb_param);
+
+      }
+
+
+
+      break;
+    }
+
+    case ESP_GATTS_DISCONNECT_EVT: {
+      if (hidd_le_env.hidd_cb != NULL) {
+        (hidd_le_env.hidd_cb)(ESP_HIDD_EVENT_BLE_DISCONNECT, NULL);
+      }
+      hidd_clcb_dealloc(param->disconnect.conn_id);
+      break;
+    }
+    case ESP_GATTS_CLOSE_EVT:
+      break;
+    case ESP_GATTS_WRITE_EVT: {
+
+      break;
+    }
+    case ESP_GATTS_CREAT_ATTR_TAB_EVT: {
+      if (param->add_attr_tab.num_handle == BAS_IDX_NB
+          && param->add_attr_tab.svc_uuid.uuid.uuid16
+             == ESP_GATT_UUID_BATTERY_SERVICE_SVC
+          && param->add_attr_tab.status == ESP_GATT_OK) {
+        incl_svc.start_hdl = param->add_attr_tab.handles[BAS_IDX_SVC];
+        incl_svc.end_hdl = incl_svc.start_hdl + BAS_IDX_NB - 1;
+        ESP_LOGI(HID_LE_PRF_TAG,
+                 "%s(), start added the hid service to the stack database. incl_handle = %d",
+                 __func__, incl_svc.start_hdl);
+        esp_ble_gatts_create_attr_tab(hidd_le_gatt_db, gatts_if,
+                                      HIDD_LE_IDX_NB, 0);
+      }
+      if (param->add_attr_tab.num_handle == HIDD_LE_IDX_NB
+          && param->add_attr_tab.status == ESP_GATT_OK) {
+        memcpy(hidd_le_env.hidd_inst.att_tbl, param->add_attr_tab.handles,
+               HIDD_LE_IDX_NB * sizeof(uint16_t));
+        ESP_LOGI(HID_LE_PRF_TAG, "hid svc handle = %x",
+                 hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_SVC]);
+        hid_add_id_tbl();
+        esp_ble_gatts_start_service(
+            hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_SVC]);
+      } else {
+        esp_ble_gatts_start_service(param->add_attr_tab.handles[0]);
+      }
+      break;
+    }
+
+    default:
+      break;
+  }
+}
+
+void ble::gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param) {
   /* If event is register event, store the gatts_if for each profile */
   if (event == ESP_GATTS_REG_EVT) {
     if (param->reg.status == ESP_GATT_OK) {
       heart_rate_profile_tab[PROFILE_APP_IDX].gatts_if = gatts_if;
 
-
     } else {
-      ESP_LOGI(HID_LE_PRF_TAG, "Reg app failed, app_id %04x, status %d\n",
-               param->reg.app_id, param->reg.status);
+      ESP_LOGI(HID_LE_PRF_TAG, "Reg app failed, app_id %04x, status %d\n", param->reg.app_id, param->reg.status);
       return;
     }
   }
@@ -154,16 +253,15 @@ void ble::gatts_event_handler(esp_gatts_cb_event_t event,
   do {
     int idx;
     for (idx = 0; idx < PROFILE_NUM; idx++) {
-      if (gatts_if == ESP_GATT_IF_NONE || /* ESP_GATT_IF_NONE, not specify a certain gatt_if, need to call every profile cb function */
+      if (gatts_if == ESP_GATT_IF_NONE || /* ESP_GATT_IF_NONE, not specify a certain gatt_if, need to call every profile
+                                             cb function */
           gatts_if == heart_rate_profile_tab[idx].gatts_if) {
         if (heart_rate_profile_tab[idx].gatts_cb) {
-          heart_rate_profile_tab[idx].gatts_cb(event, gatts_if,
-                                               param);
+          heart_rate_profile_tab[idx].gatts_cb(event, gatts_if, param);
         }
       }
     }
   } while (0);
-
 }
 void ble::disable() {}
 void ble::reset() {}
