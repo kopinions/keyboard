@@ -1,4 +1,5 @@
 #include "esp_if.hpp"
+#include "ible/ble.hpp"
 #include "keyboard.hpp"
 #include "matrix.hpp"
 #include "supporting/mapping.hpp"
@@ -17,7 +18,9 @@ extern "C" void app_main() {
     auto cfg = std::make_shared<config>();
     auto kbd = std::make_shared<keyboard>(lay, mtx, cfg);
     auto lg = std::make_shared<logger>(level::INFO, std::make_shared<esp_log_sink>());
-//    const std::shared_ptr<endpoint>& ep = std::make_shared<endpoint>();
+    //    const std::shared_ptr<endpoint>& ep = std::make_shared<endpoint>();
+    const std::shared_ptr<ble>& b = std::make_shared<ble>(lg);
+
     while (true) {
       lg->log(level::DEBUG, "%s", "xxx1111");
 
