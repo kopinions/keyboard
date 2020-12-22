@@ -1,7 +1,10 @@
 #pragma once
 
-template<typename T>
+template <typename T>
 class repository {
-  using id_t = T::identifiable;
-  std::shared_ptr<T> find(id_t);
+ public:
+  using id_t = typename T::identifiable;
+  virtual void create(const id_t&, const T&) = 0;
+  virtual std::shared_ptr<T> find(const id_t&) const = 0;
+  virtual ~repository() = default;
 };

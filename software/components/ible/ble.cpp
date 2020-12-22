@@ -11,35 +11,11 @@ constexpr std::string_view LOGGER_TAG = "ble";
 bool ble::secure = false;
 std::shared_ptr<kopinions::logging::logger> ble::m_logger = std::shared_ptr<kopinions::logging::logger>{};
 
-class profile {
- public:
-  explicit profile(std::function<void(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*)> p)
-      : m_handler{p} {};
-  void notified(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param) {
-    m_handler(event, gatts_if, param);
-  };
-
-  profile(const profile&) = delete;
-  profile& operator=(const profile&) = delete;
-
-  uint16_t gatts_if;
-  uint16_t app_id;
-  uint16_t conn_id;
-
- private:
-  std::function<void(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*)> m_handler;
-};
-
-static std::map<std::uint16_t, std::shared_ptr<profile>> profiles = {};
+std::shared_ptr<profile_repository> ble::m_profiles = std::make_shared<profile_repository>();
 
 ble::ble(std::shared_ptr<kopinions::logging::logger> lg) {
   m_logger = lg;
   // Initialize NVS.
-
-  profiles[0x180f] = std::make_shared<profile>(
-      [](esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*) -> void {
-
-      });
 
   auto ret = nvs_flash_init();
   if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
@@ -159,18 +135,42 @@ void ble::gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if
   /* If event is register event, store the gatts_if for each profile */
   if (event == ESP_GATTS_REG_EVT) {
     if (param->reg.status == ESP_GATT_OK) {
-      profiles[param->reg.app_id]->gatts_if = gatts_if;
+      auto ptr = profiles()->find(param->reg.app_id);
+      if (ptr != nullptr) {
+        ptr->gatts_if = gatts_if;
+      }
     } else {
       m_logger->error("Reg app failed, app_id %04x, status %d\n", param->reg.app_id, param->reg.status);
       return;
     }
   }
-  
-  for (const auto& [key, value] : profiles) {
-    if (gatts_if == ESP_GATT_IF_NONE || gatts_if == value->gatts_if) {
-      value->notified(event, gatts_if, param);
+
+  for (auto p : profiles()->all()) {
+    if (gatts_if == ESP_GATT_IF_NONE || gatts_if == p->gatts_if) {
+      p->notified(event, gatts_if, param);
     }
   }
 }
 void ble::disable() {}
 void ble::reset() {}
+std::shared_ptr<profile_repository> ble::profiles() { return m_profiles; }
+
+void ble::register_profile(profile::identifiable id, const profile& p) { m_profiles->create(id, p); }
+
+void profile_repository::create(const unsigned short& id, const profile& p) {
+  m_profiles[id] = std::make_shared<profile>(p);
+}
+std::shared_ptr<profile> profile_repository::find(const uint16_t& id) const {
+  if (m_profiles.find(id) != m_profiles.end()) {
+    return m_profiles.at(id);
+  }
+
+  return std::shared_ptr<profile>{};
+}
+std::vector<std::shared_ptr<profile>> profile_repository::all() const {
+  std::vector<std::shared_ptr<profile>> values;
+  for (auto p : m_profiles) {
+    values.emplace_back(p.second);
+  }
+  return values;
+}
