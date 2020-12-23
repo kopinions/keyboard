@@ -145,7 +145,7 @@ void ble::gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if
     }
   }
 
-  for (auto p : profiles()->all()) {
+  for (const auto& p : profiles()->all()) {
     if (gatts_if == ESP_GATT_IF_NONE || gatts_if == p->gatts_if) {
       p->notified(event, gatts_if, param);
     }
