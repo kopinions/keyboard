@@ -23,25 +23,28 @@
 class profile {
  public:
   using identifiable = uint16_t;
-  explicit profile(std::function<void(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*)> p)
-      : m_handler{p} {};
+  explicit profile(const identifiable& id,
+                   std::function<void(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*)> p)
+      : m_id{id}, m_handler{p} {};
   void notified(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param) {
     m_handler(event, gatts_if, param);
   };
 
   profile(const profile& o) {
     gatts_if = o.gatts_if;
-    app_id = o.app_id;
+    m_id = o.m_id;
     conn_id = o.conn_id;
     m_handler = o.m_handler;
   };
   profile& operator=(const profile&) = delete;
 
   uint16_t gatts_if;
-  uint16_t app_id;
   uint16_t conn_id;
 
+  [[nodiscard]] const identifiable& id() const { return m_id; }
+
  private:
+  identifiable m_id;
   std::function<void(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*)> m_handler;
 };
 

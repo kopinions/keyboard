@@ -14,7 +14,7 @@ class formatter {
   std::string format(Args... args) const {
     std::ostringstream sbuf;
     // fold expression
-    ((sbuf << std::dec) << ... << args);
+    ((sbuf << std::dec << m_fmt) << ... << args);
     return sbuf.str();
   };
 
