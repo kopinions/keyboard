@@ -81,11 +81,37 @@ static esp_ble_adv_params_t hidd_adv_params = {
     .adv_filter_policy = ADV_FILTER_ALLOW_SCAN_ANY_CON_ANY,
 };
 
+static esp_ble_adv_params_t adv_params = {
+    .adv_int_min = 0x20,
+    .adv_int_max = 0x40,
+    .adv_type = ADV_TYPE_IND,
+    .own_addr_type = BLE_ADDR_TYPE_PUBLIC,
+    //.peer_addr            =
+    //.peer_addr_type       =
+    .channel_map = ADV_CHNL_ALL,
+    .adv_filter_policy = ADV_FILTER_ALLOW_SCAN_ANY_CON_ANY,
+};
+
 void ble::gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t* param) {
   m_logger->info("%s", "gap event handler");
+  static uint8_t adv_config_done = 0;
+  constexpr uint8_t adv_config_flag = (1 << 0);
+  constexpr uint8_t scan_rsp_config_flag = (1 << 1);
+
   switch (event) {
     case ESP_GAP_BLE_ADV_DATA_SET_COMPLETE_EVT:
-      esp_ble_gap_start_advertising(&hidd_adv_params);
+      m_logger->info("%s", "start advertising");
+      adv_config_done &= (~adv_config_flag);
+      if (adv_config_done == 0) {
+        esp_ble_gap_start_advertising(&adv_params);
+      }
+      break;
+    case ESP_GAP_BLE_SCAN_RSP_DATA_SET_COMPLETE_EVT:
+      m_logger->info("%s", "start advertising rsp");
+      adv_config_done &= (~scan_rsp_config_flag);
+      if (adv_config_done == 0) {
+        esp_ble_gap_start_advertising(&adv_params);
+      }
       break;
     case ESP_GAP_BLE_SEC_REQ_EVT:
       for (int i = 0; i < ESP_BD_ADDR_LEN; i++) {
@@ -106,6 +132,28 @@ void ble::gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t
       if (!param->ble_security.auth_cmpl.success) {
         ble::m_logger->error("%s: fail reason = 0x%x", LOGGER_TAG, param->ble_security.auth_cmpl.fail_reason);
       }
+      break;
+
+    case ESP_GAP_BLE_ADV_START_COMPLETE_EVT:
+      // advertising start complete event to indicate advertising start successfully or failed
+      if (param->adv_start_cmpl.status != ESP_BT_STATUS_SUCCESS) {
+        m_logger->info("%s", "Advertising start failed\n");
+      }
+      m_logger->info("%s", "Advertising start done\n");
+      break;
+    case ESP_GAP_BLE_ADV_STOP_COMPLETE_EVT:
+      if (param->adv_stop_cmpl.status != ESP_BT_STATUS_SUCCESS) {
+        m_logger->info("%s", "Advertising stop failed\n");
+      } else {
+        m_logger->info("%s", "Stop adv successfully\n");
+      }
+      break;
+    case ESP_GAP_BLE_UPDATE_CONN_PARAMS_EVT:
+      ESP_LOGI(
+          "GATTS_TAG",
+          "update connection params status = %d, min_int = %d, max_int = %d,conn_int = %d,latency = %d, timeout = %d",
+          param->update_conn_params.status, param->update_conn_params.min_int, param->update_conn_params.max_int,
+          param->update_conn_params.conn_int, param->update_conn_params.latency, param->update_conn_params.timeout);
       break;
     default:
       break;

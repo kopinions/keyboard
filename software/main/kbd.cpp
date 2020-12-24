@@ -94,19 +94,19 @@ extern "C" void app_main() {
         0x180f,
         profile{
             0x180f, [](esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param) -> void {
-              std::cout << "test" << std::endl;
               switch (event) {
                 case ESP_GATTS_REG_EVT: {
-                  //#define GATTS_SERVICE_UUID_TEST_A   0x00FF
+#define GATTS_SERVICE_UUID_TEST_A 0x00FF
+#define GATTS_NUM_HANDLE_TEST_A 4
                   ESP_LOGI("GATTS_TAG", "REGISTER_APP_EVT, status %d, app_id %d\n", param->reg.status,
                            param->reg.app_id);
                   //              gl_profile_tab[PROFILE_A_APP_ID].service_id.is_primary = true;
                   //              gl_profile_tab[PROFILE_A_APP_ID].service_id.id.inst_id = 0x00;
                   //              gl_profile_tab[PROFILE_A_APP_ID].service_id.id.uuid.len = ESP_UUID_LEN_16;
                   //              gl_profile_tab[PROFILE_A_APP_ID].service_id.id.uuid.uuid.uuid16 =
-                  //              GATTS_SERVICE_UUID_TEST_A;
+                  //                                GATTS_SERVICE_UUID_TEST_A;
 
-                  esp_err_t set_dev_name_ret = esp_ble_gap_set_device_name("xxxx");
+                  esp_err_t set_dev_name_ret = esp_ble_gap_set_device_name("test_esp32");
                   if (set_dev_name_ret) {
                     ESP_LOGE(GATTS_TAG, "set device name failed, error code = %x", set_dev_name_ret);
                   }
@@ -121,11 +121,11 @@ extern "C" void app_main() {
                     ESP_LOGE(GATTS_TAG, "config scan response data failed, error code = %x", ret);
                   }
                   esp_gatt_srvc_id_t service_id;
+                  service_id.is_primary = true;
                   service_id.id.inst_id = 0x00;
                   service_id.id.uuid.len = ESP_UUID_LEN_16;
-                  service_id.id.uuid.uuid.uuid16 =
-#define GATTS_NUM_HANDLE_TEST_A 4
-                      esp_ble_gatts_create_service(gatts_if, &service_id, GATTS_NUM_HANDLE_TEST_A);
+                  service_id.id.uuid.uuid.uuid16 = GATTS_SERVICE_UUID_TEST_A;
+                  esp_ble_gatts_create_service(gatts_if, &service_id, GATTS_NUM_HANDLE_TEST_A);
                   break;
                 }
                 case ESP_GATTS_READ_EVT: {
