@@ -23,11 +23,12 @@
 class profile {
  public:
   using identifiable = uint16_t;
-  explicit profile(const identifiable& id,
-                   std::function<void(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*)> p)
+  explicit profile(
+      const identifiable& id,
+      std::function<void(profile& p, esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*)> p)
       : m_id{id}, m_handler{p} {};
   void notified(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param) {
-    m_handler(event, gatts_if, param);
+    m_handler(*this, event, gatts_if, param);
   };
 
   profile(const profile& o) {
@@ -36,16 +37,24 @@ class profile {
     conn_id = o.conn_id;
     m_handler = o.m_handler;
   };
+
   profile& operator=(const profile&) = delete;
 
+  esp_gatt_srvc_id_t service_id;
   uint16_t gatts_if;
   uint16_t conn_id;
+  uint16_t service_handle;
+  esp_bt_uuid_t char_uuid;
+  uint16_t char_handle;
+  uint16_t descr_handle;
+  esp_bt_uuid_t descr_uuid;
 
   [[nodiscard]] const identifiable& id() const { return m_id; }
 
  private:
   identifiable m_id;
-  std::function<void(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*)> m_handler;
+  std::function<void(profile& p, esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*)>
+      m_handler;
 };
 
 class profile_repository : public repository<profile> {
