@@ -2,6 +2,7 @@
 
 #include "esp_if.hpp"
 #include "ible/ble.hpp"
+#include "ihid.hpp"
 #include "keyboard.hpp"
 #include "matrix.hpp"
 #include "supporting/mapping.hpp"

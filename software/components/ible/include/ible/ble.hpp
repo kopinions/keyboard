@@ -19,7 +19,7 @@
 
 #include "logger.hpp"
 #include "repository.hpp"
-
+namespace bt {
 class profile {
  public:
   using identifiable = uint16_t;
@@ -87,4 +87,6 @@ class ble {
   static bool secure;
   static std::shared_ptr<profile_repository> m_profiles;
 };
+}  // namespace ble
+
 #endif /* IBLE_HPP */

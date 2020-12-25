@@ -8,12 +8,12 @@
 #include <memory>
 #include <string_view>
 constexpr std::string_view LOGGER_TAG = "ble";
-bool ble::secure = false;
-std::shared_ptr<kopinions::logging::logger> ble::m_logger = std::shared_ptr<kopinions::logging::logger>{};
+bool bt::ble::secure = false;
+std::shared_ptr<kopinions::logging::logger> bt::ble::m_logger = std::shared_ptr<kopinions::logging::logger>{};
 
-std::shared_ptr<profile_repository> ble::m_profiles = std::make_shared<profile_repository>();
+std::shared_ptr<bt::profile_repository> bt::ble::m_profiles = std::make_shared<profile_repository>();
 
-ble::ble(std::shared_ptr<kopinions::logging::logger> lg) {
+bt::ble::ble(std::shared_ptr<kopinions::logging::logger> lg) {
   m_logger = lg;
   // Initialize NVS.
 
@@ -67,7 +67,7 @@ ble::ble(std::shared_ptr<kopinions::logging::logger> lg) {
   //
   //  esp_ble_gatts_register_callback(ble::gatts_event_handler);
 }
-void ble::enable() {}
+void bt::ble::enable() {}
 
 /** @brief Advertising parameters */
 static esp_ble_adv_params_t hidd_adv_params = {
@@ -92,7 +92,7 @@ static esp_ble_adv_params_t adv_params = {
     .adv_filter_policy = ADV_FILTER_ALLOW_SCAN_ANY_CON_ANY,
 };
 
-void ble::gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t* param) {
+void bt::ble::gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t* param) {
   m_logger->info("%s", "gap event handler");
   static uint8_t adv_config_done = 0;
   constexpr uint8_t adv_config_flag = (1 << 0);
@@ -160,7 +160,7 @@ void ble::gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t
   }
 }
 
-void ble::gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param) {
+void bt::ble::gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param) {
   m_logger->info("%s", "gatt event handler");
   /* If event is register event, store the gatts_if for each profile */
   if (event == ESP_GATTS_REG_EVT) {
@@ -181,11 +181,11 @@ void ble::gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if
     }
   }
 }
-void ble::disable() {}
-void ble::reset() {}
-std::shared_ptr<profile_repository> ble::profiles() { return m_profiles; }
+void bt::ble::disable() {}
+void bt::ble::reset() {}
+std::shared_ptr<bt::profile_repository> bt::ble::profiles() { return m_profiles; }
 
-void ble::register_profile(profile::identifiable id, const profile& p) {
+void bt::ble::register_profile(profile::identifiable id, const profile& p) {
   m_profiles->create(id, p);
 
   if (esp_ble_gatts_app_register(p.id()) != ESP_OK) {
@@ -198,17 +198,17 @@ void ble::register_profile(profile::identifiable id, const profile& p) {
   }
 }
 
-void profile_repository::create(const unsigned short& id, const profile& p) {
+void bt::profile_repository::create(const unsigned short& id, const profile& p) {
   m_profiles[id] = std::make_shared<profile>(p);
 }
-std::shared_ptr<profile> profile_repository::find(const uint16_t& id) const {
+std::shared_ptr<bt::profile> bt::profile_repository::find(const uint16_t& id) const {
   if (m_profiles.find(id) != m_profiles.end()) {
     return m_profiles.at(id);
   }
 
   return std::shared_ptr<profile>{};
 }
-std::vector<std::shared_ptr<profile>> profile_repository::all() const {
+std::vector<std::shared_ptr<bt::profile>> bt::profile_repository::all() const {
   std::vector<std::shared_ptr<profile>> values;
   for (auto p : m_profiles) {
     values.emplace_back(p.second);
