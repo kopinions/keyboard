@@ -1,8 +1,18 @@
 #pragma once
 
 namespace hid {
+/// Maximal number of Report Char. that can be added in the DB for one HIDS - Up to 11
+#define HIDD_LE_NB_REPORT_INST_MAX (5)
+
+/// Maximal length of Report Char. Value
+#define HIDD_LE_REPORT_MAX_LEN (255)
+/// Maximal length of Report Map Char. Value
+#define HIDD_LE_REPORT_MAP_MAX_LEN (512)
+
+/// Length of Boot Report Char. Value Maximal Length
+#define HIDD_LE_BOOT_REPORT_MAX_LEN (8)
 /// HIDD Features structure
-struct feature {
+struct feature_t {
   /// Service Features
   uint8_t svc_features;
   /// Number of Report Char. instances to add in the database
@@ -10,6 +20,8 @@ struct feature {
   /// Report Char. Configuration
   uint8_t report_char_cfg[HIDD_LE_NB_REPORT_INST_MAX];
 };
+
+enum { GENERIC = 0, KEYBOARD = 1, MOUSE = 2, JOYSTICK = 4, GAMEPAD = 8, TABLET = 16, CCONTROL = 32, VENDOR = 64 } usage_t;
 
 struct connection {
   uint16_t id;
@@ -26,14 +38,31 @@ enum report_mode {
   REPORT,
 };
 
+typedef struct {
+  esp_hid_usage_t usage;              /*!< Dominant HID usage. (keyboard > mouse > joystick > gamepad > generic) */
+  uint16_t appearance;                /*!< Calculated HID Appearance based on the dominant usage */
+  uint8_t reports_len;                /*!< Number of reports discovered in the report map */
+  esp_hid_report_item_t *reports;     /*!< Reports discovered in the report map */
+} report_map_t;
+
 struct report {
   uint16_t handle;  // Handle of report characteristic
   // Client Characteristic Configuration Descriptor
   uint16_t cccdHandle;  // Handle of CCCD for report characteristic
   uint8_t id;           // Report ID
   uint8_t type;         // Report type
+  usage_t usage;        // usage
   report_mode mode;     // Protocol mode (report or boot)
 } report;
+
+typedef struct {
+  esp_hid_raw_report_map_t    reports_map;
+  uint8_t                     reports_len;
+  hidd_le_report_item_t      *reports;
+  hidd_le_service_t           hid_svc;
+  uint16_t                    hid_control_handle;
+  uint16_t                    hid_protocol_handle;
+} hidd_dev_map_t;
 
 struct application {
   uint8_t id;
@@ -42,7 +71,7 @@ struct application {
   /// Attribute handle Table
   uint16_t att_tbl[HIDD_LE_IDX_NB];
   /// Supported Features
-  hid::feature features[HIDD_LE_NB_HIDS_INST_MAX];
+  hid::feature_t features[HIDD_LE_NB_HIDS_INST_MAX];
   /// Current Protocol Mode
   uint8_t proto_mode[HIDD_LE_NB_HIDS_INST_MAX];
   /// Number of HIDS added in the database
@@ -60,24 +89,31 @@ struct information {
   uint8_t flags;
 };
 
-typedef enum {
-  ESP_HIDD_EVENT_REG_FINISH = 0,
-  ESP_BAT_EVENT_REG,
-  ESP_HIDD_EVENT_DEINIT_FINISH,
-  ESP_HIDD_EVENT_BLE_CONNECT,
-  ESP_HIDD_EVENT_BLE_DISCONNECT,
-  ESP_HIDD_EVENT_BLE_VENDOR_REPORT_WRITE_EVT,
-} esp_hidd_cb_event_t;
+enum event_type { ANY, STARTED, CONNECTED, PROTOCOL_MODE, CONTROL, OUTPUT, FEATURE, DISCONNECTED, STOPPED };
 
-class processor {
+struct connected {};
+
+struct started {};
+
+struct disconnected {};
+
+struct protocol {};
+
+struct control {};
+
+struct output {};
+
+struct feature_t {};
+
+struct stopped {};
+
+#include <variant>
+using event_payload = std::variant<started, connected, protocol, control, output, feature_t, disconnected, stopped>;
+
+class event {
  public:
-  std::vector<connection> connections;
-  esp_gatt_if_t gatt_if;
-  bool enabled;
-  bool is_take;
-  bool is_primary;
-  hid::application app;
-  uint8_t inst_id;
+  using type = event_type;
+  using payload = event_payload;
 };
 
 }  // namespace hid

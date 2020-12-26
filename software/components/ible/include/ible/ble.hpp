@@ -20,6 +20,28 @@
 #include "logger.hpp"
 #include "repository.hpp"
 namespace bt {
+
+class characteristic_t {};
+
+class service_t {
+ public:
+  esp_gatt_if_t gatt_if;
+  uint16_t handle;
+
+  std::vector<characteristic_t> characteristics(){
+
+  };
+};
+
+typedef union {
+  struct {
+    uint16_t notify_enable : 1;
+    uint16_t indicate_enable : 1;
+    uint16_t reserved : 14;
+  };
+  uint16_t value;
+} ccc_value_t;
+
 class profile {
  public:
   using identifiable = uint16_t;
@@ -87,6 +109,6 @@ class ble {
   static bool secure;
   static std::shared_ptr<profile_repository> m_profiles;
 };
-}  // namespace ble
+}  // namespace bt
 
 #endif /* IBLE_HPP */
