@@ -5,9 +5,9 @@
 #include "ihid.hpp"
 #include "keyboard.hpp"
 #include "matrix.hpp"
+#include "object.hpp"
 #include "supporting/mapping.hpp"
 #include "transports.hpp"
-#include "object.hpp"
 
 using namespace kopinions;
 using namespace kopinions::logging;
@@ -107,9 +107,9 @@ extern "C" void app_main() {
     const std::shared_ptr<bt::ble>& b = std::make_shared<bt::ble>(lg);
     b->register_profile(
         0x180f,
-        bt::profile{
+        bt::profile_t{
             0x180f,
-            [](bt::profile& p, esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
+            [](bt::profile_t& p, esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
                esp_ble_gatts_cb_param_t* param) -> void {
               switch (event) {
                 case ESP_GATTS_REG_EVT: {
@@ -306,7 +306,6 @@ extern "C" void app_main() {
                   break;
               }
             }});
-
 
     while (true) {
       lg->log(level::DEBUG, "%s", "xxx1111");

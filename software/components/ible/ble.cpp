@@ -185,7 +185,7 @@ void bt::ble::disable() {}
 void bt::ble::reset() {}
 std::shared_ptr<bt::profile_repository> bt::ble::profiles() { return m_profiles; }
 
-void bt::ble::register_profile(profile::identifiable id, const profile& p) {
+void bt::ble::register_profile(profile_t::id_t id, const profile_t& p) {
   m_profiles->create(id, p);
 
   if (esp_ble_gatts_app_register(p.id()) != ESP_OK) {
@@ -198,18 +198,18 @@ void bt::ble::register_profile(profile::identifiable id, const profile& p) {
   }
 }
 
-void bt::profile_repository::create(const unsigned short& id, const profile& p) {
-  m_profiles[id] = std::make_shared<profile>(p);
+void bt::profile_repository::create(const unsigned short& id, const profile_t& p) {
+  m_profiles[id] = std::make_shared<profile_t>(p);
 }
-std::shared_ptr<bt::profile> bt::profile_repository::find(const uint16_t& id) const {
+std::shared_ptr<bt::profile_t> bt::profile_repository::find(const uint16_t& id) const {
   if (m_profiles.find(id) != m_profiles.end()) {
     return m_profiles.at(id);
   }
 
-  return std::shared_ptr<profile>{};
+  return std::shared_ptr<profile_t>{};
 }
-std::vector<std::shared_ptr<bt::profile>> bt::profile_repository::all() const {
-  std::vector<std::shared_ptr<profile>> values;
+std::vector<std::shared_ptr<bt::profile_t>> bt::profile_repository::all() const {
+  std::vector<std::shared_ptr<profile_t>> values;
   for (auto p : m_profiles) {
     values.emplace_back(p.second);
   }

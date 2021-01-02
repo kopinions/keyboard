@@ -28,9 +28,7 @@ class service_t {
   esp_gatt_if_t gatt_if;
   uint16_t handle;
 
-  std::vector<characteristic_t> characteristics(){
-
-  };
+  std::vector<characteristic_t> characteristics() { return {}; };
 };
 
 typedef union {
@@ -42,25 +40,29 @@ typedef union {
   uint16_t value;
 } ccc_value_t;
 
-class profile {
+class profile_t {
  public:
-  using identifiable = uint16_t;
-  explicit profile(
-      const identifiable& id,
-      std::function<void(profile& p, esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*)> p)
+  using id_t = uint16_t;
+  explicit profile_t(
+      const id_t& id,
+      std::function<void(profile_t& p, esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*)>
+          p)
       : m_id{id}, m_handler{p} {};
+
   void notified(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param) {
     m_handler(*this, event, gatts_if, param);
   };
 
-  profile(const profile& o) {
+  std::vector<service_t> services() { return {}; }
+
+  profile_t(const profile_t& o) {
     gatts_if = o.gatts_if;
     m_id = o.m_id;
     conn_id = o.conn_id;
     m_handler = o.m_handler;
   };
 
-  profile& operator=(const profile&) = delete;
+  profile_t& operator=(const profile_t&) = delete;
 
   esp_gatt_srvc_id_t service_id;
   uint16_t gatts_if;
@@ -71,24 +73,24 @@ class profile {
   uint16_t descr_handle;
   esp_bt_uuid_t descr_uuid;
 
-  [[nodiscard]] const identifiable& id() const { return m_id; }
+  [[nodiscard]] const id_t& id() const { return m_id; }
 
  private:
-  identifiable m_id;
-  std::function<void(profile& p, esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*)>
+  id_t m_id;
+  std::function<void(profile_t& p, esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*)>
       m_handler;
 };
 
-class profile_repository : public repository<profile> {
+class profile_repository : public repository<profile_t> {
  public:
-  void create(const id_t& id, const profile& p) override;
-  [[nodiscard]] std::shared_ptr<profile> find(const id_t& id) const override;
+  void create(const id_t& id, const profile_t& p) override;
+  [[nodiscard]] std::shared_ptr<profile_t> find(const id_t& id) const override;
 
-  [[nodiscard]] std::vector<std::shared_ptr<profile>> all() const;
+  [[nodiscard]] std::vector<std::shared_ptr<profile_t>> all() const;
   ~profile_repository() override = default;
 
  private:
-  std::map<id_t, std::shared_ptr<profile>> m_profiles;
+  std::map<id_t, std::shared_ptr<profile_t>> m_profiles;
 };
 
 class ble {
@@ -101,7 +103,7 @@ class ble {
   static void gap_event_handler(esp_gap_ble_cb_event_t, esp_ble_gap_cb_param_t*);
   static void gatts_event_handler(esp_gatts_cb_event_t, esp_gatt_if_t, esp_ble_gatts_cb_param_t*);
 
-  void register_profile(profile::identifiable id, const profile& p);
+  void register_profile(profile_t::id_t id, const profile_t& p);
   static std::shared_ptr<profile_repository> profiles();
 
  private:

@@ -21,7 +21,16 @@ struct feature_t {
   uint8_t report_char_cfg[HIDD_LE_NB_REPORT_INST_MAX];
 };
 
-enum { GENERIC = 0, KEYBOARD = 1, MOUSE = 2, JOYSTICK = 4, GAMEPAD = 8, TABLET = 16, CCONTROL = 32, VENDOR = 64 } usage_t;
+enum usage_t {
+  GENERIC = 0,
+  KEYBOARD = 1,
+  MOUSE = 2,
+  JOYSTICK = 4,
+  GAMEPAD = 8,
+  TABLET = 16,
+  CCONTROL = 32,
+  VENDOR = 64
+};
 
 struct connection {
   uint16_t id;
@@ -39,13 +48,13 @@ enum report_mode {
 };
 
 typedef struct {
-  esp_hid_usage_t usage;              /*!< Dominant HID usage. (keyboard > mouse > joystick > gamepad > generic) */
-  uint16_t appearance;                /*!< Calculated HID Appearance based on the dominant usage */
-  uint8_t reports_len;                /*!< Number of reports discovered in the report map */
-  esp_hid_report_item_t *reports;     /*!< Reports discovered in the report map */
+  usage_t usage;       /*!< Dominant HID usage. (keyboard > mouse > joystick > gamepad > generic) */
+  uint16_t appearance; /*!< Calculated HID Appearance based on the dominant usage */
+  uint8_t reports_len; /*!< Number of reports discovered in the report map */
+  //  report_item_t *reports; /*!< Reports discovered in the report map */
 } report_map_t;
 
-struct report {
+struct report_t {
   uint16_t handle;  // Handle of report characteristic
   // Client Characteristic Configuration Descriptor
   uint16_t cccdHandle;  // Handle of CCCD for report characteristic
@@ -56,12 +65,12 @@ struct report {
 } report;
 
 typedef struct {
-  esp_hid_raw_report_map_t    reports_map;
-  uint8_t                     reports_len;
-  hidd_le_report_item_t      *reports;
-  hidd_le_service_t           hid_svc;
-  uint16_t                    hid_control_handle;
-  uint16_t                    hid_protocol_handle;
+  //  esp_hid_raw_report_map_t reports_map;
+  uint8_t reports_len;
+  //  hidd_le_report_item_t *reports;
+  //  hidd_le_service_t hid_svc;
+  uint16_t hid_control_handle;
+  uint16_t hid_protocol_handle;
 } hidd_dev_map_t;
 
 struct application {
@@ -69,11 +78,11 @@ struct application {
   /// Notified handle
   uint16_t ntf_handle;
   /// Attribute handle Table
-  uint16_t att_tbl[HIDD_LE_IDX_NB];
+  //  uint16_t att_tbl[HIDD_LE_IDX_NB];
   /// Supported Features
-  hid::feature_t features[HIDD_LE_NB_HIDS_INST_MAX];
+  //  hid::feature_t features[HIDD_LE_NB_HIDS_INST_MAX];
   /// Current Protocol Mode
-  uint8_t proto_mode[HIDD_LE_NB_HIDS_INST_MAX];
+  //  uint8_t proto_mode[HIDD_LE_NB_HIDS_INST_MAX];
   /// Number of HIDS added in the database
   uint8_t hids_nb;
   uint8_t pending_evt;
@@ -88,32 +97,4 @@ struct information {
   uint8_t country_code;
   uint8_t flags;
 };
-
-enum event_type { ANY, STARTED, CONNECTED, PROTOCOL_MODE, CONTROL, OUTPUT, FEATURE, DISCONNECTED, STOPPED };
-
-struct connected {};
-
-struct started {};
-
-struct disconnected {};
-
-struct protocol {};
-
-struct control {};
-
-struct output {};
-
-struct feature_t {};
-
-struct stopped {};
-
-#include <variant>
-using event_payload = std::variant<started, connected, protocol, control, output, feature_t, disconnected, stopped>;
-
-class event {
- public:
-  using type = event_type;
-  using payload = event_payload;
-};
-
 }  // namespace hid
