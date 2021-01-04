@@ -10,7 +10,7 @@ add_custom_target(format
 
 add_custom_target(format-changed ALL
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-        COMMAND git status -s --porcelain=v2 |awk '{print $$NF}' | grep -E "\\.cpp\\|\\.hpp" | xargs clang-format -i)
+        COMMAND git status -s --porcelain=v2 | awk '$$2 !~ /D.*/ {print $$NF}'| grep -E "\\.cpp\\|\\.hpp" |xargs clang-format -i)
 
 add_custom_target(ptests
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tests/portables

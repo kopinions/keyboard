@@ -1,10 +1,27 @@
 #pragma once
 
+#include <functional>
+
 template <typename T>
-class repository {
+class repository_t {
  public:
   using id_t = typename T::id_t;
-  virtual void create(const id_t&, const T&) = 0;
-  virtual std::shared_ptr<T> find(const id_t&) const = 0;
-  virtual ~repository() = default;
+
+  virtual T& create(const T& t) {
+    m_entities[t.id()] = t;
+    return m_entities[t.id()];
+  };
+
+  virtual T& of(const id_t& id) { return m_entities[id]; };
+
+  virtual void foreach (std::function<void(T&)> f) {
+    for (auto& [k, v] : m_entities) {
+      f(v);
+    }
+  }
+
+  virtual ~repository_t() = default;
+
+ private:
+  std::map<id_t, T> m_entities;
 };

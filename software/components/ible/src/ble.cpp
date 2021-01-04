@@ -11,8 +11,6 @@ constexpr std::string_view LOGGER_TAG = "ble";
 bool bt::ble::secure = false;
 std::shared_ptr<kopinions::logging::logger> bt::ble::m_logger = std::shared_ptr<kopinions::logging::logger>{};
 
-std::shared_ptr<bt::profile_repository> bt::ble::m_profiles = std::make_shared<profile_repository>();
-
 bt::ble::ble(std::shared_ptr<kopinions::logging::logger> lg) {
   m_logger = lg;
   // Initialize NVS.
@@ -62,10 +60,6 @@ bt::ble::ble(std::shared_ptr<kopinions::logging::logger> lg) {
     ESP_LOGE("GATTS_TAG", "gap register error, error code = %x", ret);
     return;
   }
-
-  //  esp_ble_gap_register_callback(ble::gap_event_handler);
-  //
-  //  esp_ble_gatts_register_callback(ble::gatts_event_handler);
 }
 void bt::ble::enable() {}
 
@@ -162,61 +156,38 @@ void bt::ble::gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_par
 
 void bt::ble::gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param) {
   m_logger->info("%s", "gatt event handler");
-  /* If event is register event, store the gatts_if for each profile */
+  static std::map<esp_gatt_if_t, application_t::id_t> gatt_ifs;
   if (event == ESP_GATTS_REG_EVT) {
     if (param->reg.status == ESP_GATT_OK) {
-      for (const auto& p : profiles()->all()) {
-        for (auto svc : p->services()) {
-          if (svc.id() == param->reg.app_id) {
-            svc.registered(gatts_if);
-          }
+      apps()->foreach ([&param, &gatts_if](auto& app) {
+        if (app.id() == param->reg.app_id) {
+          gatt_ifs[gatts_if] = app.id();
         }
-      }
+      });
     } else {
       m_logger->error("Reg app failed, app_id %04x, status %d\n", param->reg.app_id, param->reg.status);
       return;
     }
   }
 
-  for (const auto& p : profiles()->all()) {
-    if (gatts_if == ESP_GATT_IF_NONE || gatts_if == p->gatts_if) {
-      p->notified(event, gatts_if, param);
-    }
-  }
+  apps()->of(gatt_ifs[gatts_if]).notified(event, param);
 }
 void bt::ble::disable() {}
 void bt::ble::reset() {}
-std::shared_ptr<bt::profile_repository> bt::ble::profiles() { return m_profiles; }
 
-void bt::ble::register_profile(profile_t::id_t id, const profile_t& p) {
-  m_profiles->create(id, p);
+void bt::ble::enroll(const bt::application_t& app) {
+  if (esp_ble_gatts_app_register(app.id()) != ESP_OK) {
+    m_logger->error("%s: %s Register App failed", LOGGER_TAG, __func__);
 
-  for (auto svc : p.services()) {
-    if (esp_ble_gatts_app_register(svc.id()) != ESP_OK) {
-      m_logger->error("%s: %s Register App failed", LOGGER_TAG, __func__);
-
-      if (esp_bluedroid_get_status() != ESP_BLUEDROID_STATUS_ENABLED) {
-        m_logger->error("%s: %s blue droid status error", LOGGER_TAG, __func__);
-      }
-      return;
+    if (esp_bluedroid_get_status() != ESP_BLUEDROID_STATUS_ENABLED) {
+      m_logger->error("%s: %s blue droid status error", LOGGER_TAG, __func__);
     }
+    return;
   }
 }
 
-void bt::profile_repository::create(const unsigned short& id, const profile_t& p) {
-  m_profiles[id] = std::make_shared<profile_t>(p);
-}
-std::shared_ptr<bt::profile_t> bt::profile_repository::find(const uint16_t& id) const {
-  if (m_profiles.find(id) != m_profiles.end()) {
-    return m_profiles.at(id);
-  }
+std::shared_ptr<repository_t<bt::application_t>> bt::ble::apps() {
+  static std::shared_ptr<repository_t<application_t>> m_apps = std::make_shared<repository_t<application_t>>();
 
-  return std::shared_ptr<profile_t>{};
-}
-std::vector<std::shared_ptr<bt::profile_t>> bt::profile_repository::all() const {
-  std::vector<std::shared_ptr<profile_t>> values;
-  for (auto p : m_profiles) {
-    values.emplace_back(p.second);
-  }
-  return values;
+  return m_apps;
 }
