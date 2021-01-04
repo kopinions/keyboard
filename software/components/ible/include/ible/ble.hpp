@@ -20,15 +20,21 @@
 #include "logger.hpp"
 #include "repository.hpp"
 namespace bt {
-
+using uuid_t = std::uint16_t;
 class characteristic_t {};
 
 class service_t {
  public:
+  void registered(esp_gatt_if_t i) { gatt_if = i; }
+  std::vector<characteristic_t> characteristics() { return {}; };
+  [[nodiscard]] uuid_t id() const { return m_id; }
+
+  void notified(esp_gatts_cb_event_t param, esp_gatt_if_t i, esp_ble_gatts_cb_param_t* ptr) {}
+
+ private:
   esp_gatt_if_t gatt_if;
   uint16_t handle;
-
-  std::vector<characteristic_t> characteristics() { return {}; };
+  uuid_t m_id;
 };
 
 typedef union {
@@ -53,7 +59,7 @@ class profile_t {
     m_handler(*this, event, gatts_if, param);
   };
 
-  std::vector<service_t> services() { return {}; }
+  std::vector<service_t> services() const { return {}; }
 
   profile_t(const profile_t& o) {
     gatts_if = o.gatts_if;

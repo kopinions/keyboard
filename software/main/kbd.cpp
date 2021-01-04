@@ -1,7 +1,7 @@
 #include <cstring>
 
 #include "esp_if.hpp"
-#include "ible/ble.hpp"
+#include "ible.hpp"
 #include "ihid.hpp"
 #include "keyboard.hpp"
 #include "matrix.hpp"

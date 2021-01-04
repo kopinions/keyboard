@@ -165,9 +165,12 @@ void bt::ble::gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatt
   /* If event is register event, store the gatts_if for each profile */
   if (event == ESP_GATTS_REG_EVT) {
     if (param->reg.status == ESP_GATT_OK) {
-      auto ptr = profiles()->find(param->reg.app_id);
-      if (ptr != nullptr) {
-        ptr->gatts_if = gatts_if;
+      for (const auto& p : profiles()->all()) {
+        for (auto svc : p->services()) {
+          if (svc.id() == param->reg.app_id) {
+            svc.registered(gatts_if);
+          }
+        }
       }
     } else {
       m_logger->error("Reg app failed, app_id %04x, status %d\n", param->reg.app_id, param->reg.status);
@@ -188,13 +191,15 @@ std::shared_ptr<bt::profile_repository> bt::ble::profiles() { return m_profiles;
 void bt::ble::register_profile(profile_t::id_t id, const profile_t& p) {
   m_profiles->create(id, p);
 
-  if (esp_ble_gatts_app_register(p.id()) != ESP_OK) {
-    m_logger->error("%s: %s Register App failed", LOGGER_TAG, __func__);
+  for (auto svc : p.services()) {
+    if (esp_ble_gatts_app_register(svc.id()) != ESP_OK) {
+      m_logger->error("%s: %s Register App failed", LOGGER_TAG, __func__);
 
-    if (esp_bluedroid_get_status() != ESP_BLUEDROID_STATUS_ENABLED) {
-      m_logger->error("%s: %s blue droid status error", LOGGER_TAG, __func__);
+      if (esp_bluedroid_get_status() != ESP_BLUEDROID_STATUS_ENABLED) {
+        m_logger->error("%s: %s blue droid status error", LOGGER_TAG, __func__);
+      }
+      return;
     }
-    return;
   }
 }
 
