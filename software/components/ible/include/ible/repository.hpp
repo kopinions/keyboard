@@ -5,16 +5,17 @@
 template <typename T>
 class repository_t {
  public:
-  using id_t = typename T::id_t;
+  using id_t = typename std::conditional_t<std::is_pointer_v<T>, std::remove_pointer_t<T>, T>::id_t;
 
-  virtual T& create(const T& t) {
-    m_entities[t.id()] = t;
-    return m_entities[t.id()];
+  template <typename... Args>
+  T* create(id_t id, Args... args) {
+    m_entities[id] = new T{id, std::forward<Args>(args)...};
+    return m_entities[id];
   };
 
-  virtual T& of(const id_t& id) { return m_entities[id]; };
+  virtual T* of(const id_t& id) { return m_entities[id]; };
 
-  virtual void foreach (std::function<void(T&)> f) {
+  virtual void foreach (std::function<void(T*)> f) {
     for (auto& [k, v] : m_entities) {
       f(v);
     }
@@ -23,5 +24,5 @@ class repository_t {
   virtual ~repository_t() = default;
 
  private:
-  std::map<id_t, T> m_entities;
+  std::map<id_t, T*> m_entities;
 };

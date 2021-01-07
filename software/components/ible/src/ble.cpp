@@ -3,7 +3,6 @@
 #include <nvs_flash.h>
 
 #include <cstring>
-#include <functional>
 #include <map>
 #include <memory>
 #include <string_view>
@@ -159,9 +158,9 @@ void bt::ble::gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatt
   static std::map<esp_gatt_if_t, application_t::id_t> gatt_ifs;
   if (event == ESP_GATTS_REG_EVT) {
     if (param->reg.status == ESP_GATT_OK) {
-      apps()->foreach ([&param, &gatts_if](auto& app) {
-        if (app.id() == param->reg.app_id) {
-          gatt_ifs[gatts_if] = app.id();
+      apps()->foreach ([&param, &gatts_if](auto* app) {
+        if (app->id() == param->reg.app_id) {
+          gatt_ifs[gatts_if] = app->id();
         }
       });
     } else {
@@ -170,7 +169,7 @@ void bt::ble::gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatt
     }
   }
 
-  apps()->of(gatt_ifs[gatts_if]).notified(event, param);
+  apps()->of(gatt_ifs[gatts_if])->notified(event, param);
 }
 void bt::ble::disable() {}
 void bt::ble::reset() {}
