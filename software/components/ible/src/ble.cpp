@@ -169,7 +169,7 @@ void bt::ble::gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatt
     }
   }
 
-  apps()->of(gatt_ifs[gatts_if])->notified(event, param);
+  apps()->of(gatt_ifs[gatts_if])->notified(event_t{});
 }
 void bt::ble::disable() {}
 void bt::ble::reset() {}

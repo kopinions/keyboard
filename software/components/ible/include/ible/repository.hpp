@@ -1,6 +1,8 @@
 #pragma once
 
 #include <functional>
+#include <map>
+#include <type_traits>
 
 template <typename T>
 class repository_t {

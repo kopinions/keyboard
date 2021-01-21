@@ -1,4 +1,4 @@
-idf_component_register(SRCS "src/ble.cpp"
+idf_component_register(SRCS src/ble.cpp src/specification.cpp
         INCLUDE_DIRS "include"
         REQUIRES vif esp_if bt)
 
