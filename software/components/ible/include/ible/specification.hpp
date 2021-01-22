@@ -93,6 +93,8 @@ class profile_t : public visitable_t<visitor_t<profile_t>> {
 
   profile_t& operator=(const profile_t&) { return *this; };
 
+  virtual ~profile_t();
+
   esp_gatt_srvc_id_t service_id;
   uint16_t gatts_if;
   uint16_t conn_id;
@@ -122,12 +124,40 @@ class event_t {
 class application_t {
  public:
   using id_t = uint16_t;
+
+  class builder_t : public std::enable_shared_from_this<application_t::builder_t> {
+   public:
+    builder_t(std::string app_name) : m_app_name(std::move(app_name)) {}
+
+    static std::shared_ptr<application_t::builder_t> name(const std::string& name) {
+      return std::make_shared<application_t::builder_t>(name);
+    }
+
+    std::shared_ptr<application_t::builder_t> id(id_t id) {
+      m_id = id;
+      return shared_from_this();
+    }
+
+    std::shared_ptr<application_t::builder_t> profile(bt::profile_t pf) {
+      m_profiles.push_back(pf);
+      return shared_from_this();
+    }
+
+    application_t build() { return application_t{m_id}; };
+
+   private:
+    std::string m_app_name;
+    std::vector<profile_t> m_profiles;
+    id_t m_id;
+  };
+
   virtual id_t id() const { return m_id; }
   virtual id_t id() { return m_id; }
   explicit application_t(id_t id);
 
   application_t(const application_t&);
-  application_t(application_t&&) noexcept ;
+  application_t(application_t&&) noexcept;
+  virtual ~application_t();
 
   virtual std::vector<profile_t> profiles() { return {}; }
 
@@ -141,6 +171,8 @@ class application_t {
   std::shared_ptr<repository_t<profile_t>> m_profiles;
   std::shared_ptr<kopinions::logging::logger> m_logger;
 };
+
+enum appearance_t : uint16_t { KEYBOARD = 0x3C1 };
 
 class topic {
  public:

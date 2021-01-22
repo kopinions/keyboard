@@ -14,6 +14,11 @@ class repository_t {
     return m_entities[id];
   };
 
+  T* create(T t) {
+    m_entities[t.id()] = new T{t};
+    return m_entities[t.id()];
+  };
+
   virtual T* of(const id_t& id) { return m_entities[id]; };
 
   virtual void foreach (std::function<void(T*)> f) {
@@ -22,7 +27,13 @@ class repository_t {
     }
   }
 
-  virtual ~repository_t() = default;
+  virtual ~repository_t() {
+    for (auto& [k, v] : m_entities) {
+      if (v) {
+        delete v;
+      }
+    }
+  };
 
  private:
   std::map<id_t, T*> m_entities;

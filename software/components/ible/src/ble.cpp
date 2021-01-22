@@ -62,18 +62,6 @@ bt::ble::ble(std::shared_ptr<kopinions::logging::logger> lg) {
 }
 void bt::ble::enable() {}
 
-/** @brief Advertising parameters */
-static esp_ble_adv_params_t hidd_adv_params = {
-    .adv_int_min = 0x20,
-    .adv_int_max = 0x30,
-    .adv_type = ADV_TYPE_IND,
-    .own_addr_type = BLE_ADDR_TYPE_PUBLIC,
-    //.peer_addr            =
-    //.peer_addr_type       =
-    .channel_map = ADV_CHNL_ALL,
-    .adv_filter_policy = ADV_FILTER_ALLOW_SCAN_ANY_CON_ANY,
-};
-
 static esp_ble_adv_params_t adv_params = {
     .adv_int_min = 0x20,
     .adv_int_max = 0x40,
@@ -175,7 +163,7 @@ void bt::ble::disable() {}
 void bt::ble::reset() {}
 
 void bt::ble::enroll(const bt::application_t& app) {
-  apps()->create(app.id());
+  apps()->create(app);
   if (esp_ble_gatts_app_register(app.id()) != ESP_OK) {
     m_logger->error("%s: %s Register App failed", LOGGER_TAG, __func__);
 
