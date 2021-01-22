@@ -175,6 +175,7 @@ void bt::ble::disable() {}
 void bt::ble::reset() {}
 
 void bt::ble::enroll(const bt::application_t& app) {
+  apps()->create(app.id());
   if (esp_ble_gatts_app_register(app.id()) != ESP_OK) {
     m_logger->error("%s: %s Register App failed", LOGGER_TAG, __func__);
 

@@ -27,6 +27,10 @@ extern "C" void app_main() {
     //    const std::shared_ptr<endpoint>& ep = std::make_shared<endpoint>();
     const std::shared_ptr<bt::ble>& b = std::make_shared<bt::ble>(lg);
 
+    bt::application_t app{0x0001};
+    app.enroll();
+    b->enroll(app);
+
     while (true) {
       lg->log(level::DEBUG, "%s", "xxx1111");
 

@@ -8,7 +8,6 @@ template <typename T>
 class repository_t {
  public:
   using id_t = typename std::conditional_t<std::is_pointer_v<T>, std::remove_pointer_t<T>, T>::id_t;
-
   template <typename... Args>
   T* create(id_t id, Args... args) {
     m_entities[id] = new T{id, std::forward<Args>(args)...};

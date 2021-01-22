@@ -124,17 +124,21 @@ class application_t {
   using id_t = uint16_t;
   virtual id_t id() const { return m_id; }
   virtual id_t id() { return m_id; }
+  explicit application_t(id_t id);
+
+  application_t(const application_t&);
+  application_t(application_t&&) noexcept ;
 
   virtual std::vector<profile_t> profiles() { return {}; }
 
-  virtual void enroll(const profile_t& profile) { m_profiles.create(profile.id(), profile.m_handler); }
+  virtual void enroll(const profile_t& profile) { m_profiles->create(profile.id(), profile.m_handler); }
 
   void notified(event_t e);
 
  private:
   id_t m_id;
   std::unique_ptr<attribute_visitor> m_attributes;
-  repository_t<profile_t> m_profiles;
+  std::shared_ptr<repository_t<profile_t>> m_profiles;
   std::shared_ptr<kopinions::logging::logger> m_logger;
 };
 
@@ -195,6 +199,15 @@ class attribute_visitor : public visitor_t<profile_t, service_t, characteristic_
                                                             .max_length = 2,
                                                             .length = 1,
                                                             .value = nullptr}});
+
+    for (auto c : t->characteristics()) {
+      c.accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(c)>>*>(this));
+    }
+
+    esp_err_t err = m_gatt_if->create_attr_tab(m_attributes.data(), 2, 0);
+  }
+
+  void visit(characteristic_t* t) override {
     m_attributes.push_back(esp_gatts_attr_db_t{.attr_control = {.auto_rsp = ESP_GATT_AUTO_RSP},
                                                .att_desc = {.uuid_length = 2,
                                                             .uuid_p = (uint8_t*)&s_character_declaration_uuid,
@@ -202,15 +215,7 @@ class attribute_visitor : public visitor_t<profile_t, service_t, characteristic_
                                                             .max_length = 1,
                                                             .length = 1,
                                                             .value = nullptr}});
-
-    esp_err_t err = m_gatt_if->create_attr_tab(m_attributes.data(), 2, 0);
-
-    for (auto c : t->characteristics()) {
-      c.accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(c)>>*>(this));
-    }
   }
-
-  void visit(characteristic_t* t) override {}
 
   ~attribute_visitor() override {}
 
