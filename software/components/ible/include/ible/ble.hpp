@@ -28,12 +28,18 @@ class ble {
   void disable();
   void reset();
 
+ public:
+  ble(const ble&) = delete;
+  ble(ble&&) = delete;
+  ble& operator=(const ble&) = delete;
+  ble& operator=(ble&&) = delete;
+
   void enroll(const bt::application_t& app);
 
  private:
   static void gap_event_handler(esp_gap_ble_cb_event_t, esp_ble_gap_cb_param_t*);
   static void gatts_event_handler(esp_gatts_cb_event_t, esp_gatt_if_t, esp_ble_gatts_cb_param_t*);
-  static inline std::shared_ptr<repository_t<application_t>> apps();
+  static std::shared_ptr<repository_t<application_t>> apps();
 
  private:
   static std::shared_ptr<kopinions::logging::logger> m_logger;

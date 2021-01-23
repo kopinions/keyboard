@@ -2,10 +2,11 @@
 
 #include <esp_gap_ble_api.h>
 
-void bt::application_t::notified(event_t e) {
+void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
   switch (e.event) {
     case ESP_GATTS_REG_EVT: {
-      //      m_profiles->foreach ([e, this](profile_t* p) { m_attributes->visit(p); });
+      m_attributes = std::make_shared<attribute_visitor>(gatt);
+      m_profiles->foreach ([e, this](profile_t* p) { m_attributes->visit(p); });
       break;
     }
     default:
@@ -15,8 +16,16 @@ void bt::application_t::notified(event_t e) {
 
 bt::application_t::application_t(id_t id) : m_id(id) { m_profiles = std::make_shared<repository_t<bt::profile_t>>(); }
 
-bt::application_t::application_t(const bt::application_t& o) { m_profiles = o.m_profiles; }
-bt::application_t::application_t(bt::application_t&& o) { m_profiles = o.m_profiles; }
+bt::application_t::application_t(const bt::application_t& o) {
+  m_id = o.m_id;
+  m_profiles = o.m_profiles;
+  m_attributes = o.m_attributes;
+}
+bt::application_t::application_t(bt::application_t&& o) {
+  m_id = o.m_id;
+  m_profiles = o.m_profiles;
+  m_attributes = o.m_attributes;
+}
 
 bt::application_t::~application_t() {}
 

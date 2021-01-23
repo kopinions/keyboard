@@ -9,6 +9,27 @@
 #include "ible/visitor.hpp"
 #include "vif.hpp"
 namespace bt {
+
+class gatt_if_t {
+ public:
+  virtual esp_err_t create_attr_tab(const esp_gatts_attr_db_t* gatts_attr_db, uint8_t max_nb_attr,
+                                    uint8_t srvc_inst_id) = 0;
+};
+
+class esp_gatt : public gatt_if_t {
+ public:
+  explicit esp_gatt(esp_gatt_if_t gatt_if) : m_gatt_if(gatt_if) {}
+
+  esp_err_t create_attr_tab(const esp_gatts_attr_db_t* gatts_attr_db, uint8_t max_nb_attr,
+                            uint8_t srvc_inst_id) override {
+    return esp_ble_gatts_create_attr_tab(gatts_attr_db, m_gatt_if, max_nb_attr, srvc_inst_id);
+  }
+
+ private:
+  esp_gatt_if_t m_gatt_if;
+};
+
+
 using uuid_t = std::uint16_t;
 
 class attribute_visitor;
@@ -163,11 +184,11 @@ class application_t {
 
   virtual void enroll(const profile_t& profile) { m_profiles->create(profile.id(), profile.m_handler); }
 
-  void notified(event_t e);
+  void notified(std::shared_ptr<bt::gatt_if_t>, event_t e);
 
  private:
   id_t m_id;
-  std::unique_ptr<attribute_visitor> m_attributes;
+  std::shared_ptr<attribute_visitor> m_attributes;
   std::shared_ptr<repository_t<profile_t>> m_profiles;
   std::shared_ptr<kopinions::logging::logger> m_logger;
 };
@@ -188,25 +209,6 @@ static const uint16_t s_primary_service_uuid = ESP_GATT_UUID_PRI_SERVICE;
 static const uint16_t s_include_service_uuid = ESP_GATT_UUID_INCLUDE_SERVICE;
 static const uint16_t s_character_declaration_uuid = ESP_GATT_UUID_CHAR_DECLARE;
 static const uint16_t s_character_client_config_uuid = ESP_GATT_UUID_CHAR_CLIENT_CONFIG;
-
-class gatt_if_t {
- public:
-  virtual esp_err_t create_attr_tab(const esp_gatts_attr_db_t* gatts_attr_db, uint8_t max_nb_attr,
-                                    uint8_t srvc_inst_id) = 0;
-};
-
-class esp_gatt : public gatt_if_t {
- public:
-  explicit esp_gatt(esp_gatt_if_t gatt_if) : m_gatt_if(gatt_if) {}
-
-  esp_err_t create_attr_tab(const esp_gatts_attr_db_t* gatts_attr_db, uint8_t max_nb_attr,
-                            uint8_t srvc_inst_id) override {
-    return esp_ble_gatts_create_attr_tab(gatts_attr_db, m_gatt_if, max_nb_attr, srvc_inst_id);
-  }
-
- private:
-  esp_gatt_if_t m_gatt_if;
-};
 
 class attribute_visitor : public visitor_t<profile_t, service_t, characteristic_t> {
  public:
@@ -249,7 +251,7 @@ class attribute_visitor : public visitor_t<profile_t, service_t, characteristic_
                                                             .value = nullptr}});
   }
 
-  ~attribute_visitor() override {}
+  ~attribute_visitor() override = default;
 
  public:
  private:

@@ -187,6 +187,7 @@ static uint8_t adv_service_uuid128[32] = {
 void bt::ble::gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param) {
   m_logger->info("%s", "gatt event handler");
   static std::map<esp_gatt_if_t, application_t::id_t> gatt_ifs;
+  static std::map<esp_gatt_if_t, std::shared_ptr<gatt_if_t>> gatt_ifs_;
   if (event == ESP_GATTS_REG_EVT) {
     if (param->reg.status == ESP_GATT_OK) {
       esp_err_t set_dev_name_ret = esp_ble_gap_set_device_name(bt::ble::name.c_str());
@@ -248,7 +249,7 @@ void bt::ble::gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatt
     }
   }
 
-  apps()->of(gatt_ifs[gatts_if])->notified(event_t{});
+  apps()->of(gatt_ifs[gatts_if])->notified(gatt_ifs_[gatts_if], event_t{});
 }
 void bt::ble::disable() {}
 void bt::ble::reset() {}
@@ -266,7 +267,9 @@ void bt::ble::enroll(const bt::application_t& app) {
 }
 
 std::shared_ptr<repository_t<bt::application_t>> bt::ble::apps() {
-  static std::shared_ptr<repository_t<application_t>> m_apps = std::make_shared<repository_t<application_t>>();
-
+  static std::shared_ptr<repository_t<application_t>> m_apps;
+  if (m_apps == nullptr) {
+    m_apps = std::make_shared<repository_t<application_t>>();
+  }
   return m_apps;
 }

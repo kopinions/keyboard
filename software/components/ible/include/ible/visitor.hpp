@@ -6,6 +6,7 @@ template <typename TYPE>
 class visitor_t<TYPE> {
  public:
   virtual void visit(TYPE *t) = 0;
+  virtual ~visitor_t() = default;
 };
 
 template <typename T, typename... TYPES>
@@ -13,7 +14,7 @@ class visitor_t<T, TYPES...> : public visitor_t<TYPES...> {
  public:
   using visitor_t<TYPES...>::visit;
   virtual void visit(T *t) = 0;
-  virtual ~visitor_t() = 0;
+  virtual ~visitor_t() = default;
 };
 
 template <typename T>
