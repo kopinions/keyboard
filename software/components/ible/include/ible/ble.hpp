@@ -23,7 +23,7 @@
 namespace bt {
 class ble {
  public:
-  explicit ble(std::shared_ptr<kopinions::logging::logger> lg);
+  ble(std::string name, bt::appearance_t appearance, std::shared_ptr<kopinions::logging::logger> lg);
   void enable();
   void disable();
   void reset();
@@ -37,7 +37,9 @@ class ble {
 
  private:
   static std::shared_ptr<kopinions::logging::logger> m_logger;
+  static std::string name;
   static bool secure;
+  static appearance_t appearance;
 };
 }  // namespace bt
 
