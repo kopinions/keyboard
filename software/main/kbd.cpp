@@ -1,8 +1,8 @@
 #include <cstring>
 
+#include "esp_if/esp_if.hpp"
 #include "ible.hpp"
 #include "ihid.hpp"
-#include "esp_if/esp_if.hpp"
 #include "keyboard.hpp"
 #include "matrix.hpp"
 #include "object.hpp"
@@ -26,7 +26,12 @@ extern "C" void app_main() {
     auto trans = std::make_shared<transports>();
     //    const std::shared_ptr<endpoint>& ep = std::make_shared<endpoint>();
     const std::shared_ptr<bt::ble>& b = std::make_shared<bt::ble>("Chaos", bt::appearance_t::KEYBOARD, lg);
-    const bt::application_t& app = bt::application_t::builder_t::name("kbd")->id(0x0001)->build();
+    const bt::application_t& app = bt::application_t::builder_t::name("kbd")
+                                       ->id(0x0001)
+                                       ->profile([](bt::profile_t::builder_t* builder) {
+
+                                       })
+                                       ->build();
 
     b->enroll(app);
 

@@ -4,6 +4,7 @@
 
 #include <memory>
 
+#include "ible/builder.hpp"
 #include "ible/repository.hpp"
 #include "ible/specification.hpp"
 #include "ible/visitor.hpp"
@@ -28,7 +29,6 @@ class esp_gatt : public gatt_if_t {
  private:
   esp_gatt_if_t m_gatt_if;
 };
-
 
 using uuid_t = std::uint16_t;
 
@@ -91,6 +91,11 @@ class profile_t : public visitable_t<visitor_t<profile_t>> {
  public:
   using id_t = std::uint16_t;
 
+  class builder_t : ibuilder<profile_t> {
+   public:
+    profile_t build() override;
+  };
+
   explicit profile_t(
       const id_t& id,
       std::function<void(profile_t& p, esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*)>
@@ -146,7 +151,7 @@ class application_t {
  public:
   using id_t = uint16_t;
 
-  class builder_t : public std::enable_shared_from_this<application_t::builder_t> {
+  class builder_t : public ibuilder<application_t> {
    public:
     builder_t(std::string app_name) : m_app_name(std::move(app_name)) {}
 
@@ -156,12 +161,14 @@ class application_t {
 
     std::shared_ptr<application_t::builder_t> id(id_t id) {
       m_id = id;
-      return shared_from_this();
+      return shared_from(this);
     }
 
-    std::shared_ptr<application_t::builder_t> profile(bt::profile_t pf) {
-      m_profiles.push_back(pf);
-      return shared_from_this();
+    std::shared_ptr<application_t::builder_t> profile(std::function<void(profile_t::builder_t*)> consumer) {
+      auto b = new profile_t::builder_t();
+      consumer(b);
+      m_profiles.push_back(b->build());
+      return shared_from(this);
     }
 
     application_t build() { return application_t{m_id}; };
@@ -233,7 +240,7 @@ class attribute_visitor : public visitor_t<profile_t, service_t, characteristic_
     for (auto c : t->characteristics()) {
       c.accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(c)>>*>(this));
     }
-
+    std::cout << "create attribute table" << std::endl;
     esp_err_t err = m_gatt_if->create_attr_tab(m_attributes.data(), 2, 0);
     if (err) {
       std::cout << "error while attribute sevice visitor" << std::endl;

@@ -100,3 +100,7 @@ void bt::profile_t::notified(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
 }
 
 bt::profile_t::~profile_t() {}
+bt::profile_t bt::profile_t::builder_t::build() {
+  return profile_t(1,
+                   [](profile_t& p, esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*) {});
+}
