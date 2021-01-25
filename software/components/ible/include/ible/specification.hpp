@@ -217,11 +217,7 @@ class attribute_visitor : public visitor_t<profile_t, service_t, characteristic_
     for (auto srv : t->services()) {
       auto* service_visitor = new attribute_visitor(m_gatt_if);
       srv.accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(srv)>>*>(service_visitor));
-      esp_err_t err = esp_ble_gatts_create_attr_tab(service_visitor->m_attributes.data(), 0,
-                                                    service_visitor->m_attributes.size(), 0);
-      if (err) {
-        std::cout << "error while attribute sevice visitor" << std::endl;
-      }
+      delete service_visitor;
     }
   }
 
@@ -239,6 +235,9 @@ class attribute_visitor : public visitor_t<profile_t, service_t, characteristic_
     }
 
     esp_err_t err = m_gatt_if->create_attr_tab(m_attributes.data(), 2, 0);
+    if (err) {
+      std::cout << "error while attribute sevice visitor" << std::endl;
+    }
   }
 
   void visit(characteristic_t* t) override {

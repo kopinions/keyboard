@@ -11,22 +11,67 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
       m_profiles->foreach ([e, this](profile_t* p) { m_attributes->visit(p); });
       break;
     }
+    case ESP_GATTS_CREAT_ATTR_TAB_EVT: {
+      m_logger->info("%s", "gatt create attr in the application");
+      //      dev->bat_svc.handle = e.param->add_attr_tab.handles[BAS_IDX_SVC];
+      //      dev->bat_level_handle = param->add_attr_tab.handles[BAS_IDX_BATT_LVL_VAL];  // so we notify of the change
+      //      dev->bat_ccc_handle = param->add_attr_tab.handles[BAS_IDX_BATT_LVL_CCC];    // so we know if we can send
+      //      notify ESP_LOGV(TAG, "Battery CREAT_ATTR_TAB service handle = %d", dev->bat_svc.handle);
+      //
+      //      dev->hid_incl_svc.start_hdl = dev->bat_svc.handle;
+      //      dev->hid_incl_svc.end_hdl = dev->bat_svc.handle + BAS_IDX_NB - 1;
+      //
+      //      esp_ble_gatts_start_service(dev->bat_svc.handle);
+      //
+      //      // Add the info service next, because it's shared between all device maps
+      //      create_info_db(dev);
+      break;
+    }
+    case ESP_GATTS_READ_EVT: {
+      m_logger->info("%s", "gatt read in the application");
+      //      if (param->read.handle == dev->bat_level_handle) {
+      //        ESP_LOGD(TAG, "Battery READ %d", dev->bat_level);
+      //      }
+      break;
+    }
+    case ESP_GATTS_WRITE_EVT: {
+      m_logger->info("%s", "gatt write in the application");
+      //      if (param->write.handle == dev->bat_ccc_handle) {
+      //        dev->bat_ccc.value = param->write.value[0];
+      //        ESP_LOGV(TAG, "Battery CCC: Notify: %s, Indicate: %s", dev->bat_ccc.notify_enable ? "On" : "Off",
+      //        dev->bat_ccc.indicate_enable ? "On" : "Off");
+      //      }
+      break;
+    }
+    case ESP_GATTS_SET_ATTR_VAL_EVT: {
+      m_logger->info("%s", "gatt set attr val in the application");
+      //      if (param->set_attr_val.attr_handle == dev->bat_level_handle) {
+      //        ESP_LOGD(TAG, "Battery SET %d, status: 0x%02x", dev->bat_level, param->set_attr_val.status);
+      //      }
+      break;
+    }
     default:
       break;
   }
 }
 
-bt::application_t::application_t(id_t id) : m_id(id) { m_profiles = std::make_shared<repository_t<bt::profile_t>>(); }
+bt::application_t::application_t(id_t id) : m_id(id) {
+  m_profiles = std::make_shared<repository_t<bt::profile_t>>();
+  m_logger = std::make_shared<kopinions::logging::logger>(kopinions::logging::level::INFO,
+                                                          std::make_shared<kopinions::logging::esp_log_sink>());
+}
 
 bt::application_t::application_t(const bt::application_t& o) {
   m_id = o.m_id;
   m_profiles = o.m_profiles;
   m_attributes = o.m_attributes;
+  m_logger = o.m_logger;
 }
-bt::application_t::application_t(bt::application_t&& o) {
+bt::application_t::application_t(bt::application_t&& o) noexcept {
   m_id = o.m_id;
   m_profiles = o.m_profiles;
   m_attributes = o.m_attributes;
+  m_logger = o.m_logger;
 }
 
 bt::application_t::~application_t() {}
