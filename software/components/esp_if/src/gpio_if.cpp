@@ -1,28 +1,12 @@
-#pragma once
-#include "driver/gpio.h"
-#include "gpio.hpp"
+#include "esp_if/gpio_if.hpp"
 
-namespace kopinions {
+kopinions::gpio_if::~gpio_if() = default;
 
-class gpio_if : public gpio {
- public:
-  explicit gpio_if(const pin::id& id) noexcept;
-  pin::status current() override;
-  void option(const pin::opt& opt) override;
-  void set(pin::status target) override;
-  ~gpio_if() override;
-
- private:
-  pin::id m_id;
-};
-
-gpio_if::~gpio_if() = default;
-
-pin::status gpio_if::current() {
+kopinions::pin::status kopinions::gpio_if::current() {
   return gpio_get_level(static_cast<gpio_num_t>(m_id)) > 0 ? pin::status::HIGH : pin::status::LOW;
 }
 
-void gpio_if::option(const pin::opt& opt) {
+void kopinions::gpio_if::option(const pin::opt& opt) {
   auto gpio_no = static_cast<gpio_num_t>(m_id);
   switch (opt.cap) {
     case pin::capability_t::WEAK:
@@ -54,11 +38,9 @@ void gpio_if::option(const pin::opt& opt) {
   }
 }
 
-void gpio_if::set(pin::status target) {
+void kopinions::gpio_if::set(pin::status target) {
   auto gpio_no = static_cast<gpio_num_t>(m_id);
   gpio_set_level(gpio_no, target == pin::status::HIGH ? 1 : 0);
 }
 
-gpio_if::gpio_if(const pin::id& id) noexcept : m_id(id) {}
-
-}  // namespace kopinions
+kopinions::gpio_if::gpio_if(const pin::id& id) noexcept : m_id(id) {}

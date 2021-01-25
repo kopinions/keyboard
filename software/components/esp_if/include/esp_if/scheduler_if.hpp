@@ -47,6 +47,5 @@ std::shared_ptr<scheduled> scheduler_if<Args...>::schedule(const std::string& id
   return ptr;
 }
 
-void scheduled_if::cancel() { vTaskDelete(m_handle); }
-
+void kopinions::scheduled_if::cancel() { vTaskDelete(m_handle); }
 }  // namespace kopinions

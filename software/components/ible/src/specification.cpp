@@ -2,6 +2,8 @@
 
 #include <esp_gap_ble_api.h>
 
+#include "esp_if/esp_log_sink.hpp"
+
 void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
   switch (e.event) {
     case ESP_GATTS_REG_EVT: {
