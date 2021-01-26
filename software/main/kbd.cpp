@@ -26,10 +26,12 @@ extern "C" void app_main() {
     auto trans = std::make_shared<transports>();
     //    const std::shared_ptr<endpoint>& ep = std::make_shared<endpoint>();
     const std::shared_ptr<bt::ble>& b = std::make_shared<bt::ble>("Chaos", bt::appearance_t::KEYBOARD, lg);
-    const bt::application_t& app = bt::application_t::builder_t::name("kbd")
+    const bt::application_t& app = bt::application_builder_t::name("kbd")
                                        ->id(0x0001)
-                                       ->profile([](bt::profile_t::builder_t* builder) {
+                                       ->profile([](bt::profile_builder_t* p) {
+                                         p->service([](bt::service_builder_t* s) {
 
+                                         });
                                        })
                                        ->build();
 

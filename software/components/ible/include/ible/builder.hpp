@@ -4,6 +4,7 @@ template <typename T>
 class ibuilder : public std::enable_shared_from_this<ibuilder<T>> {
  public:
   virtual T build() = 0;
+  virtual ~ibuilder() = default;
 
  protected:
   template <typename DERIVED>

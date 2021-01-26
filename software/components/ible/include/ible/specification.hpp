@@ -87,14 +87,62 @@ typedef union {
   uint16_t value;
 } ccc_value_t;
 
+class event_t {
+ public:
+  esp_gatts_cb_event_t event;
+  esp_ble_gatts_cb_param_t* param;
+};
+
+class profile_t;
+
+class application_t {
+ public:
+  using id_t = uint16_t;
+
+  virtual id_t id() const { return m_id; }
+  virtual id_t id() { return m_id; }
+  explicit application_t(id_t id);
+
+  application_t(const application_t&);
+  application_t(application_t&&) noexcept;
+  virtual ~application_t();
+
+  virtual std::vector<profile_t> profiles() { return {}; }
+
+  virtual void enroll(const profile_t& profile);
+
+  void notified(std::shared_ptr<bt::gatt_if_t>, event_t e);
+
+ private:
+  id_t m_id;
+  std::shared_ptr<attribute_visitor> m_attributes;
+  std::shared_ptr<repository_t<profile_t>> m_profiles;
+  std::shared_ptr<kopinions::logging::logger> m_logger;
+};
+
+class profile_builder_t;
+
+class application_builder_t : public ibuilder<application_t> {
+ public:
+  explicit application_builder_t(std::string app_name);
+
+  static std::shared_ptr<application_builder_t> name(const std::string& name);
+
+  std::shared_ptr<application_builder_t> id(bt::application_t::id_t id);
+
+  std::shared_ptr<application_builder_t> profile(std::function<void(profile_builder_t*)> consumer);
+
+  application_t build() override;
+
+ private:
+  std::string m_app_name;
+  std::vector<profile_t> m_profiles;
+  bt::application_t::id_t m_id;
+};
+
 class profile_t : public visitable_t<visitor_t<profile_t>> {
  public:
   using id_t = std::uint16_t;
-
-  class builder_t : ibuilder<profile_t> {
-   public:
-    profile_t build() override;
-  };
 
   explicit profile_t(
       const id_t& id,
@@ -141,63 +189,26 @@ class profile_t : public visitable_t<visitor_t<profile_t>> {
       m_handler;
 };
 
-class event_t {
+class profile_builder_t;
+
+class service_builder_t : public ibuilder<service_t> {
  public:
-  esp_gatts_cb_event_t event;
-  esp_ble_gatts_cb_param_t* param;
-};
-
-class application_t {
- public:
-  using id_t = uint16_t;
-
-  class builder_t : public ibuilder<application_t> {
-   public:
-    builder_t(std::string app_name) : m_app_name(std::move(app_name)) {}
-
-    static std::shared_ptr<application_t::builder_t> name(const std::string& name) {
-      return std::make_shared<application_t::builder_t>(name);
-    }
-
-    std::shared_ptr<application_t::builder_t> id(id_t id) {
-      m_id = id;
-      return shared_from(this);
-    }
-
-    std::shared_ptr<application_t::builder_t> profile(std::function<void(profile_t::builder_t*)> consumer) {
-      auto b = new profile_t::builder_t();
-      consumer(b);
-      m_profiles.push_back(b->build());
-      return shared_from(this);
-    }
-
-    application_t build() { return application_t{m_id}; };
-
-   private:
-    std::string m_app_name;
-    std::vector<profile_t> m_profiles;
-    id_t m_id;
-  };
-
-  virtual id_t id() const { return m_id; }
-  virtual id_t id() { return m_id; }
-  explicit application_t(id_t id);
-
-  application_t(const application_t&);
-  application_t(application_t&&) noexcept;
-  virtual ~application_t();
-
-  virtual std::vector<profile_t> profiles() { return {}; }
-
-  virtual void enroll(const profile_t& profile) { m_profiles->create(profile.id(), profile.m_handler); }
-
-  void notified(std::shared_ptr<bt::gatt_if_t>, event_t e);
+  friend profile_builder_t;
 
  private:
-  id_t m_id;
-  std::shared_ptr<attribute_visitor> m_attributes;
-  std::shared_ptr<repository_t<profile_t>> m_profiles;
-  std::shared_ptr<kopinions::logging::logger> m_logger;
+  service_t build() override;
+
+ private:
+};
+
+class profile_builder_t : public ibuilder<profile_t> {
+ public:
+  friend application_builder_t;
+  std::shared_ptr<profile_builder_t> service(std::function<void(service_builder_t*)> consumer);
+
+ private:
+  profile_t build() override;
+  std::vector<service_t> m_services;
 };
 
 enum appearance_t : uint16_t { KEYBOARD = 0x3C1 };
