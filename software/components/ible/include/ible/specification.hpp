@@ -62,6 +62,8 @@ class characteristic_t : public visitable_t<visitor_t<characteristic_t>> {
 class service_t : public visitable_t<visitor_t<service_t>> {
  public:
   using id_t = std::uint16_t;
+  explicit service_t(id_t id);
+
   void registered(esp_gatt_if_t i) { gatt_if = i; }
 
   std::vector<characteristic_t> characteristics() { return {}; };
@@ -72,7 +74,7 @@ class service_t : public visitable_t<visitor_t<service_t>> {
 
   void notified(esp_gatts_cb_event_t param, esp_gatt_if_t i, esp_ble_gatts_cb_param_t* ptr) {}
 
-  void accept(visitor_t<service_t>* t) override { t->visit(this); };
+  void accept(visitor_t<service_t>* t) override;;
 
  private:
   esp_gatt_if_t gatt_if;
@@ -148,32 +150,19 @@ class profile_t : public visitable_t<visitor_t<profile_t>> {
   explicit profile_t(
       const id_t& id,
       std::function<void(profile_t& p, esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*)>
-          p)
-      : m_id{id}, m_handler{p} {};
+          p);
 
   void notified(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param);
 
-  std::vector<service_t> services() const {
-    std::vector<service_t> s;
+  [[nodiscard]] std::vector<service_t> services() const;
 
-    for (auto [k, v] : m_services) {
-      s.push_back(*v);
-    };
-    return s;
-  }
+  virtual void enroll(service_t srv);
 
-  virtual void enroll(service_t* const srv) { m_services[srv->id()] = srv; }
+  void accept(visitor_t<profile_t>* t) override;
 
-  void accept(visitor_t<profile_t>* t) override { t->visit(this); };
+  profile_t(const profile_t& o);
 
-  profile_t(const profile_t& o) {
-    gatts_if = o.gatts_if;
-    m_id = o.m_id;
-    conn_id = o.conn_id;
-    m_handler = o.m_handler;
-  };
-
-  profile_t& operator=(const profile_t&) { return *this; };
+  profile_t& operator=(const profile_t&);
 
   virtual ~profile_t();
 
@@ -186,11 +175,11 @@ class profile_t : public visitable_t<visitor_t<profile_t>> {
   uint16_t descr_handle;
   esp_bt_uuid_t descr_uuid;
 
-  [[nodiscard]] const id_t& id() const { return m_id; }
+  [[nodiscard]] const id_t& id() const;
 
  private:
   id_t m_id;
-  std::map<id_t, service_t*> m_services;
+  std::map<id_t, service_t> m_services;
 
  public:
   std::function<void(profile_t& p, esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*)>
@@ -242,46 +231,15 @@ static const uint16_t s_character_client_config_uuid = ESP_GATT_UUID_CHAR_CLIENT
 class attribute_visitor : public visitor_t<profile_t, service_t, characteristic_t> {
  public:
   attribute_visitor(std::shared_ptr<gatt_if_t> gatt_if) { m_gatt_if = gatt_if; }
-  void visit(profile_t* t) override {
-    for (auto srv : t->services()) {
-      auto* service_visitor = new attribute_visitor(m_gatt_if);
-      srv.accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(srv)>>*>(service_visitor));
-      delete service_visitor;
-    }
-  }
 
-  void visit(service_t* t) override {
-    m_attributes.push_back(esp_gatts_attr_db_t{.attr_control = {.auto_rsp = ESP_GATT_AUTO_RSP},
-                                               .att_desc = {.uuid_length = 2,
-                                                            .uuid_p = (uint8_t*)&s_primary_service_uuid,
-                                                            .perm = ESP_UUID_LEN_16,
-                                                            .max_length = 2,
-                                                            .length = 1,
-                                                            .value = nullptr}});
+  void visit(profile_t* t) override;
 
-    for (auto c : t->characteristics()) {
-      c.accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(c)>>*>(this));
-    }
-    std::cout << "create attribute table" << std::endl;
-    esp_err_t err = m_gatt_if->create_attr_tab(m_attributes.data(), 2, 0);
-    if (err) {
-      std::cout << "error while attribute sevice visitor" << std::endl;
-    }
-  }
+  void visit(service_t* t) override;
 
-  void visit(characteristic_t* t) override {
-    m_attributes.push_back(esp_gatts_attr_db_t{.attr_control = {.auto_rsp = ESP_GATT_AUTO_RSP},
-                                               .att_desc = {.uuid_length = 2,
-                                                            .uuid_p = (uint8_t*)&s_character_declaration_uuid,
-                                                            .perm = ESP_UUID_LEN_16,
-                                                            .max_length = 1,
-                                                            .length = 1,
-                                                            .value = nullptr}});
-  }
+  void visit(characteristic_t* t) override;
 
   ~attribute_visitor() override = default;
 
- public:
  private:
   std::vector<esp_gatts_attr_db_t> m_attributes;
   std::shared_ptr<gatt_if_t> m_gatt_if;

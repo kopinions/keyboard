@@ -10,10 +10,10 @@ class visitor_t<TYPE> {
 };
 
 template <typename T, typename... TYPES>
-class visitor_t<T, TYPES...> : public visitor_t<TYPES...> {
+class visitor_t<T, TYPES...> : public visitor_t<T>, public visitor_t<TYPES...> {
  public:
   using visitor_t<TYPES...>::visit;
-  virtual void visit(T *t) = 0;
+  using visitor_t<T>::visit;
   virtual ~visitor_t() = default;
 };
 
