@@ -2,6 +2,8 @@
 
 #include <esp_gap_ble_api.h>
 
+#include <utility>
+
 #include "esp_if/esp_log_sink.hpp"
 #include "ible/visitors.hpp"
 
@@ -118,6 +120,7 @@ void bt::profile_t::accept(visitor_t<profile_t>* t) { t->visit(this); }
 
 const bt::profile_t::id_t& bt::profile_t::id() const { return m_id; }
 
-bt::service_t::service_t(bt::service_t::id_t id) : m_id(id) {}
+bt::service_t::service_t(id_t id, std::vector<characteristic_t> characteristics)
+    : m_id(id), m_characteristics{std::move(characteristics)} {}
 
 void bt::service_t::accept(visitor_t<service_t>* t) { t->visit(this); }

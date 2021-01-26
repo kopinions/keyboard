@@ -53,6 +53,7 @@ class device_t {
 
 class ble_hid_t : public hid::device_t {
  public:
+  ble_hid_t() {}
   bool connected() override { return false; }
   esp_err_t subscribe(event_t event, esp_event_handler_t callback) override { return 0; }
   esp_err_t unsubscribe(event_t event, esp_event_handler_t callback) override { return 0; }
@@ -74,8 +75,8 @@ class ble_hid_t : public hid::device_t {
   uint8_t control;    // 0x00 suspend, 0x01 suspend off
   uint8_t protocol;   // 0x00 boot, 0x01 report
 
-  bt::service_t battery;
-  bt::service_t information;
+  bt::service_t *battery;
+  bt::service_t *information;
   esp_gatts_incl_svc_desc_t hid_incl_svc;
 
   uint16_t bat_level_handle;

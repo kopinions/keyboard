@@ -46,7 +46,11 @@ class attribute_t {
 class attribute_visitor;
 
 class characteristic_t : public visitable_t<visitor_t<characteristic_t>> {
+ public:
+  using id_t = std::uint16_t;
   friend class attribute_visitor;
+
+ private:
   uint8_t auto_rsp;
   uint16_t uuid_length;
   uint8_t* uuid_p;
@@ -62,24 +66,18 @@ class characteristic_t : public visitable_t<visitor_t<characteristic_t>> {
 class service_t : public visitable_t<visitor_t<service_t>> {
  public:
   using id_t = std::uint16_t;
-  explicit service_t(id_t id);
+  explicit service_t(id_t id, std::vector<characteristic_t>);
 
-  void registered(esp_gatt_if_t i) { gatt_if = i; }
-
-  std::vector<characteristic_t> characteristics() { return {}; };
+  std::vector<characteristic_t> characteristics() { return m_characteristics; };
 
   [[nodiscard]] id_t id() const { return m_id; }
 
-  bool matched(esp_gatt_if_t i) { return i == ESP_GATT_IF_NONE || i == gatt_if; }
-
-  void notified(esp_gatts_cb_event_t param, esp_gatt_if_t i, esp_ble_gatts_cb_param_t* ptr) {}
-
   void accept(visitor_t<service_t>* t) override;
-  ;
 
  private:
   esp_gatt_if_t gatt_if;
   id_t m_id;
+  std::vector<characteristic_t> m_characteristics;
 };
 
 typedef union {

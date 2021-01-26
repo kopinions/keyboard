@@ -43,9 +43,23 @@ bt::profile_builder_t* bt::profile_builder_t::service(std::function<void(bt::ser
   return this;
 }
 
-bt::service_t bt::service_builder_t::build() { return service_t(m_id); }
+bt::service_t bt::service_builder_t::build() { return service_t(m_id, m_characteristics); }
 
 bt::service_builder_t* bt::service_builder_t::id(bt::service_t::id_t id) {
+  m_id = id;
+  return this;
+}
+bt::service_builder_t* bt::service_builder_t::characteristic(bt::consumer_t<bt::characteristic_builder_t> consumer) {
+  auto b = new characteristic_builder_t();
+  consumer(b);
+  m_characteristics.push_back(b->build());
+  delete b;
+  return this;
+}
+
+bt::characteristic_t bt::characteristic_builder_t::build() { return bt::characteristic_t(); }
+
+bt::characteristic_builder_t* bt::characteristic_builder_t::id(bt::characteristic_t::id_t id) {
   m_id = id;
   return this;
 }
