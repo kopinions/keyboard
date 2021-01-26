@@ -74,7 +74,8 @@ class service_t : public visitable_t<visitor_t<service_t>> {
 
   void notified(esp_gatts_cb_event_t param, esp_gatt_if_t i, esp_ble_gatts_cb_param_t* ptr) {}
 
-  void accept(visitor_t<service_t>* t) override;;
+  void accept(visitor_t<service_t>* t) override;
+  ;
 
  private:
   esp_gatt_if_t gatt_if;
@@ -123,36 +124,11 @@ class application_t {
   std::shared_ptr<kopinions::logging::logger> m_logger;
 };
 
-class profile_builder_t;
-
-class application_builder_t : public ibuilder<application_t> {
- public:
-  explicit application_builder_t(std::string app_name);
-
-  static application_builder_t* name(const std::string& name);
-
-  application_builder_t* id(bt::application_t::id_t id);
-
-  application_builder_t* profile(std::function<void(profile_builder_t*)> consumer);
-
-  application_t build() override;
-
- private:
-  std::string m_app_name;
-  std::vector<profile_t> m_profiles;
-  bt::application_t::id_t m_id;
-};
-
 class profile_t : public visitable_t<visitor_t<profile_t>> {
  public:
   using id_t = std::uint16_t;
 
-  explicit profile_t(
-      const id_t& id,
-      std::function<void(profile_t& p, esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*)>
-          p);
-
-  void notified(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param);
+  explicit profile_t(const id_t& id);
 
   [[nodiscard]] std::vector<service_t> services() const;
 
@@ -180,35 +156,6 @@ class profile_t : public visitable_t<visitor_t<profile_t>> {
  private:
   id_t m_id;
   std::map<id_t, service_t> m_services;
-
- public:
-  std::function<void(profile_t& p, esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*)>
-      m_handler;
-};
-
-class profile_builder_t;
-
-class service_builder_t : public ibuilder<service_t> {
- public:
-  friend profile_builder_t;
-
-  service_builder_t* id(bt::service_t::id_t id);
-
- private:
-  service_t build() override;
-
- private:
-  bt::service_t::id_t m_id;
-};
-
-class profile_builder_t : public ibuilder<profile_t> {
- public:
-  friend application_builder_t;
-  profile_builder_t* service(std::function<void(service_builder_t*)> consumer);
-
- private:
-  profile_t build() override;
-  std::vector<service_t> m_services;
 };
 
 enum appearance_t : uint16_t { KEYBOARD = 0x3C1 };
@@ -221,28 +168,6 @@ class topic {
 class subscriber {
  public:
   virtual void subscribe(std::shared_ptr<topic>) = 0;
-};
-
-static const uint16_t s_primary_service_uuid = ESP_GATT_UUID_PRI_SERVICE;
-static const uint16_t s_include_service_uuid = ESP_GATT_UUID_INCLUDE_SERVICE;
-static const uint16_t s_character_declaration_uuid = ESP_GATT_UUID_CHAR_DECLARE;
-static const uint16_t s_character_client_config_uuid = ESP_GATT_UUID_CHAR_CLIENT_CONFIG;
-
-class attribute_visitor : public visitor_t<profile_t, service_t, characteristic_t> {
- public:
-  attribute_visitor(std::shared_ptr<gatt_if_t> gatt_if) { m_gatt_if = gatt_if; }
-
-  void visit(profile_t* t) override;
-
-  void visit(service_t* t) override;
-
-  void visit(characteristic_t* t) override;
-
-  ~attribute_visitor() override = default;
-
- private:
-  std::vector<esp_gatts_attr_db_t> m_attributes;
-  std::shared_ptr<gatt_if_t> m_gatt_if;
 };
 
 }  // namespace bt

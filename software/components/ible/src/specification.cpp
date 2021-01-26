@@ -3,6 +3,7 @@
 #include <esp_gap_ble_api.h>
 
 #include "esp_if/esp_log_sink.hpp"
+#include "ible/visitors.hpp"
 
 void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
   switch (e.event) {
@@ -78,29 +79,6 @@ bt::application_t::~application_t() {}
 
 void bt::application_t::enroll(const bt::profile_t& profile) { m_profiles->create(profile); }
 
-void bt::profile_t::notified(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param) {
-  m_handler(*this, event, gatts_if, param);
-
-  switch (event) {
-    case ESP_GATTS_REG_EVT: {
-      for (auto [id, srv] : m_services) {
-        auto* vis = new attribute_visitor{std::make_shared<esp_gatt>(gatts_if)};
-        srv.accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(srv)>>*>(vis));
-        delete vis;
-      }
-      break;
-    }
-    case ESP_GATTS_CREAT_ATTR_TAB_EVT: {
-      for (auto& [id, srv] : m_services) {
-        srv.notified(event, gatts_if, param);
-      }
-      break;
-    }
-    default:
-      break;
-  }
-}
-
 bt::profile_t::~profile_t() {}
 
 void bt::profile_t::enroll(bt::service_t srv) {
@@ -117,16 +95,12 @@ std::vector<bt::service_t> bt::profile_t::services() const {
   return s;
 }
 
-bt::profile_t::profile_t(
-    const bt::profile_t::id_t& id,
-    std::function<void(profile_t&, esp_gatts_cb_event_t, esp_gatt_if_t, esp_ble_gatts_cb_param_t*)> p)
-    : m_id{id}, m_handler{p} {}
+bt::profile_t::profile_t(const bt::profile_t::id_t& id) : m_id{id} {}
 
 bt::profile_t::profile_t(const bt::profile_t& o) {
   gatts_if = o.gatts_if;
   m_id = o.m_id;
   conn_id = o.conn_id;
-  m_handler = o.m_handler;
   m_services = o.m_services;
   std::cout << m_services.size() << "copy size" << std::endl;
 }
@@ -135,7 +109,6 @@ bt::profile_t& bt::profile_t::operator=(const bt::profile_t& o) {
   gatts_if = o.gatts_if;
   m_id = o.m_id;
   conn_id = o.conn_id;
-  m_handler = o.m_handler;
   m_services = o.m_services;
   std::cout << m_services.size() << "operator size" << std::endl;
   return *this;
@@ -145,100 +118,6 @@ void bt::profile_t::accept(visitor_t<profile_t>* t) { t->visit(this); }
 
 const bt::profile_t::id_t& bt::profile_t::id() const { return m_id; }
 
-bt::application_builder_t* bt::application_builder_t::name(const std::string& name) {
-  return new bt::application_builder_t(name);
-}
-bt::application_builder_t* bt::application_builder_t::profile(std::function<void(profile_builder_t*)> consumer) {
-  auto b = new profile_builder_t();
-  consumer(b);
-  m_profiles.push_back(b->build());
-  delete b;
-  return this;
-}
-bt::application_t bt::application_builder_t::build() {
-  application_t application = application_t{m_id};
-  for (auto p : m_profiles) {
-    application.enroll(p);
-  }
-  return application;
-}
-
-bt::application_builder_t* bt::application_builder_t::id(bt::application_t::id_t id) {
-  m_id = id;
-  return this;
-}
-
-bt::application_builder_t::application_builder_t(std::string app_name) : m_app_name(std::move(app_name)) {}
-
-bt::profile_t bt::profile_builder_t::build() {
-  profile_t profile =
-      profile_t(1, [](profile_t& p, esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*) {});
-  std::cout << m_services.size() << "build size" << std::endl;
-  for (const auto& srv : m_services) {
-    profile.enroll(srv);
-  }
-
-  return profile;
-}
-
-bt::profile_builder_t* bt::profile_builder_t::service(std::function<void(bt::service_builder_t*)> consumer) {
-  auto b = new service_builder_t();
-  consumer(b);
-  m_services.push_back(b->build());
-  delete b;
-  return this;
-}
-
-bt::service_t bt::service_builder_t::build() { return service_t(m_id); }
-
-bt::service_builder_t* bt::service_builder_t::id(bt::service_t::id_t id) {
-  m_id = id;
-  return this;
-}
-
 bt::service_t::service_t(bt::service_t::id_t id) : m_id(id) {}
 
 void bt::service_t::accept(visitor_t<service_t>* t) { t->visit(this); }
-
-void bt::attribute_visitor::visit(bt::profile_t* t) {
-  std::cout << "visitor from profile" << std::endl;
-  for (auto srv : t->services()) {
-    std::cout << t->services().size() << "prepare visitor size" << std::endl;
-    auto* service_visitor = new attribute_visitor(m_gatt_if);
-    std::cout << t->services().size() << " visitor size" << std::endl;
-    auto* v = dynamic_cast<visitor_t<service_t>*>(service_visitor);
-    std::cout << t->services().size() << "after cast size" << std::endl;
-    srv.accept(v);
-    delete service_visitor;
-  }
-}
-
-void bt::attribute_visitor::visit(bt::service_t* t) {
-  std::cout << "visitor from service" << std::endl;
-  m_attributes.push_back(esp_gatts_attr_db_t{.attr_control = {.auto_rsp = ESP_GATT_AUTO_RSP},
-                                             .att_desc = {.uuid_length = 2,
-                                                          .uuid_p = (uint8_t*)&s_primary_service_uuid,
-                                                          .perm = ESP_UUID_LEN_16,
-                                                          .max_length = 2,
-                                                          .length = 1,
-                                                          .value = nullptr}});
-
-  for (auto c : t->characteristics()) {
-    c.accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(c)>>*>(this));
-  }
-  std::cout << "create attribute table" << std::endl;
-  esp_err_t err = m_gatt_if->create_attr_tab(m_attributes.data(), 2, 0);
-  if (err) {
-    std::cout << "error while attribute sevice visitor" << std::endl;
-  }
-}
-
-void bt::attribute_visitor::visit(bt::characteristic_t* t) {
-  m_attributes.push_back(esp_gatts_attr_db_t{.attr_control = {.auto_rsp = ESP_GATT_AUTO_RSP},
-                                             .att_desc = {.uuid_length = 2,
-                                                          .uuid_p = (uint8_t*)&s_character_declaration_uuid,
-                                                          .perm = ESP_UUID_LEN_16,
-                                                          .max_length = 1,
-                                                          .length = 1,
-                                                          .value = nullptr}});
-}
