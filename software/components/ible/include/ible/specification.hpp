@@ -3,6 +3,7 @@
 #include <esp_gatts_api.h>
 
 #include <memory>
+#include <variant>
 
 #include "ible/builder.hpp"
 #include "ible/repository.hpp"
@@ -30,7 +31,7 @@ class esp_gatt : public gatt_if_t {
   esp_gatt_if_t m_gatt_if;
 };
 
-using uuid_t = std::uint16_t;
+using uuid_t = std::variant<std::uint16_t>;
 
 class attribute_visitor;
 
@@ -65,7 +66,7 @@ class service_t : public visitable_t<visitor_t<service_t>> {
 
   std::vector<characteristic_t> characteristics() { return {}; };
 
-  [[nodiscard]] uuid_t id() const { return m_id; }
+  [[nodiscard]] id_t id() const { return m_id; }
 
   bool matched(esp_gatt_if_t i) { return i == ESP_GATT_IF_NONE || i == gatt_if; }
 
@@ -75,7 +76,7 @@ class service_t : public visitable_t<visitor_t<service_t>> {
 
  private:
   esp_gatt_if_t gatt_if;
-  uuid_t m_id;
+  id_t m_id;
 };
 
 typedef union {
@@ -126,11 +127,11 @@ class application_builder_t : public ibuilder<application_t> {
  public:
   explicit application_builder_t(std::string app_name);
 
-  static std::shared_ptr<application_builder_t> name(const std::string& name);
+  static application_builder_t* name(const std::string& name);
 
-  std::shared_ptr<application_builder_t> id(bt::application_t::id_t id);
+  application_builder_t* id(bt::application_t::id_t id);
 
-  std::shared_ptr<application_builder_t> profile(std::function<void(profile_builder_t*)> consumer);
+  application_builder_t* profile(std::function<void(profile_builder_t*)> consumer);
 
   application_t build() override;
 
@@ -152,7 +153,14 @@ class profile_t : public visitable_t<visitor_t<profile_t>> {
 
   void notified(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param);
 
-  std::vector<service_t> services() const { return {}; }
+  std::vector<service_t> services() const {
+    std::vector<service_t> s;
+
+    for (auto [k, v] : m_services) {
+      s.push_back(*v);
+    };
+    return s;
+  }
 
   virtual void enroll(service_t* const srv) { m_services[srv->id()] = srv; }
 
@@ -195,16 +203,19 @@ class service_builder_t : public ibuilder<service_t> {
  public:
   friend profile_builder_t;
 
+  service_builder_t* id(bt::service_t::id_t id);
+
  private:
   service_t build() override;
 
  private:
+  bt::service_t::id_t m_id;
 };
 
 class profile_builder_t : public ibuilder<profile_t> {
  public:
   friend application_builder_t;
-  std::shared_ptr<profile_builder_t> service(std::function<void(service_builder_t*)> consumer);
+  profile_builder_t* service(std::function<void(service_builder_t*)> consumer);
 
  private:
   profile_t build() override;

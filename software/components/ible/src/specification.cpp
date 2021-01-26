@@ -101,23 +101,31 @@ void bt::profile_t::notified(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
 }
 
 bt::profile_t::~profile_t() {}
-std::shared_ptr<bt::application_builder_t> bt::application_builder_t::name(const std::string& name) {
-  return std::make_shared<bt::application_builder_t>(name);
+bt::application_builder_t* bt::application_builder_t::name(const std::string& name) {
+  return new bt::application_builder_t(name);
 }
-std::shared_ptr<bt::application_builder_t> bt::application_builder_t::profile(
-    std::function<void(profile_builder_t*)> consumer) {
+bt::application_builder_t* bt::application_builder_t::profile(std::function<void(profile_builder_t*)> consumer) {
   auto b = new profile_builder_t();
   consumer(b);
   m_profiles.push_back(b->build());
   delete b;
-  return shared_from(this);
+  return this;
 }
-bt::application_t bt::application_builder_t::build() { return application_t{m_id}; }
-std::shared_ptr<bt::application_builder_t> bt::application_builder_t::id(bt::application_t::id_t id) {
+bt::application_t bt::application_builder_t::build() {
+  application_t application = application_t{m_id};
+  for (auto p : m_profiles) {
+    application.enroll(p);
+  }
+  return application;
+}
+
+bt::application_builder_t* bt::application_builder_t::id(bt::application_t::id_t id) {
   m_id = id;
-  return shared_from(this);
+  return this;
 }
+
 bt::application_builder_t::application_builder_t(std::string app_name) : m_app_name(std::move(app_name)) {}
+
 bt::profile_t bt::profile_builder_t::build() {
   profile_t profile =
       profile_t(1, [](profile_t& p, esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t*) {});
@@ -127,12 +135,18 @@ bt::profile_t bt::profile_builder_t::build() {
 
   return profile;
 }
-std::shared_ptr<bt::profile_builder_t> bt::profile_builder_t::service(
-    std::function<void(bt::service_builder_t*)> consumer) {
+
+bt::profile_builder_t* bt::profile_builder_t::service(std::function<void(bt::service_builder_t*)> consumer) {
   auto b = new service_builder_t();
   consumer(b);
   m_services.push_back(b->build());
   delete b;
-  return shared_from(this);
+  return this;
 }
+
 bt::service_t bt::service_builder_t::build() { return service_t(); }
+
+bt::service_builder_t* bt::service_builder_t::id(bt::service_t::id_t id) {
+  m_id = id;
+  return this;
+}
