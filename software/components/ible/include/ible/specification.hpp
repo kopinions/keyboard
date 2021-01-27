@@ -1,47 +1,21 @@
 #pragma once
-#include <esp_gatt_defs.h>
-#include <esp_gatts_api.h>
 
 #include <memory>
 #include <variant>
 
 #include "ible/builder.hpp"
+#include "ible/gatt_if.hpp"
 #include "ible/repository.hpp"
 #include "ible/specification.hpp"
 #include "ible/visitor.hpp"
 #include "vif.hpp"
 namespace bt {
 
-class gatt_if_t {
- public:
-  virtual esp_err_t create_attr_tab(const esp_gatts_attr_db_t* gatts_attr_db, uint8_t max_nb_attr,
-                                    uint8_t srvc_inst_id) = 0;
-};
-
-class esp_gatt : public gatt_if_t {
- public:
-  explicit esp_gatt(esp_gatt_if_t gatt_if) : m_gatt_if(gatt_if) {}
-
-  esp_err_t create_attr_tab(const esp_gatts_attr_db_t* gatts_attr_db, uint8_t max_nb_attr,
-                            uint8_t srvc_inst_id) override {
-    return esp_ble_gatts_create_attr_tab(gatts_attr_db, m_gatt_if, max_nb_attr, srvc_inst_id);
-  }
-
- private:
-  esp_gatt_if_t m_gatt_if;
-};
-
 using uuid_t = std::variant<std::uint16_t>;
 
 class attribute_visitor;
 
-class attribute_t {
- public:
-  enum class type : uint16_t {
-    INCLUDE_DECLARATION = 0x2802,
-    CHARACTER_DECLARATION = 0x2803,
-  };
-};
+enum appearance_t : uint16_t { KEYBOARD = 0x3C1 };
 
 class attribute_visitor;
 
@@ -140,32 +114,11 @@ class profile_t : public visitable_t<visitor_t<profile_t>> {
 
   virtual ~profile_t();
 
-  esp_gatt_srvc_id_t service_id;
-  uint16_t gatts_if;
-  uint16_t conn_id;
-  uint16_t service_handle;
-  esp_bt_uuid_t char_uuid;
-  uint16_t char_handle;
-  uint16_t descr_handle;
-  esp_bt_uuid_t descr_uuid;
-
   [[nodiscard]] const id_t& id() const;
 
  private:
   id_t m_id;
   std::map<id_t, service_t> m_services;
-};
-
-enum appearance_t : uint16_t { KEYBOARD = 0x3C1 };
-
-class topic {
- public:
-  virtual void subscribed() = 0;
-};
-
-class subscriber {
- public:
-  virtual void subscribe(std::shared_ptr<topic>) = 0;
 };
 
 }  // namespace bt

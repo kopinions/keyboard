@@ -31,7 +31,9 @@ void bt::attribute_visitor::visit(bt::service_t* t) {
   for (auto c : t->characteristics()) {
     c.accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(c)>>*>(this));
   }
-  std::cout << "create attribute table" << std::endl;
+
+  std::cout << "create attribute table before actual api" << std::endl;
+
   esp_err_t err = m_gatt_if->create_attr_tab(m_attributes.data(), 2, 0);
   if (err) {
     std::cout << "error while attribute sevice visitor" << std::endl;
@@ -39,9 +41,19 @@ void bt::attribute_visitor::visit(bt::service_t* t) {
 }
 
 void bt::attribute_visitor::visit(bt::characteristic_t* t) {
+  std::cout << "characteristic visitor" << std::endl;
+
   m_attributes.push_back(esp_gatts_attr_db_t{.attr_control = {.auto_rsp = ESP_GATT_AUTO_RSP},
                                              .att_desc = {.uuid_length = 2,
                                                           .uuid_p = (uint8_t*)&s_character_declaration_uuid,
+                                                          .perm = ESP_UUID_LEN_16,
+                                                          .max_length = 1,
+                                                          .length = 1,
+                                                          .value = nullptr}});
+
+  m_attributes.push_back(esp_gatts_attr_db_t{.attr_control = {.auto_rsp = ESP_GATT_AUTO_RSP},
+                                             .att_desc = {.uuid_length = 2,
+                                                          .uuid_p = (uint8_t*)&s_character_client_config_uuid,
                                                           .perm = ESP_UUID_LEN_16,
                                                           .max_length = 1,
                                                           .length = 1,

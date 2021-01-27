@@ -54,6 +54,7 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
       break;
     }
     default:
+      m_logger->info("%s", "default for the event");
       break;
   }
 }
@@ -100,17 +101,13 @@ std::vector<bt::service_t> bt::profile_t::services() const {
 bt::profile_t::profile_t(const bt::profile_t::id_t& id) : m_id{id} {}
 
 bt::profile_t::profile_t(const bt::profile_t& o) {
-  gatts_if = o.gatts_if;
   m_id = o.m_id;
-  conn_id = o.conn_id;
   m_services = o.m_services;
   std::cout << m_services.size() << "copy size" << std::endl;
 }
 
 bt::profile_t& bt::profile_t::operator=(const bt::profile_t& o) {
-  gatts_if = o.gatts_if;
   m_id = o.m_id;
-  conn_id = o.conn_id;
   m_services = o.m_services;
   std::cout << m_services.size() << "operator size" << std::endl;
   return *this;
