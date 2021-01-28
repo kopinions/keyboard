@@ -20,6 +20,7 @@ void bt::attribute_visitor::visit(bt::profile_t *t) {
     delete service_visitor;
   }
 }
+
 static const uint16_t s_bat_svc = ESP_GATT_UUID_BATTERY_SERVICE_SVC;
 static uint8_t bat_level = 1;
 
@@ -37,9 +38,14 @@ void bt::attribute_visitor::visit(bt::service_t *t) {
   for (auto c : t->characteristics()) {
     c.accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(c)>> *>(this));
   }
-  std::cout << m_attributes.size() << "  :attributes after service visit" << std::endl;
 
-  esp_err_t err = m_gatt_if->create_attr_tab(m_attributes.data(), 2, 0);
+  std::cout << m_attributes.size() << "  :attributes after service visit" << std::endl;
+  for (auto a : m_attributes) {
+    std::cout << "length" << a.att_desc.length << std::endl;
+    std::cout << "uuid length" << a.att_desc.uuid_length << std::endl;
+  }
+
+  esp_err_t err = m_gatt_if->create_attr_tab(m_attributes.data(), 5, 0);
   if (err) {
     std::cout << "error while attribute sevice visitor" << std::endl;
   }
