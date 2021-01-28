@@ -30,7 +30,11 @@ extern "C" void app_main() {
         bt::application_builder_t::name("kbd")
             ->id(0x0001)
             ->profile([](bt::profile_builder_t* p) {
-              p->service([](bt::service_builder_t* s) { s->id(1)->characteristic([](auto* c) { c->id(1); }); });
+              p->service([](bt::service_builder_t* s) {
+                s->id(1)->characteristic([](bt::characteristic_builder_t* c) {
+                  c->id(1);
+                });
+              });
             })
             ->build();
 
