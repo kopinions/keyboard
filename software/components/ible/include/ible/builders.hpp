@@ -59,20 +59,31 @@ class characteristic_builder_t : public ibuilder<bt::characteristic_t> {
   friend service_builder_t;
   characteristic_builder_t* id(bt::characteristic_t::id_t id);
 
-  characteristic_builder_t* property(std::uint8_t property) {
+  characteristic_builder_t* property(bt::characteristic_t::property_t property) {
     m_property |= property;
     return this;
   }
 
-  characteristic_builder_t* permission(std::uint16_t permission) {
+  characteristic_builder_t* permission(bt::characteristic_t::permission_t permission) {
     m_permission |= permission;
+    return this;
+  }
+
+  characteristic_builder_t* descriptor(bt::characteristic_t::permission_t permission) {
+    m_permission |= permission;
+    return this;
+  }
+
+  characteristic_builder_t* value(std::uint8_t* v) {
+    data = v;
     return this;
   }
 
  private:
   characteristic_t build() override;
   bt::characteristic_t::id_t m_id;
-  std::uint16_t m_permission;
-  std::uint8_t m_property;
+  bt::characteristic_t::permission_t m_permission;
+  bt::characteristic_t::property_t m_property;
+  std::uint8_t* data;
 };
 }  // namespace bt

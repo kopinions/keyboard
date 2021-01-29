@@ -121,3 +121,5 @@ bt::service_t::service_t(id_t id, std::vector<characteristic_t> characteristics)
     : m_id(id), m_characteristics{std::move(characteristics)} {}
 
 void bt::service_t::accept(visitor_t<service_t>* t) { t->visit(this); }
+
+bool bt::characteristic_t::automated() { return m_automated; }

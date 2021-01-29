@@ -26,18 +26,32 @@ extern "C" void app_main() {
     auto trans = std::make_shared<transports>();
     //    const std::shared_ptr<endpoint>& ep = std::make_shared<endpoint>();
     const std::shared_ptr<bt::ble>& b = std::make_shared<bt::ble>("Chaos", bt::appearance_t::KEYBOARD, lg);
-    const bt::application_t& app =
-        bt::application_builder_t::name("kbd")
-            ->id(0x0001)
-            ->profile([](bt::profile_builder_t* p) {
-              p->service([](bt::service_builder_t* s) {
-                s->id(1)->characteristic([](bt::characteristic_builder_t* c) {
-                  c->id(1);
-                });
-              });
-            })
-            ->build();
 
+    static const uint16_t s_primary_service_uuid = ESP_GATT_UUID_PRI_SERVICE;
+    static const uint16_t s_include_service_uuid = ESP_GATT_UUID_INCLUDE_SERVICE;
+    static const uint16_t s_character_declaration_uuid = ESP_GATT_UUID_CHAR_DECLARE;
+    static const uint16_t s_character_client_config_uuid = ESP_GATT_UUID_CHAR_CLIENT_CONFIG;
+
+    static const uint16_t s_bat_level_uuid = ESP_GATT_UUID_BATTERY_LEVEL;
+    static const uint16_t s_bat_char_pres_format_uuid = ESP_GATT_UUID_CHAR_PRESENT_FORMAT;
+    static const uint8_t s_char_prop_read_notify = ESP_GATT_CHAR_PROP_BIT_READ | ESP_GATT_CHAR_PROP_BIT_NOTIFY;
+    static uint8_t bat_level = 1;
+
+    const bt::application_t& app = bt::application_builder_t::name("kbd")
+                                       ->id(0x0001)
+                                       ->profile([](bt::profile_builder_t* p) {
+                                         p->service([](bt::service_builder_t* s) {
+                                           s->id(1);
+                                           s->characteristic([](bt::characteristic_builder_t* c) {
+                                             c->id(s_bat_level_uuid);
+                                             c->property(bt::characteristic_t::property_t::READ);
+                                             c->property(bt::characteristic_t::property_t::NOTIFY);
+                                             c->permission(bt::characteristic_t::permission_t::READ);
+                                             c->value(&bat_level);
+                                           });
+                                         });
+                                       })
+                                       ->build();
     b->enroll(app);
 
     while (true) {

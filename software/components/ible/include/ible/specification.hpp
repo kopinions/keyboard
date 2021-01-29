@@ -22,20 +22,53 @@ class attribute_visitor;
 class characteristic_t : public visitable_t<visitor_t<characteristic_t>> {
  public:
   using id_t = std::uint16_t;
+
+  enum class property_t : uint8_t {
+    BROADCAST = (1 << 0),
+    READ = (1 << 1),
+    WRITE_NR = (1 << 2),
+    WRITE = (1 << 3),
+    NOTIFY = (1 << 4),
+    INDICATE = (1 << 5),
+    AUTH = (1 << 6),
+    EXT_PROP = (1 << 7),
+  };
+
+  enum class permission_t : uint16_t {
+    READ = (1 << 0),
+    READ_ENCRYPTED = (1 << 1),
+    READ_ENC_MITM = (1 << 2),
+    WRITE = (1 << 4),
+    WRITE_ENCRYPTED = (1 << 5),
+    WRITE_ENC_MITM = (1 << 6),
+    WRITE_SIGNED = (1 << 7),
+    WRITE_SIGNED_MITM = (1 << 8),
+  };
+
   friend class attribute_visitor;
 
  private:
-  uint8_t auto_rsp;
-  uint16_t uuid_length;
-  uint8_t* uuid_p;
-  uint16_t perm;
-  uint16_t max_length;
-  uint16_t length;
-  uint8_t* value;
+  id_t m_id;
+  std::uint16_t m_permission;
+  std::uint8_t* m_value;
+  bool m_automated;
+  std::uint8_t m_property;
+
+  bool automated();
 
  public:
   void accept(visitor_t<characteristic_t>* t) override { t->visit(this); }
 };
+
+static inline bt::characteristic_t::property_t operator|=(bt::characteristic_t::property_t& l,
+                                                          bt::characteristic_t::property_t r) {
+  return static_cast<bt::characteristic_t::property_t>(static_cast<uint8_t>(l) | static_cast<uint8_t>(r));
+}
+
+static inline bt::characteristic_t::permission_t operator|=(bt::characteristic_t::permission_t& l,
+                                                            bt::characteristic_t::permission_t r) {
+  return static_cast<bt::characteristic_t::permission_t>(static_cast<uint16_t>(l) | static_cast<uint16_t>(r));
+}
 
 class service_t : public visitable_t<visitor_t<service_t>> {
  public:
