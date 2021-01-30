@@ -65,7 +65,7 @@ void bt::attribute_visitor::visit(bt::characteristic_t *t) {
       esp_gatts_attr_db_t{.attr_control = {.auto_rsp = static_cast<uint8_t>(t->automated() ? 1u : 0u)},
                           .att_desc = {.uuid_length = sizeof(t->m_id),
                                        .uuid_p = reinterpret_cast<uint8_t *>(t->m_id),
-                                       .perm = t->m_permission,
+                                       .perm = static_cast<uint16_t>(t->m_permission),
                                        .max_length = 1,
                                        .length = 1,
                                        .value = t->m_value}});

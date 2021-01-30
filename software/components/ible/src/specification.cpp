@@ -122,4 +122,15 @@ bt::service_t::service_t(id_t id, std::vector<characteristic_t> characteristics)
 
 void bt::service_t::accept(visitor_t<service_t>* t) { t->visit(this); }
 
+bt::characteristic_t::characteristic_t(characteristic_t::id_t id, bool automated, characteristic_t::property_t property,
+                                       characteristic_t::permission_t permission, uint8_t* value, size_t length,
+                                       size_t max_length)
+    : m_id(id),
+      m_automated(automated),
+      m_property(property),
+      m_permission(permission),
+      m_value(value),
+      m_length(length),
+      m_max_length(max_length) {}
+
 bool bt::characteristic_t::automated() { return m_automated; }

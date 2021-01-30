@@ -47,7 +47,7 @@ extern "C" void app_main() {
                                              c->property(bt::characteristic_t::property_t::READ);
                                              c->property(bt::characteristic_t::property_t::NOTIFY);
                                              c->permission(bt::characteristic_t::permission_t::READ);
-                                             c->value(&bat_level);
+                                             c->value(&bat_level, 1, 1);
                                            });
                                          });
                                        })

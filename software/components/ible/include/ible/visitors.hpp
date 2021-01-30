@@ -27,4 +27,5 @@ class attribute_visitor : public visitor_t<profile_t, service_t, characteristic_
   std::vector<esp_gatts_attr_db_t> m_attributes;
   std::shared_ptr<gatt_if_t> m_gatt_if;
 };
+
 }  // namespace bt

@@ -57,7 +57,9 @@ bt::service_builder_t* bt::service_builder_t::characteristic(bt::consumer_t<bt::
   return this;
 }
 
-bt::characteristic_t bt::characteristic_builder_t::build() { return bt::characteristic_t(); }
+bt::characteristic_t bt::characteristic_builder_t::build() {
+  return bt::characteristic_t(m_id, m_automated, m_property, m_permission, nullptr, m_length, m_max_length);
+}
 
 bt::characteristic_builder_t* bt::characteristic_builder_t::id(bt::characteristic_t::id_t id) {
   m_id = id;

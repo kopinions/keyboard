@@ -45,14 +45,18 @@ class characteristic_t : public visitable_t<visitor_t<characteristic_t>> {
     WRITE_SIGNED_MITM = (1 << 8),
   };
 
+  characteristic_t(characteristic_t::id_t, bool, characteristic_t::property_t, characteristic_t::permission_t, uint8_t*,
+                   size_t length, size_t max_length);
+
   friend class attribute_visitor;
 
  private:
   id_t m_id;
-  std::uint16_t m_permission;
-  std::uint8_t* m_value;
   bool m_automated;
-  std::uint8_t m_property;
+  characteristic_t::property_t m_property;
+  characteristic_t::permission_t m_permission;
+  std::uint8_t* m_value;
+  size_t m_length, m_max_length;
 
   bool automated();
 
