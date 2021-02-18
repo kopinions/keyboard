@@ -27,7 +27,6 @@ bt::application_builder_t::application_builder_t(std::string app_name) : m_app_n
 
 bt::profile_t bt::profile_builder_t::build() {
   auto profile = profile_t(1);
-  std::cout << m_services.size() << "build size" << std::endl;
   for (const auto& srv : m_services) {
     profile.enroll(srv);
   }

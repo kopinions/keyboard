@@ -86,12 +86,10 @@ bt::profile_t::~profile_t() {}
 
 void bt::profile_t::enroll(bt::service_t srv) {
   m_services.insert(std::make_pair(srv.id(), srv));
-  std::cout << m_services.size() << "insert size" << std::endl;
 }
 
 std::vector<bt::service_t> bt::profile_t::services() const {
   std::vector<service_t> s;
-  std::cout << m_services.size() << "get size" << std::endl;
   for (auto [k, v] : m_services) {
     s.push_back(v);
   }
@@ -103,13 +101,11 @@ bt::profile_t::profile_t(const bt::profile_t::id_t& id) : m_id{id} {}
 bt::profile_t::profile_t(const bt::profile_t& o) {
   m_id = o.m_id;
   m_services = o.m_services;
-  std::cout << m_services.size() << "copy size" << std::endl;
 }
 
 bt::profile_t& bt::profile_t::operator=(const bt::profile_t& o) {
   m_id = o.m_id;
   m_services = o.m_services;
-  std::cout << m_services.size() << "operator size" << std::endl;
   return *this;
 }
 

@@ -31,8 +31,8 @@ void bt::attribute_visitor::visit(bt::service_t *t) {
                                              .att_desc = {.uuid_length = ESP_UUID_LEN_16,
                                                           .uuid_p = (uint8_t *)&s_primary_service_uuid,
                                                           .perm = ESP_GATT_PERM_READ,
-                                                          .max_length = 2,
-                                                          .length = 2,
+                                                          .max_length = 1,
+                                                          .length = 1,
                                                           .value = (uint8_t *)&s_bat_svc}});
 
   for (auto c : t->characteristics()) {

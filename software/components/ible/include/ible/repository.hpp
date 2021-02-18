@@ -23,7 +23,6 @@ class repository_t {
   virtual T* of(const id_t& id) { return m_entities[id]; };
 
   virtual void foreach (std::function<void(T*)> f) {
-    std::cout << "create attribute table " << m_entities.size() << std::endl;
     for (auto& [k, v] : m_entities) {
       f(v);
     }
