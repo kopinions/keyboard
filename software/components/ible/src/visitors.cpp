@@ -44,8 +44,11 @@ void bt::attribute_visitor::visit(bt::service_t *t) {
     std::cout << "length" << a.att_desc.length << std::endl;
     std::cout << "uuid length" << a.att_desc.uuid_length << std::endl;
   }
-
-  esp_err_t err = m_gatt_if->create_attr_tab(m_attributes.data(), 5, 0);
+  auto *_last_db = (esp_gatts_attr_db_t *)malloc(sizeof(esp_gatts_attr_db_t) * m_attributes.size());
+  for (auto i=0; i<m_attributes.size() ; i++) {
+    _last_db[i] = m_attributes.at(i);
+  }
+  esp_err_t err = m_gatt_if->create_attr_tab(_last_db, m_attributes.size(), 0);
   if (err) {
     std::cout << "error while attribute sevice visitor" << std::endl;
   }
@@ -64,7 +67,7 @@ void bt::attribute_visitor::visit(bt::characteristic_t *t) {
   m_attributes.push_back(
       esp_gatts_attr_db_t{.attr_control = {.auto_rsp = static_cast<uint8_t>(t->automated() ? 1u : 0u)},
                           .att_desc = {.uuid_length = sizeof(t->m_id),
-                                       .uuid_p = reinterpret_cast<uint8_t *>(t->m_id),
+                                       .uuid_p = reinterpret_cast<uint8_t *>(&(t->m_id)),
                                        .perm = static_cast<uint16_t>(t->m_permission),
                                        .max_length = 1,
                                        .length = 1,
