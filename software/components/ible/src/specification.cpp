@@ -10,11 +10,12 @@
 void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
   switch (e.event) {
     case ESP_GATTS_REG_EVT: {
-      m_attributes = std::make_shared<attribute_visitor>(gatt);
-      m_profiles->foreach ([e, this](profile_t* p) { m_attributes->visit(p); });
+
       break;
     }
     case ESP_GATTS_CREAT_ATTR_TAB_EVT: {
+      m_attributes = std::make_shared<attribute_visitor>(gatt);
+      m_profiles->foreach ([e, this](profile_t* p) { m_attributes->visit(p); });
       m_logger->info("%s", "gatt create attr in the application");
       //      dev->bat_svc.handle = e.param->add_attr_tab.handles[BAS_IDX_SVC];
       //      dev->bat_level_handle = param->add_attr_tab.handles[BAS_IDX_BATT_LVL_VAL];  // so we notify of the change

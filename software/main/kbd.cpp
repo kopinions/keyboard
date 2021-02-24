@@ -41,7 +41,7 @@ extern "C" void app_main() {
                                        ->id(0x0001)
                                        ->profile([](bt::profile_builder_t* p) {
                                          p->service([](bt::service_builder_t* s) {
-                                           s->id(1);
+                                           s->id(ESP_GATT_UUID_BATTERY_SERVICE_SVC);
                                            s->characteristic([](bt::characteristic_builder_t* c) {
                                              c->id(s_bat_level_uuid);
                                              c->property(bt::characteristic_t::property_t::READ);
