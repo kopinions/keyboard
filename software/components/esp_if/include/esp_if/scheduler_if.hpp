@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <memory>
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -18,34 +19,28 @@ class scheduled_if : public scheduled {
   TaskHandle_t m_handle;
 
  public:
-  void cancel() override;
+  void cancel() override { vTaskDelete(m_handle); };
 };
 
 template <typename... Args>
 class scheduler_if : public scheduler<Args...> {
  public:
   std::shared_ptr<scheduled> schedule(const std::string& id, const kopinions::task<void(Args...)>& f,
-                                      Args... args) override;
+                                      Args... args) override {
+    m_f = f;
+
+    closure = [this, &args...]() -> void { m_f(std::forward<Args...>(args)...); };
+    auto tf = [](void* d) -> void { (*static_cast<decltype(closure)*>(d))(); };
+
+    auto ptr = std::make_shared<scheduled_if>();
+
+    xTaskCreate(tf, id.c_str(), 10000, &closure, 1, &ptr->m_handle);
+
+    return ptr;
+  };
 
  private:
   std::function<void()> closure;
   kopinions::task<void(Args...)> m_f;
 };
-
-template <typename... Args>
-std::shared_ptr<scheduled> scheduler_if<Args...>::schedule(const std::string& id,
-                                                           const kopinions::task<void(Args...)>& f, Args... args) {
-  m_f = f;
-
-  closure = [this, &args...]() -> void { m_f(std::forward<Args...>(args)...); };
-  auto tf = [](void* d) -> void { (*static_cast<decltype(closure)*>(d))(); };
-
-  auto ptr = std::make_shared<scheduled_if>();
-
-  xTaskCreate(tf, id.c_str(), 10000, &closure, 1, &ptr->m_handle);
-
-  return ptr;
-}
-
-void kopinions::scheduled_if::cancel() { vTaskDelete(m_handle); }
 }  // namespace kopinions

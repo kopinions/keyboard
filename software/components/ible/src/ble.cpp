@@ -78,11 +78,96 @@ static esp_ble_adv_params_t adv_params = {
     .adv_filter_policy = ADV_FILTER_ALLOW_SCAN_ANY_CON_ANY,
 };
 
+static uint8_t adv_service_uuid128[32] = {
+    /* LSB <--------------------------------------------------------------------------------> MSB */
+    // first uuid, 16bit, [12],[13] is the value
+    0xfb,
+    0x34,
+    0x9b,
+    0x5f,
+    0x80,
+    0x00,
+    0x00,
+    0x80,
+    0x00,
+    0x10,
+    0x00,
+    0x00,
+    0xEE,
+    0x00,
+    0x00,
+    0x00,
+    // second uuid, 32bit, [12], [13], [14], [15] is the value
+    0xfb,
+    0x34,
+    0x9b,
+    0x5f,
+    0x80,
+    0x00,
+    0x00,
+    0x80,
+    0x00,
+    0x10,
+    0x00,
+    0x00,
+    0xFF,
+    0x00,
+    0x00,
+    0x00,
+};
+
 void bt::ble::gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t* param) {
   m_logger->info("%s", "gap event handler");
   static uint8_t adv_config_done = 0;
   constexpr uint8_t adv_config_flag = (1 << 0);
   constexpr uint8_t scan_rsp_config_flag = (1 << 1);
+  esp_err_t set_dev_name_ret = esp_ble_gap_set_device_name(bt::ble::name.c_str());
+  if (set_dev_name_ret) {
+    m_logger->error("set name failed", "set name failed");
+  }
+  static esp_ble_adv_data_t adv_data = {
+      .set_scan_rsp = false,
+      .include_name = true,
+      .include_txpower = true,
+      .min_interval = 0x0006,  // slave connection min interval, Time = min_interval * 1.25 msec
+      .max_interval = 0x0010,  // slave connection max interval, Time = max_interval * 1.25 msec
+      .appearance = bt::ble::appearance,
+      .manufacturer_len = 0,           // TEST_MANUFACTURER_DATA_LEN,
+      .p_manufacturer_data = nullptr,  //&test_manufacturer[0],
+      .service_data_len = 0,
+      .p_service_data = nullptr,
+      .service_uuid_len = sizeof(adv_service_uuid128),
+      .p_service_uuid = adv_service_uuid128,
+      .flag = (ESP_BLE_ADV_FLAG_GEN_DISC | ESP_BLE_ADV_FLAG_BREDR_NOT_SPT),
+  };
+
+  // scan response data
+  static esp_ble_adv_data_t scan_rsp_data = {
+      .set_scan_rsp = true,
+      .include_name = true,
+      .include_txpower = true,
+      //.min_interval = 0x0006,
+      //.max_interval = 0x0010,
+      .appearance = bt::ble::appearance,
+      .manufacturer_len = 0,
+      .p_manufacturer_data = nullptr,
+      .service_data_len = 0,
+      .p_service_data = nullptr,
+      .service_uuid_len = sizeof(adv_service_uuid128),
+      .p_service_uuid = adv_service_uuid128,
+      .flag = (ESP_BLE_ADV_FLAG_GEN_DISC | ESP_BLE_ADV_FLAG_BREDR_NOT_SPT),
+  };
+
+  // config adv data
+  esp_err_t ret = esp_ble_gap_config_adv_data(&adv_data);
+  if (ret) {
+    m_logger->error("set name failed", "set name failed");
+  }
+  // config scan response data
+  ret = esp_ble_gap_config_adv_data(&scan_rsp_data);
+  if (ret) {
+    m_logger->error("set name failed", "set name failed");
+  }
 
   switch (event) {
     case ESP_GAP_BLE_ADV_DATA_SET_COMPLETE_EVT:
@@ -146,98 +231,12 @@ void bt::ble::gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_par
   }
 }
 
-static uint8_t adv_service_uuid128[32] = {
-    /* LSB <--------------------------------------------------------------------------------> MSB */
-    // first uuid, 16bit, [12],[13] is the value
-    0xfb,
-    0x34,
-    0x9b,
-    0x5f,
-    0x80,
-    0x00,
-    0x00,
-    0x80,
-    0x00,
-    0x10,
-    0x00,
-    0x00,
-    0xEE,
-    0x00,
-    0x00,
-    0x00,
-    // second uuid, 32bit, [12], [13], [14], [15] is the value
-    0xfb,
-    0x34,
-    0x9b,
-    0x5f,
-    0x80,
-    0x00,
-    0x00,
-    0x80,
-    0x00,
-    0x10,
-    0x00,
-    0x00,
-    0xFF,
-    0x00,
-    0x00,
-    0x00,
-};
-
 void bt::ble::gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t* param) {
   m_logger->info("%s", "gatt event handler");
   static std::map<esp_gatt_if_t, application_t::id_t> gatt_ifs;
   static std::map<esp_gatt_if_t, std::shared_ptr<gatt_if_t>> gatt_ifs_;
   if (event == ESP_GATTS_REG_EVT) {
     if (param->reg.status == ESP_GATT_OK) {
-      esp_err_t set_dev_name_ret = esp_ble_gap_set_device_name(bt::ble::name.c_str());
-      if (set_dev_name_ret) {
-        m_logger->error("set name failed", "set name failed");
-      }
-      static esp_ble_adv_data_t adv_data = {
-          .set_scan_rsp = false,
-          .include_name = true,
-          .include_txpower = true,
-          .min_interval = 0x0006,  // slave connection min interval, Time = min_interval * 1.25 msec
-          .max_interval = 0x0010,  // slave connection max interval, Time = max_interval * 1.25 msec
-          .appearance = bt::ble::appearance,
-          .manufacturer_len = 0,           // TEST_MANUFACTURER_DATA_LEN,
-          .p_manufacturer_data = nullptr,  //&test_manufacturer[0],
-          .service_data_len = 0,
-          .p_service_data = nullptr,
-          .service_uuid_len = sizeof(adv_service_uuid128),
-          .p_service_uuid = adv_service_uuid128,
-          .flag = (ESP_BLE_ADV_FLAG_GEN_DISC | ESP_BLE_ADV_FLAG_BREDR_NOT_SPT),
-      };
-
-      // scan response data
-      static esp_ble_adv_data_t scan_rsp_data = {
-          .set_scan_rsp = true,
-          .include_name = true,
-          .include_txpower = true,
-          //.min_interval = 0x0006,
-          //.max_interval = 0x0010,
-          .appearance = bt::ble::appearance,
-          .manufacturer_len = 0,
-          .p_manufacturer_data = nullptr,
-          .service_data_len = 0,
-          .p_service_data = nullptr,
-          .service_uuid_len = sizeof(adv_service_uuid128),
-          .p_service_uuid = adv_service_uuid128,
-          .flag = (ESP_BLE_ADV_FLAG_GEN_DISC | ESP_BLE_ADV_FLAG_BREDR_NOT_SPT),
-      };
-
-      // config adv data
-      esp_err_t ret = esp_ble_gap_config_adv_data(&adv_data);
-      if (ret) {
-        m_logger->error("set name failed", "set name failed");
-      }
-      // config scan response data
-      ret = esp_ble_gap_config_adv_data(&scan_rsp_data);
-      if (ret) {
-        m_logger->error("set name failed", "set name failed");
-      }
-
       apps()->foreach ([&param, &gatts_if](auto* app) {
         if (app->id() == param->reg.app_id) {
           gatt_ifs[gatts_if] = app->id();
