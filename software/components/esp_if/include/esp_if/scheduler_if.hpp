@@ -27,7 +27,7 @@ class scheduler_if : public scheduler<Args...> {
  public:
   std::shared_ptr<scheduled> schedule(const std::string& id, const kopinions::task<void(Args...)>& f,
                                       Args... args) override {
-    m_f = f;
+    m_f = std::move(f);
 
     closure = [this, &args...]() -> void { m_f(std::forward<Args...>(args)...); };
     auto tf = [](void* d) -> void { (*static_cast<decltype(closure)*>(d))(); };
