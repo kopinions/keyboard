@@ -23,7 +23,7 @@
 namespace bt {
 class ble {
  public:
-  ble(std::string name, bt::appearance_t appearance, std::shared_ptr<kopinions::logging::logger> lg);
+  ble(const std::string& device_name, bt::appearance_t appearance, std::shared_ptr<kopinions::logging::logger> lg);
   void enable();
   void disable();
   void reset();

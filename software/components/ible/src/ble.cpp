@@ -1,34 +1,25 @@
 #include "ible/ble.hpp"
 
-#include <nvs_flash.h>
-
 #include <cstring>
 #include <map>
 #include <memory>
 #include <string_view>
-constexpr std::string_view LOGGER_TAG = "ble";
+#define LOGGER_TAG "ble"
 bool bt::ble::secure = false;
 std::shared_ptr<kopinions::logging::logger> bt::ble::m_logger = std::shared_ptr<kopinions::logging::logger>{};
 std::string bt::ble::name = "Chaos";
 bt::appearance_t bt::ble::appearance = bt::appearance_t::KEYBOARD;
 
-bt::ble::ble(std::string device_name, bt::appearance_t device_appearance,
+bt::ble::ble(const std::string& device_name, bt::appearance_t device_appearance,
              std::shared_ptr<kopinions::logging::logger> lg) {
   name = device_name;
   appearance = device_appearance;
   m_logger = lg;
   // Initialize NVS.
 
-  auto ret = nvs_flash_init();
-  if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-    ESP_ERROR_CHECK(nvs_flash_erase());
-    ret = nvs_flash_init();
-  }
-  ESP_ERROR_CHECK(ret);
-
   esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT);
   esp_bt_controller_config_t bt_cfg = BT_CONTROLLER_INIT_CONFIG_DEFAULT();
-  ret = esp_bt_controller_init(&bt_cfg);
+  auto ret = esp_bt_controller_init(&bt_cfg);
 
   if (ret) {
     m_logger->error("%s: %s initialize controller failed\n", LOGGER_TAG, __func__);
