@@ -61,8 +61,8 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
 
 bt::application_t::application_t(id_t id) : m_id(id) {
   m_profiles = std::make_shared<repository_t<bt::profile_t>>();
-  m_logger = std::make_shared<kopinions::logging::logger>(kopinions::logging::level::INFO,
-                                                          std::make_shared<kopinions::logging::esp_log_sink>());
+  auto sink = new kopinions::logging::esp_log_sink();
+  m_logger = new kopinions::logging::logger(kopinions::logging::level::INFO, sink);
 }
 
 bt::application_t::application_t(const bt::application_t& o) {

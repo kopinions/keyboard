@@ -16,6 +16,7 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <string_view>
 
 #include "ible/specification.hpp"
 #include "logger.hpp"
@@ -23,7 +24,7 @@
 namespace bt {
 class ble {
  public:
-  ble(const std::string& device_name, bt::appearance_t appearance, std::shared_ptr<kopinions::logging::logger> lg);
+  ble(const std::string& device_name, bt::appearance_t appearance, kopinions::logging::logger& lg);
   void enable();
   void disable();
   void reset();
@@ -42,8 +43,8 @@ class ble {
   static std::shared_ptr<repository_t<application_t>> apps();
 
  private:
-  static std::shared_ptr<kopinions::logging::logger> m_logger;
-  static std::string name;
+  static kopinions::logging::logger* m_logger;
+  static std::string_view name;
   static bool secure;
   static appearance_t appearance;
 };

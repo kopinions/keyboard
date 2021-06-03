@@ -8,7 +8,7 @@ namespace kopinions {
 
 class gpios {
  public:
-  virtual std::shared_ptr<gpio> select(pin::id p) = 0;
+  virtual gpio* select(pin::id p) = 0;
   virtual ~gpios() = default;
 };
 }  // namespace kopinions

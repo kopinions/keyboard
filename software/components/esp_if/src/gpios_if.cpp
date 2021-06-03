@@ -2,12 +2,12 @@
 
 #include "pin.hpp"
 
-std::shared_ptr<kopinions::gpio> kopinions::gpios_if::select(kopinions::pin::id p) {
+kopinions::gpio* kopinions::gpios_if::select(kopinions::pin::id p) {
   if (auto it = m_gpios.find(p); it != m_gpios.end()) {
     return it->second;
   }
-  auto io = std::make_shared<gpio_if>(p);
-  m_gpios[p] = io;
+  auto io = new gpio_if(p);
+  m_gpios.insert(std::make_pair(p, io));
   return m_gpios[p];
 }
 

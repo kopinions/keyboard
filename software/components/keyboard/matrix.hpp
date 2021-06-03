@@ -11,16 +11,16 @@
 namespace kopinions {
 class matrix {
  public:
-  explicit matrix(const std::shared_ptr<gpios> &, const std::shared_ptr<kopinions::clock> &) noexcept;
+  explicit matrix(gpios &, kopinions::clock &) noexcept;
 
   std::map<std::pair<pin::id, pin::id>, pin::status> scan();
 
   virtual ~matrix() = default;
 
  private:
-  std::shared_ptr<gpios> m_gpios;
+  gpios *m_gpios;
   matrix_config *m_conf;
-  std::shared_ptr<kopinions::clock> m_clk;
+  kopinions::clock *m_clk;
   std::map<std::pair<pin::id, pin::id>, uint64_t> m_debounce;
   std::map<std::pair<pin::id, pin::id>, pin::status> m_prev;
   std::map<std::pair<pin::id, pin::id>, pin::status> m_current;
@@ -51,8 +51,7 @@ std::map<std::pair<pin::id, pin::id>, pin::status> matrix::scan() {
   return changes;
 }
 
-matrix::matrix(const std::shared_ptr<gpios> &gpios, const std::shared_ptr<kopinions::clock> &clk) noexcept
-    : m_gpios{gpios}, m_clk{clk} {
+matrix::matrix(gpios &gpios, kopinions::clock &clk) noexcept : m_gpios{&gpios}, m_clk{&clk} {
   m_conf = new matrix_config(
       std::vector<pin::id>{
           pin::id::IO2,

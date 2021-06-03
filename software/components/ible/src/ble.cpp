@@ -6,15 +6,14 @@
 #include <string_view>
 #define LOGGER_TAG "ble"
 bool bt::ble::secure = false;
-std::shared_ptr<kopinions::logging::logger> bt::ble::m_logger = std::shared_ptr<kopinions::logging::logger>{};
-std::string bt::ble::name = "Chaos";
+kopinions::logging::logger* bt::ble::m_logger = nullptr;
+std::string_view bt::ble::name = "ble";
 bt::appearance_t bt::ble::appearance = bt::appearance_t::KEYBOARD;
 
-bt::ble::ble(const std::string& device_name, bt::appearance_t device_appearance,
-             std::shared_ptr<kopinions::logging::logger> lg) {
+bt::ble::ble(const std::string& device_name, bt::appearance_t device_appearance, kopinions::logging::logger& lg) {
   name = device_name;
   appearance = device_appearance;
-  m_logger = lg;
+  m_logger = &lg;
   // Initialize NVS.
 
   esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT);
@@ -25,25 +24,26 @@ bt::ble::ble(const std::string& device_name, bt::appearance_t device_appearance,
     m_logger->error("%s: %s initialize controller failed\n", LOGGER_TAG, __func__);
     return;
   }
-
+  m_logger->error("%s: %s init bluedroid failed\n", LOGGER_TAG, "after init");
   ret = esp_bt_controller_enable(ESP_BT_MODE_BLE);
   if (ret) {
     m_logger->error("%s: %s enable controller failed\n", LOGGER_TAG, __func__);
     return;
   }
+  m_logger->error("%s: %s init bluedroid failed\n", LOGGER_TAG, "after controller enable");
 
   ret = esp_bluedroid_init();
   if (ret) {
     m_logger->error("%s: %s init bluedroid failed\n", LOGGER_TAG, __func__);
     return;
   }
-
+  m_logger->error("%s: %s init bluedroid failed\n", LOGGER_TAG, "after bluedroid init");
   ret = esp_bluedroid_enable();
   if (ret) {
     m_logger->error("%s: %s init bluedroid failed\n", LOGGER_TAG, __func__);
     return;
   }
-
+  m_logger->error("%s: %s init bluedroid failed\n", LOGGER_TAG, "after enable");
   ret = esp_ble_gatts_register_callback(ble::gatts_event_handler);
   if (ret) {
     ESP_LOGE("GATTS_TAG", "gatts register error, error code = %x", ret);
@@ -112,7 +112,7 @@ void bt::ble::gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_par
   static uint8_t adv_config_done = 0;
   constexpr uint8_t adv_config_flag = (1 << 0);
   constexpr uint8_t scan_rsp_config_flag = (1 << 1);
-  esp_err_t set_dev_name_ret = esp_ble_gap_set_device_name(bt::ble::name.c_str());
+  esp_err_t set_dev_name_ret = esp_ble_gap_set_device_name(bt::ble::name.data());
   if (set_dev_name_ret) {
     m_logger->error("set name failed", "set name failed");
   }

@@ -130,7 +130,7 @@ class application_t {
   id_t m_id;
   std::shared_ptr<attribute_visitor> m_attributes;
   std::shared_ptr<repository_t<profile_t>> m_profiles;
-  std::shared_ptr<kopinions::logging::logger> m_logger;
+  kopinions::logging::logger* m_logger;
 };
 
 class profile_t : public visitable_t<visitor_t<profile_t>> {

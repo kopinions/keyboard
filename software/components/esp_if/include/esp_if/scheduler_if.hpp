@@ -34,7 +34,7 @@ class scheduler_if : public scheduler<Args...> {
 
     auto ptr = std::make_shared<scheduled_if>();
 
-    xTaskCreate(tf, id.c_str(), 10000, &closure, 1, &ptr->m_handle);
+    xTaskCreate(tf, id.c_str(), 2048, &closure, 1, &ptr->m_handle);
 
     return ptr;
   };

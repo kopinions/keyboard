@@ -6,10 +6,10 @@
 namespace kopinions {
 class gpios_if : public gpios {
  public:
-  std::shared_ptr<gpio> select(pin::id p) override;
+  gpio* select(pin::id p) override;
   ~gpios_if() override;
 
  private:
-  std::map<pin::id, std::shared_ptr<kopinions::gpio_if>> m_gpios;
+  std::map<pin::id, kopinions::gpio_if*> m_gpios;
 };
 }  // namespace kopinions
