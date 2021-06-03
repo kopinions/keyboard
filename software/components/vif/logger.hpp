@@ -1,7 +1,9 @@
 #pragma once
+#include <cstdio>
 #include <iostream>
 #include <memory>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 
 namespace kopinions::logging {
@@ -12,10 +14,14 @@ class formatter {
 
   template <typename... Args>
   std::string format(Args... args) const {
-    std::ostringstream sbuf;
-    // fold expression
-    ((sbuf << std::dec << m_fmt) << ... << args);
-    return sbuf.str();
+    int size_s = std::snprintf(nullptr, 0, m_fmt.c_str(), args...) + 1;  // Extra space for '\0'
+    if (size_s <= 0) {
+      throw std::runtime_error("Error during formatting.");
+    }
+    auto size = static_cast<size_t>(size_s);
+    auto buf = std::make_unique<char[]>(size);
+    std::snprintf(buf.get(), size, m_fmt.c_str(), args...);
+    return std::string(buf.get(), buf.get() + size - 1);  // We don't want the '\0' inside
   };
 
  private:

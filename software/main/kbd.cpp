@@ -54,19 +54,19 @@ extern "C" void app_main() {
                                        ->build();
     b->enroll(app);
 
-    //    while (true) {
-    lg->log(level::DEBUG, "%s", "xxx1111");
+    while (true) {
+      lg->log(level::DEBUG, "%s %d", "xxx1111", 222);
 
-    auto&& res = kbd->scan();
-    trans->select();
+      auto&& res = kbd->scan();
+      trans->select();
 
-    for (auto b : res) {
-      auto status = b.sts;
-      lg->log(level::DEBUG, "%s", status);
+      for (auto b : res) {
+        auto status = b.sts;
+        lg->log(level::DEBUG, "%d", status);
+      }
+
+      vTaskDelay(100);
     }
-
-    vTaskDelay(100);
-    //    }
   });
   while (true) {
     vTaskDelay(1000 / portTICK_PERIOD_MS);
