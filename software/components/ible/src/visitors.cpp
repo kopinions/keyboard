@@ -31,8 +31,8 @@ void bt::attribute_visitor::visit(bt::service_t *t) {
                                              .att_desc = {.uuid_length = ESP_UUID_LEN_16,
                                                           .uuid_p = (uint8_t *)&s_primary_service_uuid,
                                                           .perm = ESP_GATT_PERM_READ,
-                                                          .max_length = 1,
-                                                          .length = 1,
+                                                          .max_length = 2,
+                                                          .length = 2,
                                                           .value = (uint8_t *)&s_bat_svc}});
 
   for (auto c : t->characteristics()) {
@@ -45,7 +45,7 @@ void bt::attribute_visitor::visit(bt::service_t *t) {
     std::cout << "uuid length" << a.att_desc.uuid_length << std::endl;
   }
   auto *_last_db = (esp_gatts_attr_db_t *)malloc(sizeof(esp_gatts_attr_db_t) * m_attributes.size());
-  for (auto i=0; i<m_attributes.size() ; i++) {
+  for (auto i = 0; i < m_attributes.size(); i++) {
     _last_db[i] = m_attributes.at(i);
   }
   esp_err_t err = m_gatt_if->create_attr_tab(_last_db, m_attributes.size(), 0);
@@ -60,13 +60,15 @@ void bt::attribute_visitor::visit(bt::characteristic_t *t) {
                                              .att_desc = {.uuid_length = ESP_UUID_LEN_16,
                                                           .uuid_p = (uint8_t *)&CHARACTERISTIC_DECLARE,
                                                           .perm = ESP_GATT_PERM_READ,
-                                                          .max_length = 1,
-                                                          .length = 1,
+                                                          .max_length = 2,
+                                                          .length = 2,
                                                           .value = (uint8_t *)&(t->m_property)}});
 
+  size_t i = sizeof(decltype(t->m_id)) / sizeof(uint8_t);
+  std::cout << "size i " << i << std::endl;
   m_attributes.push_back(
       esp_gatts_attr_db_t{.attr_control = {.auto_rsp = static_cast<uint8_t>(t->automated() ? 1u : 0u)},
-                          .att_desc = {.uuid_length = sizeof(t->m_id),
+                          .att_desc = {.uuid_length = static_cast<uint16_t>(i),
                                        .uuid_p = reinterpret_cast<uint8_t *>(&(t->m_id)),
                                        .perm = static_cast<uint16_t>(t->m_permission),
                                        .max_length = 1,
