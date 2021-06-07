@@ -24,26 +24,22 @@ bt::ble::ble(const std::string& device_name, bt::appearance_t device_appearance,
     m_logger->error("%s: %s initialize controller failed\n", LOGGER_TAG, __func__);
     return;
   }
-  m_logger->error("%s: %s init bluedroid failed\n", LOGGER_TAG, "after init");
   ret = esp_bt_controller_enable(ESP_BT_MODE_BLE);
   if (ret) {
     m_logger->error("%s: %s enable controller failed\n", LOGGER_TAG, __func__);
     return;
   }
-  m_logger->error("%s: %s init bluedroid failed\n", LOGGER_TAG, "after controller enable");
 
   ret = esp_bluedroid_init();
   if (ret) {
     m_logger->error("%s: %s init bluedroid failed\n", LOGGER_TAG, __func__);
     return;
   }
-  m_logger->error("%s: %s init bluedroid failed\n", LOGGER_TAG, "after bluedroid init");
   ret = esp_bluedroid_enable();
   if (ret) {
     m_logger->error("%s: %s init bluedroid failed\n", LOGGER_TAG, __func__);
     return;
   }
-  m_logger->error("%s: %s init bluedroid failed\n", LOGGER_TAG, "after enable");
   ret = esp_ble_gatts_register_callback(ble::gatts_event_handler);
   if (ret) {
     ESP_LOGE("GATTS_TAG", "gatts register error, error code = %x", ret);
