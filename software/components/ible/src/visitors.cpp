@@ -16,17 +16,13 @@ void bt::attribute_visitor::visit(bt::profile_t *t) {
   std::cout << "visit profile" << std::endl;
   for (auto srv : t->services()) {
     auto *service_visitor = new attribute_visitor(m_gatt_if);
-    std::cout << service_visitor->m_attributes.size() << "  :attributes" << std::endl;
-
     srv.accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(srv)>> *>(service_visitor));
-    std::cout << service_visitor->m_attributes.size() << "  :attributes" << std::endl;
     delete service_visitor;
   }
 }
 
 void bt::attribute_visitor::visit(bt::service_t *t) {
   std::cout << "visit service" << std::endl;
-  std::cout << m_attributes.size() << "  :attributes before service visit" << std::endl;
   m_attributes.push_back(esp_gatts_attr_db_t{.attr_control = {.auto_rsp = ESP_GATT_AUTO_RSP},
                                              .att_desc = {.uuid_length = ESP_UUID_LEN_16,
                                                           .uuid_p = (uint8_t *)&s_primary_service_uuid,
@@ -39,12 +35,11 @@ void bt::attribute_visitor::visit(bt::service_t *t) {
     c.accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(c)>> *>(this));
   }
 
-  std::cout << m_attributes.size() << "  :attributes after service visit" << std::endl;
   for (auto a : m_attributes) {
     std::cout << "length" << a.att_desc.length << std::endl;
     std::cout << "uuid length" << a.att_desc.uuid_length << std::endl;
   }
-  auto *_last_db = (esp_gatts_attr_db_t *)malloc(sizeof(esp_gatts_attr_db_t) * m_attributes.size());
+  auto *_last_db = new esp_gatts_attr_db_t[m_attributes.size()];
   for (auto i = 0; i < m_attributes.size(); i++) {
     _last_db[i] = m_attributes.at(i);
   }
@@ -60,8 +55,8 @@ void bt::attribute_visitor::visit(bt::characteristic_t *t) {
                                              .att_desc = {.uuid_length = ESP_UUID_LEN_16,
                                                           .uuid_p = (uint8_t *)&CHARACTERISTIC_DECLARE,
                                                           .perm = ESP_GATT_PERM_READ,
-                                                          .max_length = 2,
-                                                          .length = 2,
+                                                          .max_length = 1,
+                                                          .length = 1,
                                                           .value = (uint8_t *)&(t->m_property)}});
 
   size_t i = sizeof(decltype(t->m_id)) / sizeof(uint8_t);

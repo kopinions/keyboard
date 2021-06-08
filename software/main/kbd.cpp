@@ -56,6 +56,7 @@ void hid_demo_task(void* pvParameters) {
                                        });
                                      })
                                      ->build();
+  std::cout << app.stringify();
   b->enroll(app);
 
   while (true) {

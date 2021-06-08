@@ -2,7 +2,7 @@
 
 #include <esp_gap_ble_api.h>
 
-#include <utility>
+#include <strstream>
 
 #include "esp_if/esp_log_sink.hpp"
 #include "ible/visitors.hpp"
@@ -81,6 +81,13 @@ bt::application_t::application_t(bt::application_t&& o) noexcept {
 bt::application_t::~application_t() {}
 
 void bt::application_t::enroll(const bt::profile_t& profile) { m_profiles->create(profile); }
+std::string bt::application_t::stringify() const {
+  std::strstream str;
+  str << "app id:" << m_id << "; "
+      << "profiles:" << std::endl;
+  m_profiles->foreach ([&](profile_t* p) { str << p->stringify(); });
+  return str.str();
+}
 
 bt::profile_t::~profile_t() {}
 
@@ -110,11 +117,30 @@ bt::profile_t& bt::profile_t::operator=(const bt::profile_t& o) {
 void bt::profile_t::accept(visitor_t<profile_t>* t) { t->visit(this); }
 
 const bt::profile_t::id_t& bt::profile_t::id() const { return m_id; }
+std::string bt::profile_t::stringify() const {
+  std::strstream str;
+  str << "profile id:" << m_id << "; "
+      << "services:" << std::endl;
+  for (auto [id, srv] : m_services) {
+    str << "id:" << id << "; " << srv.stringify();
+  }
+  return str.str();
+}
 
 bt::service_t::service_t(id_t id, std::vector<characteristic_t> characteristics)
     : m_id(id), m_characteristics{std::move(characteristics)} {}
 
 void bt::service_t::accept(visitor_t<service_t>* t) { t->visit(this); }
+std::string bt::service_t::stringify() const {
+  std::strstream str;
+  str << "service id:" << m_id << "; "
+      << "characteristics:" << std::endl;
+  for (const auto& c : m_characteristics) {
+    str << c.stringify();
+  }
+
+  return str.str();
+}
 
 bt::characteristic_t::characteristic_t(characteristic_t::id_t id, bool automated, characteristic_t::property_t property,
                                        characteristic_t::permission_t permission, uint8_t* value, size_t length,
@@ -128,3 +154,15 @@ bt::characteristic_t::characteristic_t(characteristic_t::id_t id, bool automated
       m_max_length(max_length) {}
 
 bool bt::characteristic_t::automated() { return m_automated; }
+
+std::string bt::characteristic_t::stringify() const {
+  std::strstream str;
+  str << "characteristic id:" << m_id << "; "
+      << "automated:" << m_automated << "; "
+      << "property:" << m_property << "; "
+      << "permission:" << m_permission << "; "
+      << "value:" << m_value << "; "
+      << "length:" << m_length << "; "
+      << "max_length" << m_max_length << std::endl;
+  return str.str();
+}

@@ -7,6 +7,7 @@
 #include "ible/gatt_if.hpp"
 #include "ible/repository.hpp"
 #include "ible/specification.hpp"
+#include "ible/stringify.hpp"
 #include "ible/visitor.hpp"
 #include "vif.hpp"
 namespace bt {
@@ -19,10 +20,9 @@ enum appearance_t : uint16_t { KEYBOARD = 0x3C1 };
 
 class attribute_visitor;
 
-class characteristic_t : public visitable_t<visitor_t<characteristic_t>> {
+class characteristic_t : public visitable_t<visitor_t<characteristic_t>>, public stringify_t {
  public:
   using id_t = std::uint16_t;
-
   enum class property_t : uint8_t {
     BROADCAST = (1 << 0),
     READ = (1 << 1),
@@ -47,7 +47,7 @@ class characteristic_t : public visitable_t<visitor_t<characteristic_t>> {
 
   characteristic_t(characteristic_t::id_t, bool, characteristic_t::property_t, characteristic_t::permission_t, uint8_t*,
                    size_t length, size_t max_length);
-
+  [[nodiscard]] std::string stringify() const override;
   friend class attribute_visitor;
 
  private:
@@ -64,6 +64,15 @@ class characteristic_t : public visitable_t<visitor_t<characteristic_t>> {
   void accept(visitor_t<characteristic_t>* t) override { t->visit(this); }
 };
 
+inline std::ostream& operator<<(std::ostream& os, const characteristic_t::property_t obj) {
+  os << static_cast<uint32_t>(obj);
+  return os;
+}
+inline std::ostream& operator<<(std::ostream& os, const characteristic_t::permission_t obj) {
+  os << static_cast<uint32_t>(obj);
+  return os;
+}
+
 static inline bt::characteristic_t::property_t operator|=(bt::characteristic_t::property_t& l,
                                                           bt::characteristic_t::property_t r) {
   return static_cast<bt::characteristic_t::property_t>(static_cast<uint8_t>(l) | static_cast<uint8_t>(r));
@@ -74,13 +83,13 @@ static inline bt::characteristic_t::permission_t operator|=(bt::characteristic_t
   return static_cast<bt::characteristic_t::permission_t>(static_cast<uint16_t>(l) | static_cast<uint16_t>(r));
 }
 
-class service_t : public visitable_t<visitor_t<service_t>> {
+class service_t : public visitable_t<visitor_t<service_t>>, public stringify_t {
  public:
   using id_t = std::uint16_t;
   explicit service_t(id_t id, std::vector<characteristic_t>);
 
   std::vector<characteristic_t> characteristics() { return m_characteristics; };
-
+  [[nodiscard]] std::string stringify() const override;
   [[nodiscard]] id_t id() const { return m_id; }
 
   void accept(visitor_t<service_t>* t) override;
@@ -108,7 +117,7 @@ class event_t {
 
 class profile_t;
 
-class application_t {
+class application_t : public stringify_t {
  public:
   using id_t = uint16_t;
 
@@ -125,6 +134,7 @@ class application_t {
   virtual void enroll(const profile_t& profile);
 
   void notified(std::shared_ptr<bt::gatt_if_t>, event_t e);
+  [[nodiscard]] std::string stringify() const override;
 
  private:
   id_t m_id;
@@ -133,7 +143,7 @@ class application_t {
   kopinions::logging::logger* m_logger;
 };
 
-class profile_t : public visitable_t<visitor_t<profile_t>> {
+class profile_t : public visitable_t<visitor_t<profile_t>>, public stringify_t {
  public:
   using id_t = std::uint16_t;
 
@@ -152,6 +162,7 @@ class profile_t : public visitable_t<visitor_t<profile_t>> {
   virtual ~profile_t();
 
   [[nodiscard]] const id_t& id() const;
+  [[nodiscard]] std::string stringify() const override;
 
  private:
   id_t m_id;
