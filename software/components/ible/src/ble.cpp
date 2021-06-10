@@ -230,13 +230,14 @@ void bt::ble::gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatt
           gatt_ifs_[gatts_if] = std::make_shared<esp_gatt>(gatts_if);
         }
       });
+      apps()->of(gatt_ifs[gatts_if])->notified(gatt_ifs_[gatts_if], event_t{});
     } else {
       m_logger->error("Reg app failed, app_id %04x, status %d\n", param->reg.app_id, param->reg.status);
       return;
     }
+  } else {
+    apps()->of(gatt_ifs[gatts_if])->notified(gatt_ifs_[gatts_if], event_t{});
   }
-
-  apps()->of(gatt_ifs[gatts_if])->notified(gatt_ifs_[gatts_if], event_t{});
 }
 void bt::ble::disable() {}
 void bt::ble::reset() {}
