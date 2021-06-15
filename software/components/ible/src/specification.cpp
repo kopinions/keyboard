@@ -11,8 +11,10 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
   switch (e.event) {
     case ESP_GATTS_REG_EVT: {
       m_logger->info("%s", "gatt reg for the application");
-      m_attributes = std::make_shared<attribute_visitor>(gatt);
-      m_profiles->foreach ([e, this](profile_t* p) { m_attributes->visit(p); });
+      if (m_attributes == nullptr) {
+        m_attributes = std::make_shared<attribute_visitor>(gatt);
+        m_profiles->foreach ([e, this](profile_t* p) { m_attributes->visit(p); });
+      }
       break;
     }
     case ESP_GATTS_CREAT_ATTR_TAB_EVT: {
@@ -162,7 +164,7 @@ std::string bt::characteristic_t::stringify() const {
       << "automated:" << m_automated << "; "
       << "property:" << m_property << "; "
       << "permission:" << m_permission << "; "
-      << "value:" << m_value << "; "
+      << "value:" << std::hex << m_value << "; "
       << "length:" << m_length << "; "
       << "max_length" << m_max_length << std::endl;
   return str.str();
