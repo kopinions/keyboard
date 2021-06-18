@@ -13,10 +13,6 @@
 
 using namespace kopinions;
 using namespace kopinions::logging;
-void heap_caps_alloc_failed_hook(size_t requested_size, uint32_t caps, const char* function_name) {
-  printf("%s was called but failed to allocate %d bytes with 0x%X capabilities. \n", function_name, requested_size,
-         caps);
-}
 
 void hid_demo_task(void* pvParameters) {
   auto ios = new gpios_if;
@@ -38,7 +34,6 @@ void hid_demo_task(void* pvParameters) {
   static const uint16_t s_bat_char_pres_format_uuid = ESP_GATT_UUID_CHAR_PRESENT_FORMAT;
   static const uint8_t s_char_prop_read_notify = ESP_GATT_CHAR_PROP_BIT_READ | ESP_GATT_CHAR_PROP_BIT_NOTIFY;
   static uint8_t bat_level = 1;
-  esp_err_t error = heap_caps_register_failed_alloc_callback(heap_caps_alloc_failed_hook);
   auto b = new bt::ble("Chaos", bt::appearance_t::KEYBOARD, *lg);
 
   const bt::application_t& app = bt::application_builder_t::name("kbd")

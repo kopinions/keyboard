@@ -19,20 +19,37 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
     }
     case ESP_GATTS_CREAT_ATTR_TAB_EVT: {
       m_logger->info("%s", "gatt create attr in the application");
-      //      dev->bat_svc.handle = e.param->add_attr_tab.handles[BAS_IDX_SVC];
-      //      dev->bat_level_handle = param->add_attr_tab.handles[BAS_IDX_BATT_LVL_VAL];  // so we notify of the change
-      //      dev->bat_ccc_handle = param->add_attr_tab.handles[BAS_IDX_BATT_LVL_CCC];    // so we know if we can send
-      //      notify ESP_LOGV(TAG, "Battery CREAT_ATTR_TAB service handle = %d", dev->bat_svc.handle);
-      //
-      //      dev->hid_incl_svc.start_hdl = dev->bat_svc.handle;
-      //      dev->hid_incl_svc.end_hdl = dev->bat_svc.handle + BAS_IDX_NB - 1;
-      //
-      //      esp_ble_gatts_start_service(dev->bat_svc.handle);
-      //
-      //      // Add the info service next, because it's shared between all device maps
-      //      create_info_db(dev);
+      auto bat_svc_handle = e.param->add_attr_tab.handles[0];
+      // auto bat_level_handle = e.param->add_attr_tab.handles[BAS_IDX_BATT_LVL_VAL];  // so we notify of the
+      // change auto bat_ccc_handle = e.param->add_attr_tab.handles[BAS_IDX_BATT_LVL_CCC];    // so we know if we
+      // can send notify ESP_LOGV(TAG, "Battery CREAT_ATTR_TAB service handle = %d", dev->bat_svc.handle);
+
+      // dev->hid_incl_svc.start_hdl = dev->bat_svc.handle;
+      // dev->hid_incl_svc.end_hdl = dev->bat_svc.handle + BAS_IDX_NB - 1;
+
+      auto ret = esp_ble_gatts_start_service(bat_svc_handle);
+      if (ret) {
+        m_logger->error("%s: %s start service failed", __func__);
+        return;
+      }
+      // Add the info service next, because it's shared between all device maps
       break;
     }
+    case ESP_GATTS_START_EVT: {
+      m_logger->info("%s", "gatts start event");
+      // use event loop
+      static esp_ble_adv_params_t hidd_adv_params = {
+          .adv_int_min        = 0x20,
+          .adv_int_max        = 0x30,
+          .adv_type           = ADV_TYPE_IND,
+          .own_addr_type      = BLE_ADDR_TYPE_PUBLIC,
+          .channel_map        = ADV_CHNL_ALL,
+          .adv_filter_policy  = ADV_FILTER_ALLOW_SCAN_ANY_CON_ANY,
+      };
+      esp_ble_gap_start_advertising(&hidd_adv_params);
+      break;
+    }
+
     case ESP_GATTS_READ_EVT: {
       m_logger->info("%s", "gatt read in the application");
       //      if (param->read.handle == dev->bat_level_handle) {

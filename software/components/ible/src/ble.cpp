@@ -1,9 +1,6 @@
 #include "ible/ble.hpp"
 
 #include <cstring>
-#include <map>
-#include <memory>
-#include <string_view>
 #define LOGGER_TAG "ble"
 bool bt::ble::secure = false;
 kopinions::logging::logger* bt::ble::m_logger = nullptr;
@@ -14,8 +11,6 @@ bt::ble::ble(const std::string& device_name, bt::appearance_t device_appearance,
   name = device_name;
   appearance = device_appearance;
   m_logger = &lg;
-  // Initialize NVS.
-
   esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT);
   esp_bt_controller_config_t bt_cfg = BT_CONTROLLER_INIT_CONFIG_DEFAULT();
   auto ret = esp_bt_controller_init(&bt_cfg);
@@ -40,15 +35,15 @@ bt::ble::ble(const std::string& device_name, bt::appearance_t device_appearance,
     m_logger->error("%s: %s init bluedroid failed\n", LOGGER_TAG, __func__);
     return;
   }
+
   ret = esp_ble_gatts_register_callback(ble::gatts_event_handler);
   if (ret) {
     ESP_LOGE("GATTS_TAG", "gatts register error, error code = %x", ret);
     return;
   }
 
-  ret = esp_ble_gap_register_callback(ble::gap_event_handler);
-  if (ret) {
-    ESP_LOGE("GATTS_TAG", "gap register error, error code = %x", ret);
+  if (auto ret = esp_ble_gap_register_callback(ble::gap_event_handler); ret != ESP_OK) {
+    m_logger->error("gap register error, error code = %x", ret);
     return;
   }
 }
@@ -105,6 +100,7 @@ static uint8_t adv_service_uuid128[32] = {
 
 void bt::ble::gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t* param) {
   m_logger->info("%s", "gap event handler");
+  std::cout << "xxxxx" << std::endl;
   static uint8_t adv_config_done = 0;
   constexpr uint8_t adv_config_flag = (1 << 0);
   constexpr uint8_t scan_rsp_config_flag = (1 << 1);
