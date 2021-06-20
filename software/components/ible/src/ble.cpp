@@ -46,69 +46,51 @@ bt::ble::ble(const std::string& device_name, bt::appearance_t device_appearance,
     m_logger->error("gap register error, error code = %x", ret);
     return;
   }
-}
-void bt::ble::enable() {}
 
-static esp_ble_adv_params_t adv_params = {
-    .adv_int_min = 0x20,
-    .adv_int_max = 0x40,
-    .adv_type = ADV_TYPE_IND,
-    .own_addr_type = BLE_ADDR_TYPE_PUBLIC,
-    //.peer_addr            =
-    //.peer_addr_type       =
-    .channel_map = ADV_CHNL_ALL,
-    .adv_filter_policy = ADV_FILTER_ALLOW_SCAN_ANY_CON_ANY,
-};
-
-static uint8_t adv_service_uuid128[32] = {
-    /* LSB <--------------------------------------------------------------------------------> MSB */
-    // first uuid, 16bit, [12],[13] is the value
-    0xfb,
-    0x34,
-    0x9b,
-    0x5f,
-    0x80,
-    0x00,
-    0x00,
-    0x80,
-    0x00,
-    0x10,
-    0x00,
-    0x00,
-    0xEE,
-    0x00,
-    0x00,
-    0x00,
-    // second uuid, 32bit, [12], [13], [14], [15] is the value
-    0xfb,
-    0x34,
-    0x9b,
-    0x5f,
-    0x80,
-    0x00,
-    0x00,
-    0x80,
-    0x00,
-    0x10,
-    0x00,
-    0x00,
-    0xFF,
-    0x00,
-    0x00,
-    0x00,
-};
-
-void bt::ble::gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t* param) {
-  m_logger->info("%s", "gap event handler");
-  std::cout << "xxxxx" << std::endl;
-  static uint8_t adv_config_done = 0;
-  constexpr uint8_t adv_config_flag = (1 << 0);
-  constexpr uint8_t scan_rsp_config_flag = (1 << 1);
   esp_err_t set_dev_name_ret = esp_ble_gap_set_device_name(bt::ble::name.data());
   if (set_dev_name_ret) {
     m_logger->error("set name failed", "set name failed");
   }
-  static esp_ble_adv_data_t adv_data = {
+
+  uint8_t adv_service_uuid128[32] = {
+      /* LSB <--------------------------------------------------------------------------------> MSB */
+      // first uuid, 16bit, [12],[13] is the value
+      0xfb,
+      0x34,
+      0x9b,
+      0x5f,
+      0x80,
+      0x00,
+      0x00,
+      0x80,
+      0x00,
+      0x10,
+      0x00,
+      0x00,
+      0xEE,
+      0x00,
+      0x00,
+      0x00,
+      // second uuid, 32bit, [12], [13], [14], [15] is the value
+      0xfb,
+      0x34,
+      0x9b,
+      0x5f,
+      0x80,
+      0x00,
+      0x00,
+      0x80,
+      0x00,
+      0x10,
+      0x00,
+      0x00,
+      0xFF,
+      0x00,
+      0x00,
+      0x00,
+  };
+
+  esp_ble_adv_data_t adv_data = {
       .set_scan_rsp = false,
       .include_name = true,
       .include_txpower = true,
@@ -125,7 +107,7 @@ void bt::ble::gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_par
   };
 
   // scan response data
-  static esp_ble_adv_data_t scan_rsp_data = {
+  esp_ble_adv_data_t scan_rsp_data = {
       .set_scan_rsp = true,
       .include_name = true,
       .include_txpower = true,
@@ -142,15 +124,32 @@ void bt::ble::gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_par
   };
 
   // config adv data
-  esp_err_t ret = esp_ble_gap_config_adv_data(&adv_data);
-  if (ret) {
+  if (auto ret = esp_ble_gap_config_adv_data(&adv_data); ret != ESP_OK) {
     m_logger->error("set name failed", "set name failed");
   }
   // config scan response data
-  ret = esp_ble_gap_config_adv_data(&scan_rsp_data);
-  if (ret) {
+  if (auto ret = esp_ble_gap_config_adv_data(&scan_rsp_data); ret != ESP_OK) {
     m_logger->error("set name failed", "set name failed");
   }
+}
+void bt::ble::enable() {}
+
+static esp_ble_adv_params_t adv_params = {
+    .adv_int_min = 0x20,
+    .adv_int_max = 0x40,
+    .adv_type = ADV_TYPE_IND,
+    .own_addr_type = BLE_ADDR_TYPE_PUBLIC,
+    //.peer_addr            =
+    //.peer_addr_type       =
+    .channel_map = ADV_CHNL_ALL,
+    .adv_filter_policy = ADV_FILTER_ALLOW_SCAN_ANY_CON_ANY,
+};
+
+void bt::ble::gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t* param) {
+  m_logger->info("%s", "gap event handler");
+  static uint8_t adv_config_done = 0;
+  constexpr uint8_t adv_config_flag = (1 << 0);
+  constexpr uint8_t scan_rsp_config_flag = (1 << 1);
 
   switch (event) {
     case ESP_GAP_BLE_ADV_DATA_SET_COMPLETE_EVT:

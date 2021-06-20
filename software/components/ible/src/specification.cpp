@@ -38,15 +38,7 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
     case ESP_GATTS_START_EVT: {
       m_logger->info("%s", "gatts start event");
       // use event loop
-      static esp_ble_adv_params_t hidd_adv_params = {
-          .adv_int_min        = 0x20,
-          .adv_int_max        = 0x30,
-          .adv_type           = ADV_TYPE_IND,
-          .own_addr_type      = BLE_ADDR_TYPE_PUBLIC,
-          .channel_map        = ADV_CHNL_ALL,
-          .adv_filter_policy  = ADV_FILTER_ALLOW_SCAN_ANY_CON_ANY,
-      };
-      esp_ble_gap_start_advertising(&hidd_adv_params);
+
       break;
     }
 
