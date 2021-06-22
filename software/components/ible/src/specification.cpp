@@ -2,6 +2,7 @@
 
 #include <esp_gap_ble_api.h>
 
+#include <cstring>
 #include <strstream>
 
 #include "esp_if/esp_log_sink.hpp"
@@ -41,12 +42,25 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
 
       break;
     }
+    case ESP_GATTS_CONNECT_EVT: {
+      m_logger->info("%s", "gatt connect");
+      break;
+    }
 
     case ESP_GATTS_READ_EVT: {
       m_logger->info("%s", "gatt read in the application");
       //      if (param->read.handle == dev->bat_level_handle) {
       //        ESP_LOGD(TAG, "Battery READ %d", dev->bat_level);
       //      }
+      esp_gatt_rsp_t rsp;
+      memset(&rsp, 0, sizeof(esp_gatt_rsp_t));
+      rsp.attr_value.handle = e.param->read.handle;
+      rsp.attr_value.len = 4;
+      rsp.attr_value.value[0] = 0xde;
+      rsp.attr_value.value[1] = 0xed;
+      rsp.attr_value.value[2] = 0xbe;
+      rsp.attr_value.value[3] = 0xef;
+      gatt->response(e.param->read.conn_id, e.param->read.trans_id, ESP_GATT_OK, &rsp);
       break;
     }
     case ESP_GATTS_WRITE_EVT: {

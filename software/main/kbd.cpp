@@ -43,6 +43,7 @@ void hid_demo_task(void* pvParameters) {
                                          s->id(ESP_GATT_UUID_BATTERY_SERVICE_SVC);
                                          s->characteristic([](bt::characteristic_builder_t* c) {
                                            c->id(s_bat_level_uuid);
+                                           c->automated(false);
                                            c->property(bt::characteristic_t::property_t::READ);
                                            c->property(bt::characteristic_t::property_t::NOTIFY);
                                            c->permission(bt::characteristic_t::permission_t::READ);

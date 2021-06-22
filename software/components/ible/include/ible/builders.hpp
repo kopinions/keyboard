@@ -93,6 +93,6 @@ class characteristic_builder_t : public ibuilder<bt::characteristic_t> {
   bt::characteristic_t::property_t m_property;
   std::uint8_t* m_data;
   size_t m_length, m_max_length;
-  bool m_automated;
+  bool m_automated{true};
 };
 }  // namespace bt

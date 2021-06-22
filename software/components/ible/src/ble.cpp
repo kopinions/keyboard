@@ -127,6 +127,7 @@ bt::ble::ble(const std::string& device_name, bt::appearance_t device_appearance,
   if (auto ret = esp_ble_gap_config_adv_data(&adv_data); ret != ESP_OK) {
     m_logger->error("set name failed", "set name failed");
   }
+  m_logger->info("config the adv data", "");
   // config scan response data
   if (auto ret = esp_ble_gap_config_adv_data(&scan_rsp_data); ret != ESP_OK) {
     m_logger->error("set name failed", "set name failed");
