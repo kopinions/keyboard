@@ -44,9 +44,9 @@ class ble {
 
  private:
   static kopinions::logging::logger* m_logger;
-  static std::string_view name;
   static bool secure;
-  static appearance_t appearance;
+  std::string m_name;
+  appearance_t m_appearance;
 };
 }  // namespace bt
 

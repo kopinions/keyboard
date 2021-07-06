@@ -4,12 +4,10 @@
 #define LOGGER_TAG "ble"
 bool bt::ble::secure = false;
 kopinions::logging::logger* bt::ble::m_logger = nullptr;
-std::string_view bt::ble::name = "ble";
-bt::appearance_t bt::ble::appearance = bt::appearance_t::KEYBOARD;
 
 bt::ble::ble(const std::string& device_name, bt::appearance_t device_appearance, kopinions::logging::logger& lg) {
-  name = device_name;
-  appearance = device_appearance;
+  m_name = device_name;
+  m_appearance = device_appearance;
   m_logger = &lg;
   esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT);
   esp_bt_controller_config_t bt_cfg = BT_CONTROLLER_INIT_CONFIG_DEFAULT();
@@ -47,47 +45,15 @@ bt::ble::ble(const std::string& device_name, bt::appearance_t device_appearance,
     return;
   }
 
-  esp_err_t set_dev_name_ret = esp_ble_gap_set_device_name(bt::ble::name.data());
+  esp_err_t set_dev_name_ret = esp_ble_gap_set_device_name(m_name.data());
   if (set_dev_name_ret) {
     m_logger->error("set name failed", "set name failed");
   }
 
-  uint8_t adv_service_uuid128[32] = {
+  uint8_t hidd_service_uuid128[] = {
       /* LSB <--------------------------------------------------------------------------------> MSB */
       // first uuid, 16bit, [12],[13] is the value
-      0xfb,
-      0x34,
-      0x9b,
-      0x5f,
-      0x80,
-      0x00,
-      0x00,
-      0x80,
-      0x00,
-      0x10,
-      0x00,
-      0x00,
-      0xEE,
-      0x00,
-      0x00,
-      0x00,
-      // second uuid, 32bit, [12], [13], [14], [15] is the value
-      0xfb,
-      0x34,
-      0x9b,
-      0x5f,
-      0x80,
-      0x00,
-      0x00,
-      0x80,
-      0x00,
-      0x10,
-      0x00,
-      0x00,
-      0xFF,
-      0x00,
-      0x00,
-      0x00,
+      0xfb, 0x34, 0x9b, 0x5f, 0x80, 0x00, 0x00, 0x80, 0x00, 0x10, 0x00, 0x00, 0x12, 0x18, 0x00, 0x00,
   };
 
   esp_ble_adv_data_t adv_data = {
@@ -96,40 +62,20 @@ bt::ble::ble(const std::string& device_name, bt::appearance_t device_appearance,
       .include_txpower = true,
       .min_interval = 0x0006,  // slave connection min interval, Time = min_interval * 1.25 msec
       .max_interval = 0x0010,  // slave connection max interval, Time = max_interval * 1.25 msec
-      .appearance = bt::ble::appearance,
-      .manufacturer_len = 0,           // TEST_MANUFACTURER_DATA_LEN,
-      .p_manufacturer_data = nullptr,  //&test_manufacturer[0],
-      .service_data_len = 0,
-      .p_service_data = nullptr,
-      .service_uuid_len = sizeof(adv_service_uuid128),
-      .p_service_uuid = adv_service_uuid128,
-      .flag = (ESP_BLE_ADV_FLAG_GEN_DISC | ESP_BLE_ADV_FLAG_BREDR_NOT_SPT),
-  };
-
-  // scan response data
-  esp_ble_adv_data_t scan_rsp_data = {
-      .set_scan_rsp = true,
-      .include_name = true,
-      .include_txpower = true,
-      //.min_interval = 0x0006,
-      //.max_interval = 0x0010,
-      .appearance = bt::ble::appearance,
+      .appearance = m_appearance,
       .manufacturer_len = 0,
       .p_manufacturer_data = nullptr,
       .service_data_len = 0,
       .p_service_data = nullptr,
-      .service_uuid_len = sizeof(adv_service_uuid128),
-      .p_service_uuid = adv_service_uuid128,
+      .service_uuid_len = sizeof(hidd_service_uuid128),
+      .p_service_uuid = hidd_service_uuid128,
       .flag = (ESP_BLE_ADV_FLAG_GEN_DISC | ESP_BLE_ADV_FLAG_BREDR_NOT_SPT),
+
   };
 
   // config adv data
-  if (auto ret = esp_ble_gap_config_adv_data(&adv_data); ret != ESP_OK) {
-    m_logger->error("set name failed", "set name failed");
-  }
   m_logger->info("config the adv data", "");
-  // config scan response data
-  if (auto ret = esp_ble_gap_config_adv_data(&scan_rsp_data); ret != ESP_OK) {
+  if (auto ret = esp_ble_gap_config_adv_data(&adv_data); ret != ESP_OK) {
     m_logger->error("set name failed", "set name failed");
   }
 }

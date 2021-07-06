@@ -16,7 +16,7 @@ using uuid_t = std::variant<std::uint16_t>;
 
 class attribute_visitor;
 
-enum appearance_t : uint16_t { KEYBOARD = 0x3C1 };
+enum appearance_t : uint16_t { KEYBOARD = 0x03c0 };
 
 class attribute_visitor;
 
