@@ -119,7 +119,10 @@ class profile_t;
 
 class application_t : public stringify_t {
  public:
-  using id_t = uint16_t;
+  using id_t = enum : uint16_t {
+    HID = 0x1812,
+    BATTERY = 0x180f,
+  };
 
   virtual id_t id() const { return m_id; }
   virtual id_t id() { return m_id; }

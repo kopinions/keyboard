@@ -37,7 +37,7 @@ void hid_demo_task(void *pvParameters) {
   auto b = new bt::ble("Chaos", bt::appearance_t::KEYBOARD, *lg);
 
   const bt::application_t &bat = bt::application_builder_t::name("kbd")
-                                     ->id(0x180f)
+                                     ->id(bt::application_t::id_t::BATTERY)
                                      ->profile([](bt::profile_builder_t *p) {
                                        p->service([](bt::service_builder_t *s) {
                                          s->id(ESP_GATT_UUID_BATTERY_SERVICE_SVC);
@@ -243,7 +243,7 @@ void hid_demo_task(void *pvParameters) {
   static uint8_t hidProtocolMode = HID_PROTOCOL_MODE_REPORT;
   const bt::application_t &hid =
       bt::application_builder_t::name("hid")
-          ->id(0x1812)
+          ->id(bt::application_t::id_t::HID)
           ->profile([](bt::profile_builder_t *p) {
             p->service([](bt::service_builder_t *s) {
               s->id(ESP_GATT_UUID_BATTERY_SERVICE_SVC);
