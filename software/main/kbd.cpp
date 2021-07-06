@@ -14,7 +14,7 @@
 using namespace kopinions;
 using namespace kopinions::logging;
 
-void hid_demo_task(void* pvParameters) {
+void hid_demo_task(void *pvParameters) {
   auto ios = new gpios_if;
   auto clk = new clock_if;
   auto mtx = new matrix(*ios, *clk);

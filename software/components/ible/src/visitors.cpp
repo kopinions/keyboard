@@ -47,6 +47,7 @@ void bt::attribute_visitor::visit(bt::service_t *t) {
   for (auto c : t->characteristics()) {
     c.accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(c)>> *>(this));
   }
+  std::cout << "character_size" << m_attributes.size() << std::endl;
 }
 
 void bt::attribute_visitor::visit(bt::characteristic_t *t) {
@@ -59,14 +60,13 @@ void bt::attribute_visitor::visit(bt::characteristic_t *t) {
                                                           .length = 1,
                                                           .value = (uint8_t *)&(t->m_property)}});
 
-  size_t i = sizeof(decltype(t->m_id)) / sizeof(uint8_t);
-  std::cout << "size i " << i << std::endl;
+
   m_attributes.push_back(
       esp_gatts_attr_db_t{.attr_control = {.auto_rsp = static_cast<uint8_t>(t->automated() ? 1u : 0u)},
                           .att_desc = {.uuid_length = ESP_UUID_LEN_16,
                                        .uuid_p = (uint8_t *)(&t->m_id),
                                        .perm = static_cast<uint16_t>(t->m_permission),
-                                       .max_length = 1,
-                                       .length = 1,
+                                       .max_length = t->m_max_length,
+                                       .length = t->m_length,
                                        .value = t->m_value}});
 }

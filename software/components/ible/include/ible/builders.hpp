@@ -79,7 +79,7 @@ class characteristic_builder_t : public ibuilder<bt::characteristic_t> {
     return this;
   }
 
-  characteristic_builder_t* value(std::uint8_t* v, size_t length, size_t max_length) {
+  characteristic_builder_t* value(std::uint8_t* v, uint16_t  length, uint16_t  max_length) {
     m_data = v;
     m_length = length;
     m_max_length = max_length;
@@ -92,7 +92,7 @@ class characteristic_builder_t : public ibuilder<bt::characteristic_t> {
   bt::characteristic_t::permission_t m_permission;
   bt::characteristic_t::property_t m_property;
   std::uint8_t* m_data;
-  size_t m_length, m_max_length;
+  uint16_t  m_length, m_max_length;
   bool m_automated{true};
 };
 }  // namespace bt

@@ -169,8 +169,8 @@ std::string bt::service_t::stringify() const {
 }
 
 bt::characteristic_t::characteristic_t(characteristic_t::id_t id, bool automated, characteristic_t::property_t property,
-                                       characteristic_t::permission_t permission, uint8_t* value, size_t length,
-                                       size_t max_length)
+                                       characteristic_t::permission_t permission, uint8_t* value, uint16_t length,
+                                       uint16_t max_length)
     : m_id(id),
       m_automated(automated),
       m_property(property),
@@ -187,8 +187,8 @@ std::string bt::characteristic_t::stringify() const {
       << "automated:" << m_automated << "; "
       << "property:" << m_property << "; "
       << "permission:" << m_permission << "; "
-      << "value:" << std::hex << m_value << "; "
+//      << "value:" << std::hex << m_value << "; "
       << "length:" << m_length << "; "
-      << "max_length" << m_max_length << std::endl;
+      << "max_length:" << m_max_length << std::endl;
   return str.str();
 }
