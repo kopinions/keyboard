@@ -7,10 +7,10 @@ namespace hid {
 /// Maximal length of Report Char. Value
 #define HIDD_LE_REPORT_MAX_LEN (255)
 /// Maximal length of Report Map Char. Value
-#define HIDD_LE_REPORT_MAP_MAX_LEN (512)
+constexpr uint16_t HIDD_LE_REPORT_MAP_MAX_LEN = 512u;
 
 /// Length of Boot Report Char. Value Maximal Length
-#define HIDD_LE_BOOT_REPORT_MAX_LEN (8)
+constexpr uint16_t HIDD_LE_BOOT_REPORT_MAX_LEN = 8u;
 /// HIDD Features structure
 struct feature_t {
   /// Service Features
