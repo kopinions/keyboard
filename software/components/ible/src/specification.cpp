@@ -187,9 +187,20 @@ std::string bt::characteristic_t::stringify() const {
   str << "characteristic id:" << m_id << "; "
       << "automated:" << m_automated << "; "
       << "property:" << m_property << "; "
-      << "permission:" << m_permission << "; "
-//      << "value:" << std::hex << m_value << "; "
+      << "permission:" << m_permission
+      << "; "
+      //      << "value:" << std::hex << m_value << "; "
       << "length:" << m_length << "; "
       << "max_length:" << m_max_length << std::endl;
   return str.str();
 }
+
+bt::characteristic_t::characteristic_t(std::initializer_list<bt::attribute_t*> args) : m_attributes{args} { ; }
+
+void bt::characteristic_t::accept(visitor_t<bt::characteristic_t>* t) { t->visit(this); }
+
+bt::attribute_t::attribute_t(bt::uuid_t, bt::characteristic_t::permission_t, uint8_t*, uint16_t length,
+                             uint16_t maxlength, bool automated) {}
+std::string bt::attribute_t::stringify() const { return "attribute"; }
+
+void bt::attribute_t::accept(visitor_t<attribute_t>* t) { t->visit(this); }

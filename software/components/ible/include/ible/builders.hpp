@@ -1,6 +1,9 @@
 #pragma once
+#include <functional>
+
 #include "ible/builders.hpp"
 #include "ible/specification.hpp"
+#include "specification.hpp"
 namespace bt {
 class application_builder_t;
 class profile_builder_t;
@@ -54,37 +57,85 @@ class service_builder_t : public ibuilder<bt::service_t> {
   std::vector<characteristic_t> m_characteristics;
 };
 
+class characteristic_declare_builder_t : public ibuilder<bt::attribute_t> {
+ public:
+  friend characteristic_builder_t;
+
+  characteristic_declare_builder_t* property(bt::characteristic_t::property_t property);
+
+  characteristic_declare_builder_t* permission(bt::characteristic_t::permission_t permission);
+
+ private:
+  attribute_t build() override;
+
+ private:
+  bt::characteristic_t::permission_t m_permission;
+  bt::characteristic_t::property_t m_property;
+};
+
+class character_value_builder_t : public ibuilder<bt::attribute_t> {
+ public:
+  friend characteristic_builder_t;
+
+  character_value_builder_t* id(bt::characteristic_t::id_t id);
+
+  character_value_builder_t* permission(bt::characteristic_t::permission_t permission);
+
+  character_value_builder_t* automated(bool automated);
+
+  character_value_builder_t* value(std::uint8_t* v, uint16_t length, uint16_t max_length);
+
+ private:
+ public:
+  attribute_t build() override;
+
+ private:
+  bt::characteristic_t::id_t m_id;
+  bt::characteristic_t::permission_t m_permission;
+  bt::characteristic_t::property_t m_property;
+  std::uint8_t* m_data;
+  uint16_t m_length, m_max_length;
+  bool m_automated{true};
+};
+
+class character_descriptor_builder_t : public ibuilder<bt::attribute_t> {
+ public:
+  friend characteristic_builder_t;
+
+  character_descriptor_builder_t* id(bt::characteristic_t::id_t id);
+
+  character_descriptor_builder_t* permission(bt::characteristic_t::permission_t permission);
+
+  character_descriptor_builder_t* value(std::uint8_t* v, uint16_t length, uint16_t max_length);
+
+ private:
+ public:
+  attribute_t build() override;
+
+ private:
+  bt::characteristic_t::id_t m_id;
+  bt::characteristic_t::permission_t m_permission;
+  std::uint8_t* m_data;
+  uint16_t m_length, m_max_length;
+  bool m_automated{true};
+};
+
 class characteristic_builder_t : public ibuilder<bt::characteristic_t> {
  public:
   friend service_builder_t;
+  characteristic_builder_t* declare(consumer_t<characteristic_declare_builder_t>);
+  characteristic_builder_t* value(consumer_t<character_value_builder_t>);
+  characteristic_builder_t* descriptor(consumer_t<character_descriptor_builder_t>);
+
   characteristic_builder_t* id(bt::characteristic_t::id_t id);
 
-  characteristic_builder_t* property(bt::characteristic_t::property_t property) {
-    m_property |= property;
-    return this;
-  }
+  characteristic_builder_t* property(bt::characteristic_t::property_t property);
 
-  characteristic_builder_t* permission(bt::characteristic_t::permission_t permission) {
-    m_permission |= permission;
-    return this;
-  }
+  characteristic_builder_t* permission(bt::characteristic_t::permission_t permission);
 
-  characteristic_builder_t* descriptor(bt::characteristic_t::permission_t permission) {
-    m_permission |= permission;
-    return this;
-  }
+  characteristic_builder_t* automated(bool automated);
 
-  characteristic_builder_t* automated(bool automated) {
-    m_automated = automated;
-    return this;
-  }
-
-  characteristic_builder_t* value(std::uint8_t* v, uint16_t  length, uint16_t  max_length) {
-    m_data = v;
-    m_length = length;
-    m_max_length = max_length;
-    return this;
-  }
+  characteristic_builder_t* value(std::uint8_t* v, uint16_t length, uint16_t max_length);
 
  private:
   characteristic_t build() override;
@@ -92,7 +143,7 @@ class characteristic_builder_t : public ibuilder<bt::characteristic_t> {
   bt::characteristic_t::permission_t m_permission;
   bt::characteristic_t::property_t m_property;
   std::uint8_t* m_data;
-  uint16_t  m_length, m_max_length;
+  uint16_t m_length, m_max_length;
   bool m_automated{true};
 };
 }  // namespace bt

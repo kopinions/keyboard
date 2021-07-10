@@ -12,7 +12,9 @@
 #include "vif.hpp"
 namespace bt {
 
-using uuid_t = std::variant<std::uint16_t>;
+using uint128_t = uint64_t[2];
+using uuid_t = std::variant<std::uint16_t, std::uint32_t, bt::uint128_t>;
+using handle_t = std::uint16_t;
 
 class attribute_visitor;
 
@@ -22,6 +24,8 @@ class attribute_visitor;
 
 class characteristic_t : public visitable_t<visitor_t<characteristic_t>>, public stringify_t {
  public:
+  static constexpr uint16_t CHARACTERISTIC_DECLARE = ESP_GATT_UUID_CHAR_DECLARE;
+
   using id_t = std::uint16_t;
   enum class property_t : uint8_t {
     BROADCAST = (1 << 0),
@@ -45,8 +49,24 @@ class characteristic_t : public visitable_t<visitor_t<characteristic_t>>, public
     WRITE_SIGNED_MITM = (1 << 8),
   };
 
+  struct presentation_format {
+    /// Unit (The Unit is a UUID)
+    uint16_t unit;
+    /// Description
+    uint16_t description;
+    /// Format
+    uint8_t format;
+    /// Exponent
+    uint8_t exponent;
+    /// Name space
+    uint8_t name_space;
+  };
+
   characteristic_t(characteristic_t::id_t, bool, characteristic_t::property_t, characteristic_t::permission_t, uint8_t*,
                    uint16_t length, uint16_t max_length);
+
+  explicit characteristic_t(std::initializer_list<class attribute_t*>);
+  std::vector<class attribute_t*>& attributes() { return m_attributes; };
   [[nodiscard]] std::string stringify() const override;
   friend class attribute_visitor;
 
@@ -57,11 +77,32 @@ class characteristic_t : public visitable_t<visitor_t<characteristic_t>>, public
   characteristic_t::permission_t m_permission;
   std::uint8_t* m_value;
   uint16_t m_length, m_max_length;
+  std::vector<class bt::attribute_t*> m_attributes;
 
   bool automated();
 
  public:
-  void accept(visitor_t<characteristic_t>* t) override { t->visit(this); }
+  void accept(visitor_t<characteristic_t>* t) override;
+};
+
+class attribute_t : public stringify_t, public visitable_t<visitor_t<attribute_t>> {
+ public:
+  friend class attribute_visitor;
+  attribute_t(bt::uuid_t, bt::characteristic_t::permission_t, uint8_t*, uint16_t length, uint16_t maxlength,
+              bool automated = true);
+
+  [[nodiscard]] std::string stringify() const override;
+
+  void accept(visitor_t<attribute_t>* t) override;
+
+ private:
+  bt::characteristic_t::permission_t m_permission;
+  uuid_t m_uuid;
+  std::uint8_t* m_value;
+  std::uint16_t m_length;
+  std::uint16_t m_max_length;
+  bool m_automated;
+  handle_t m_handle;
 };
 
 inline std::ostream& operator<<(std::ostream& os, const characteristic_t::property_t obj) {
@@ -80,6 +121,16 @@ static inline bt::characteristic_t::property_t operator|=(bt::characteristic_t::
 
 static inline bt::characteristic_t::permission_t operator|=(bt::characteristic_t::permission_t& l,
                                                             bt::characteristic_t::permission_t r) {
+  return static_cast<bt::characteristic_t::permission_t>(static_cast<uint16_t>(l) | static_cast<uint16_t>(r));
+}
+
+static inline bt::characteristic_t::property_t operator|(bt::characteristic_t::property_t l,
+                                                         bt::characteristic_t::property_t r) {
+  return static_cast<bt::characteristic_t::property_t>(static_cast<uint8_t>(l) | static_cast<uint8_t>(r));
+}
+
+static inline bt::characteristic_t::permission_t operator|(bt::characteristic_t::permission_t l,
+                                                           bt::characteristic_t::permission_t r) {
   return static_cast<bt::characteristic_t::permission_t>(static_cast<uint16_t>(l) | static_cast<uint16_t>(r));
 }
 

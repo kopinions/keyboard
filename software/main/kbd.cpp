@@ -43,25 +43,40 @@ extern "C" void app_main() {
     static const uint16_t s_bat_level_uuid = ESP_GATT_UUID_BATTERY_LEVEL;
     static const uint16_t s_bat_char_pres_format_uuid = ESP_GATT_UUID_CHAR_PRESENT_FORMAT;
     static const uint8_t s_char_prop_read_notify = ESP_GATT_CHAR_PROP_BIT_READ | ESP_GATT_CHAR_PROP_BIT_NOTIFY;
+    static const uint8_t bat_lev_ccc[2] = {0x00, 0x00};
     static uint8_t bat_level = 1;
     auto b = new bt::ble("Chaos", bt::appearance_t::KEYBOARD, *lg);
 
-    const bt::application_t &bat = bt::application_builder_t::name("kbd")
-        ->id(bt::application_t::id_t::BATTERY)
-        ->profile([](bt::profile_builder_t *p) {
-          p->service([](bt::service_builder_t *s) {
-            s->id(ESP_GATT_UUID_BATTERY_SERVICE_SVC);
-            s->characteristic([](bt::characteristic_builder_t *c) {
-              c->id(s_bat_level_uuid);
-              c->automated(false);
-              c->property(bt::characteristic_t::property_t::READ);
-              c->property(bt::characteristic_t::property_t::NOTIFY);
-              c->permission(bt::characteristic_t::permission_t::READ);
-              c->value(&bat_level, 1, 1);
-            });
-          });
-        })
-        ->build();
+    const bt::application_t &bat =
+        bt::application_builder_t::name("kbd")
+            ->id(bt::application_t::id_t::BATTERY)
+            ->profile([](bt::profile_builder_t *p) {
+              p->service([](bt::service_builder_t *s) {
+                s->id(ESP_GATT_UUID_BATTERY_SERVICE_SVC);
+                s->characteristic([](bt::characteristic_builder_t *c) {
+                  c->declare([](bt::characteristic_declare_builder_t *d) {
+                    d->permission(bt::characteristic_t::permission_t::READ);
+                    d->property(bt::characteristic_t::property_t::READ | bt::characteristic_t::property_t::NOTIFY);
+                  });
+                  c->value([](bt::character_value_builder_t *v) {
+                    v->id(s_bat_level_uuid);
+                    v->permission(bt::characteristic_t::permission_t::READ);
+                    v->value(&bat_level, 1, 1);
+                  });
+                  c->descriptor([](bt::character_descriptor_builder_t *d) {
+                    d->id(s_character_client_config_uuid);
+                    d->permission(bt::characteristic_t::permission_t::READ | bt::characteristic_t::permission_t::WRITE);
+                    d->value((uint8_t *)&bat_lev_ccc, sizeof(bat_lev_ccc), sizeof(uint16_t));
+                  });
+                  c->descriptor([](bt::character_descriptor_builder_t *d) {
+                    d->id(s_bat_char_pres_format_uuid);
+                    d->permission(bt::characteristic_t::permission_t::READ);
+                    d->value(nullptr, 0, sizeof(bt::characteristic_t::presentation_format));
+                  });
+                });
+              });
+            })
+            ->build();
 
     static const uint16_t primary_service_uuid = ESP_GATT_UUID_PRI_SERVICE;
     static const uint16_t include_service_uuid = ESP_GATT_UUID_INCLUDE_SERVICE;
@@ -77,21 +92,7 @@ extern "C" void app_main() {
     static const uint16_t hid_mouse_input_uuid = ESP_GATT_UUID_HID_BT_MOUSE_INPUT;
     static const uint16_t hid_repot_map_ext_desc_uuid = ESP_GATT_UUID_EXT_RPT_REF_DESCR;
     static const uint16_t hid_report_ref_descr_uuid = ESP_GATT_UUID_RPT_REF_DESCR;
-    /// the propoty definition
-    static const uint8_t char_prop_notify = ESP_GATT_CHAR_PROP_BIT_NOTIFY;
-    static const uint8_t char_prop_read = ESP_GATT_CHAR_PROP_BIT_READ;
-    static const uint8_t char_prop_write_nr = ESP_GATT_CHAR_PROP_BIT_WRITE_NR;
-    static const uint8_t char_prop_read_write = ESP_GATT_CHAR_PROP_BIT_WRITE | ESP_GATT_CHAR_PROP_BIT_READ;
-    static const uint8_t char_prop_read_notify = ESP_GATT_CHAR_PROP_BIT_READ | ESP_GATT_CHAR_PROP_BIT_NOTIFY;
-    static const uint8_t char_prop_read_write_notify =
-        ESP_GATT_CHAR_PROP_BIT_READ | ESP_GATT_CHAR_PROP_BIT_WRITE | ESP_GATT_CHAR_PROP_BIT_NOTIFY;
 
-    /// battary Service
-    static const uint16_t battary_svc = ESP_GATT_UUID_BATTERY_SERVICE_SVC;
-
-    static const uint16_t bat_lev_uuid = ESP_GATT_UUID_BATTERY_LEVEL;
-    static const uint8_t bat_lev_ccc[2] = {0x00, 0x00};
-    static const uint16_t char_format_uuid = ESP_GATT_UUID_CHAR_PRESENT_FORMAT;
 #define ATT_SVC_HID 0x1812
 #define ESP_HID_FLAGS_REMOTE_WAKE 0x01           // RemoteWake
 #define ESP_HID_FLAGS_NORMALLY_CONNECTABLE 0x02  // NormallyConnectable

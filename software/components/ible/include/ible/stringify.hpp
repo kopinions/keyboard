@@ -2,6 +2,6 @@
 #define STRINGIFY_HPP
 class stringify_t {
  public:
-  virtual std::string stringify() const = 0;
+  [[nodiscard]] virtual std::string stringify() const = 0;
 };
 #endif  // STRINGIFY_HPP

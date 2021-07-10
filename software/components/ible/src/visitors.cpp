@@ -52,19 +52,17 @@ void bt::attribute_visitor::visit(bt::service_t *t) {
 
 void bt::attribute_visitor::visit(bt::characteristic_t *t) {
   std::cout << "visit characteristic" << std::endl;
-  m_attributes.push_back(esp_gatts_attr_db_t{.attr_control = {.auto_rsp = ESP_GATT_AUTO_RSP},
-                                             .att_desc = {.uuid_length = ESP_UUID_LEN_16,
-                                                          .uuid_p = (uint8_t *)&CHARACTERISTIC_DECLARE,
-                                                          .perm = ESP_GATT_PERM_READ,
-                                                          .max_length = 1,
-                                                          .length = 1,
-                                                          .value = (uint8_t *)&(t->m_property)}});
+  for (auto *attr : t->attributes()) {
+    attr->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(attr)>> *>(this));
+  }
+}
 
-
+void bt::attribute_visitor::visit(bt::attribute_t *t) {
+  // TODO push attributes here
   m_attributes.push_back(
-      esp_gatts_attr_db_t{.attr_control = {.auto_rsp = static_cast<uint8_t>(t->automated() ? 1u : 0u)},
+      esp_gatts_attr_db_t{.attr_control = {.auto_rsp = static_cast<uint8_t>(t->m_automated ? 1u : 0u)},
                           .att_desc = {.uuid_length = ESP_UUID_LEN_16,
-                                       .uuid_p = (uint8_t *)(&t->m_id),
+                                       .uuid_p = (uint8_t *)(&t->m_uuid),
                                        .perm = static_cast<uint16_t>(t->m_permission),
                                        .max_length = t->m_max_length,
                                        .length = t->m_length,
