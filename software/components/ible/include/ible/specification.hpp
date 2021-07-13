@@ -65,23 +65,12 @@ class characteristic_t : public visitable_t<visitor_t<characteristic_t>>, public
 
   explicit characteristic_t(std::vector<bt::attribute_t*>);
 
-  characteristic_t(characteristic_t::id_t, bool, characteristic_t::property_t, characteristic_t::permission_t, uint8_t*,
-                   uint16_t length, uint16_t max_length);
-
-  std::vector<bt::attribute_t*>& attributes() { return m_attributes; };
+  std::vector<bt::attribute_t*> attributes() { return m_attributes; };
   [[nodiscard]] std::string stringify() const override;
   friend class attribute_visitor;
 
  private:
-  id_t m_id;
-  bool m_automated;
-  characteristic_t::property_t m_property;
-  characteristic_t::permission_t m_permission;
-  std::uint8_t* m_value;
-  uint16_t m_length, m_max_length;
   std::vector<bt::attribute_t*> m_attributes;
-
-  bool automated();
 
  public:
   void accept(visitor_t<characteristic_t>* t) override;
@@ -143,9 +132,9 @@ static inline bt::characteristic_t::permission_t operator|(bt::characteristic_t:
 class service_t : public visitable_t<visitor_t<service_t>>, public stringify_t {
  public:
   using id_t = std::uint16_t;
-  explicit service_t(id_t id, std::vector<characteristic_t>);
+  explicit service_t(id_t id, std::vector<characteristic_t*>);
 
-  std::vector<characteristic_t> characteristics() { return m_characteristics; };
+  std::vector<characteristic_t*> characteristics() { return m_characteristics; };
   [[nodiscard]] std::string stringify() const override;
   [[nodiscard]] id_t id() const { return m_id; }
 
@@ -154,7 +143,7 @@ class service_t : public visitable_t<visitor_t<service_t>>, public stringify_t {
  private:
   esp_gatt_if_t gatt_if;
   id_t m_id;
-  std::vector<characteristic_t> m_characteristics;
+  std::vector<characteristic_t*> m_characteristics;
 };
 
 typedef union {
@@ -209,9 +198,9 @@ class profile_t : public visitable_t<visitor_t<profile_t>>, public stringify_t {
 
   explicit profile_t(const id_t& id);
 
-  [[nodiscard]] std::vector<service_t> services() const;
+  [[nodiscard]] std::vector<service_t*> services() const;
 
-  virtual void enroll(service_t srv);
+  virtual void enroll(service_t* srv);
 
   void accept(visitor_t<profile_t>* t) override;
 
@@ -226,7 +215,7 @@ class profile_t : public visitable_t<visitor_t<profile_t>>, public stringify_t {
 
  private:
   id_t m_id;
-  std::map<id_t, service_t> m_services;
+  std::map<id_t, service_t*> m_services;
 };
 
 }  // namespace bt

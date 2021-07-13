@@ -23,9 +23,9 @@ enum {
 
 void bt::attribute_visitor::visit(bt::profile_t *t) {
   std::cout << "visit profile" << std::endl;
-  for (auto srv : t->services()) {
+  for (auto *srv : t->services()) {
     auto *service_visitor = new attribute_visitor(m_gatt_if);
-    srv.accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(srv)>> *>(service_visitor));
+    srv->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(srv)>> *>(service_visitor));
     esp_err_t err = m_gatt_if->create_attr_tab(service_visitor->m_attributes.data(), BAS_IDX_NB, 0);
     if (err) {
       std::cout << "error while attribute sevice visitor" << std::endl;
@@ -45,20 +45,20 @@ void bt::attribute_visitor::visit(bt::service_t *t) {
                                                           .value = (uint8_t *)&s_bat_svc}});
 
   for (auto c : t->characteristics()) {
-    c.accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(c)>> *>(this));
+    c->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(c)>> *>(this));
   }
   std::cout << "character_size" << m_attributes.size() << std::endl;
 }
 
 void bt::attribute_visitor::visit(bt::characteristic_t *t) {
   std::cout << "visit characteristic" << std::endl;
-  for (auto *attr : t->attributes()) {
+  for (auto attr : t->attributes()) {
     attr->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(attr)>> *>(this));
   }
 }
 
 void bt::attribute_visitor::visit(bt::attribute_t *t) {
-  // TODO push attributes here
+  std::cout << "visit attributes" << std::endl;
   m_attributes.push_back(
       esp_gatts_attr_db_t{.attr_control = {.auto_rsp = static_cast<uint8_t>(t->m_automated ? 1u : 0u)},
                           .att_desc = {.uuid_length = ESP_UUID_LEN_16,
