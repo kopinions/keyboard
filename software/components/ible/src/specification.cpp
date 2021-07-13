@@ -1,6 +1,5 @@
 #include "ible/specification.hpp"
 
-
 #include <cstring>
 #include <strstream>
 
@@ -19,19 +18,30 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
     }
     case ESP_GATTS_CREAT_ATTR_TAB_EVT: {
       m_logger->info("%s", "gatt create attr in the application");
-      auto bat_svc_handle = e.param->add_attr_tab.handles[0];
-      // auto bat_level_handle = e.param->add_attr_tab.handles[BAS_IDX_BATT_LVL_VAL];  // so we notify of the
-      // change auto bat_ccc_handle = e.param->add_attr_tab.handles[BAS_IDX_BATT_LVL_CCC];    // so we know if we
-      // can send notify ESP_LOGV(TAG, "Battery CREAT_ATTR_TAB service handle = %d", dev->bat_svc.handle);
+      if (e.param->add_attr_tab.svc_uuid.uuid.uuid16 == application_t::id_t::BATTERY &&
+          e.param->add_attr_tab.status == ESP_GATT_OK) {
+        auto bat_svc_handle = e.param->add_attr_tab.handles[0];
+        //        auto bat_level_handle = e.param->add_attr_tab.handles[BAS_IDX_BATT_LVL_VAL];  // so we notify of the
+        //        change auto bat_ccc_handle = e.param->add_attr_tab.handles[BAS_IDX_BATT_LVL_CCC];    // so we know if
+        //        we can send notify ESP_LOGV(TAG, "Battery CREAT_ATTR_TAB service handle = %d", dev->bat_svc.handle);
+        //        dev->hid_incl_svc.start_hdl = dev->bat_svc.handle;
+        //        dev->hid_incl_svc.end_hdl = dev->bat_svc.handle + BAS_IDX_NB - 1;
 
-      // dev->hid_incl_svc.start_hdl = dev->bat_svc.handle;
-      // dev->hid_incl_svc.end_hdl = dev->bat_svc.handle + BAS_IDX_NB - 1;
-
-      auto ret = esp_ble_gatts_start_service(bat_svc_handle);
-      if (ret) {
-        m_logger->error("%s: %s start service failed", __func__);
-        return;
+        auto ret = esp_ble_gatts_start_service(bat_svc_handle);
+        if (ret) {
+          m_logger->error("%s: %s start service failed", __func__);
+          return;
+        }
+      } else if (e.param->add_attr_tab.svc_uuid.uuid.uuid16 == application_t::id_t::HID &&
+                 e.param->add_attr_tab.status == ESP_GATT_OK) {
+        auto hid_svc_handle = e.param->add_attr_tab.handles[0];
+        auto ret = esp_ble_gatts_start_service(hid_svc_handle);
+        if (ret) {
+          m_logger->error("%s: %s start hid service failed", __func__);
+          return;
+        }
       }
+
       // Add the info service next, because it's shared between all device maps
       break;
     }
@@ -79,7 +89,7 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
       break;
     }
     default:
-      m_logger->info("%s", "default for the event");
+      m_logger->info("%s %d", "default for the event", e.event);
       break;
   }
 }
