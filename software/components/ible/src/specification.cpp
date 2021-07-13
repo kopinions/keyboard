@@ -195,7 +195,7 @@ std::string bt::characteristic_t::stringify() const {
   return str.str();
 }
 
-bt::characteristic_t::characteristic_t(std::initializer_list<bt::attribute_t*> args) : m_attributes{args} { ; }
+bt::characteristic_t::characteristic_t(std::vector<bt::attribute_t*> args) : m_attributes{args} {}
 
 void bt::characteristic_t::accept(visitor_t<bt::characteristic_t>* t) { t->visit(this); }
 

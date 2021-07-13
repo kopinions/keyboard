@@ -21,6 +21,7 @@ class attribute_visitor;
 enum appearance_t : uint16_t { KEYBOARD = 0x03c0 };
 
 class attribute_visitor;
+class attribute_t;
 
 class characteristic_t : public visitable_t<visitor_t<characteristic_t>>, public stringify_t {
  public:
@@ -62,11 +63,12 @@ class characteristic_t : public visitable_t<visitor_t<characteristic_t>>, public
     uint8_t name_space;
   };
 
+  explicit characteristic_t(std::vector<bt::attribute_t*>);
+
   characteristic_t(characteristic_t::id_t, bool, characteristic_t::property_t, characteristic_t::permission_t, uint8_t*,
                    uint16_t length, uint16_t max_length);
 
-  explicit characteristic_t(std::initializer_list<class attribute_t*>);
-  std::vector<class attribute_t*>& attributes() { return m_attributes; };
+  std::vector<bt::attribute_t*>& attributes() { return m_attributes; };
   [[nodiscard]] std::string stringify() const override;
   friend class attribute_visitor;
 
@@ -77,7 +79,7 @@ class characteristic_t : public visitable_t<visitor_t<characteristic_t>>, public
   characteristic_t::permission_t m_permission;
   std::uint8_t* m_value;
   uint16_t m_length, m_max_length;
-  std::vector<class bt::attribute_t*> m_attributes;
+  std::vector<bt::attribute_t*> m_attributes;
 
   bool automated();
 
@@ -90,6 +92,10 @@ class attribute_t : public stringify_t, public visitable_t<visitor_t<attribute_t
   friend class attribute_visitor;
   attribute_t(bt::uuid_t, bt::characteristic_t::permission_t, uint8_t*, uint16_t length, uint16_t maxlength,
               bool automated = true);
+  attribute_t(const attribute_t&) = delete;
+  attribute_t(attribute_t&&) = delete;
+  attribute_t& operator=(const attribute_t&) = delete;
+  attribute_t& operator=(attribute_t&&) = delete;
 
   [[nodiscard]] std::string stringify() const override;
 

@@ -58,17 +58,17 @@ extern "C" void app_main() {
                     d->permission(bt::characteristic_t::permission_t::READ);
                     d->property(bt::characteristic_t::property_t::READ | bt::characteristic_t::property_t::NOTIFY);
                   });
-                  c->value([](bt::character_value_builder_t *v) {
+                  c->value([](bt::characteristic_value_builder_t *v) {
                     v->id(s_bat_level_uuid);
                     v->permission(bt::characteristic_t::permission_t::READ);
                     v->value(&bat_level, 1, 1);
                   });
-                  c->descriptor([](bt::character_descriptor_builder_t *d) {
+                  c->descriptor([](bt::characteristic_descriptor_builder_t *d) {
                     d->id(s_character_client_config_uuid);
                     d->permission(bt::characteristic_t::permission_t::READ | bt::characteristic_t::permission_t::WRITE);
                     d->value((uint8_t *)&bat_lev_ccc, sizeof(bat_lev_ccc), sizeof(uint16_t));
                   });
-                  c->descriptor([](bt::character_descriptor_builder_t *d) {
+                  c->descriptor([](bt::characteristic_descriptor_builder_t *d) {
                     d->id(s_bat_char_pres_format_uuid);
                     d->permission(bt::characteristic_t::permission_t::READ);
                     d->value(nullptr, 0, sizeof(bt::characteristic_t::presentation_format));
