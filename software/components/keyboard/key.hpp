@@ -2,7 +2,7 @@
 #include <cstdint>
 
 namespace kopinions {
-enum key_id : uint16_t {
+enum key_id : uint8_t {
   NONE,
   // modifier
   FN,
