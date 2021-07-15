@@ -180,7 +180,7 @@ class application_t : public stringify_t {
 
   virtual std::vector<profile_t> profiles() { return {}; }
 
-  virtual void enroll(const profile_t& profile);
+  virtual void enroll(profile_t* profile);
 
   void notified(std::shared_ptr<bt::gatt_if_t>, event_t e);
   [[nodiscard]] std::string stringify() const override;

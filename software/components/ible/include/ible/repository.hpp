@@ -15,6 +15,11 @@ class repository_t {
     return m_entities[id];
   };
 
+  T* create(T* t) {
+    m_entities[t->id()] = t;
+    return m_entities[t->id()];
+  };
+
   T* create(T t) {
     m_entities[t.id()] = new T{t};
     return m_entities[t.id()];

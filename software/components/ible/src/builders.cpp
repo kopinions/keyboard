@@ -12,10 +12,10 @@ bt::application_builder_t* bt::application_builder_t::profile(bt::consumer_t<pro
   delete b;
   return this;
 }
-bt::application_t bt::application_builder_t::build() {
-  application_t application = application_t{m_id};
-  for (auto p : m_profiles) {
-    application.enroll(p);
+bt::application_t* bt::application_builder_t::build() {
+  auto application = new application_t{m_id};
+  for (const auto& p : m_profiles) {
+    application->enroll(p);
   }
   return application;
 }
@@ -27,10 +27,10 @@ bt::application_builder_t* bt::application_builder_t::id(bt::application_t::id_t
 
 bt::application_builder_t::application_builder_t(std::string app_name) : m_app_name(std::move(app_name)) {}
 
-bt::profile_t bt::profile_builder_t::build() {
-  auto profile = profile_t(1);
+bt::profile_t* bt::profile_builder_t::build() {
+  auto profile = new profile_t(1);
   for (const auto& srv : m_services) {
-    profile.enroll(srv);
+    profile->enroll(srv);
   }
 
   return profile;

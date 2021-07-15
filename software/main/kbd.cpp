@@ -47,7 +47,7 @@ extern "C" void app_main() {
     static uint8_t bat_level = 1;
     auto b = new bt::ble("Chaos", bt::appearance_t::KEYBOARD, *lg);
 
-    const bt::application_t &bat =
+    auto bat =
         bt::application_builder_t::name("kbd")
             ->id(bt::application_t::id_t::BATTERY)
             ->profile([](bt::profile_builder_t *p) {
@@ -270,7 +270,7 @@ extern "C" void app_main() {
     static uint8_t hidReportRefLedOut[HID_REPORT_REF_LEN] = {HID_RPT_ID_LED_OUT, HID_REPORT_TYPE_OUTPUT};
     static uint8_t hidReportRefCCIn[HID_REPORT_REF_LEN] = {HID_RPT_ID_CC_IN, HID_REPORT_TYPE_INPUT};
     static uint8_t hidReportRefFeature[HID_REPORT_REF_LEN] = {HID_RPT_ID_FEATURE, HID_REPORT_TYPE_FEATURE};
-    const bt::application_t &hid =
+    auto hid =
         bt::application_builder_t::name("hid")
             ->id(bt::application_t::id_t::HID)
             ->profile([](bt::profile_builder_t *p) {
@@ -441,8 +441,8 @@ extern "C" void app_main() {
             })
             ->build();
 
-    std::cout << bat.stringify();
-    std::cout << hid.stringify();
+    std::cout << bat->stringify();
+    std::cout << hid->stringify();
     b->enroll(bat);
     b->enroll(hid);
 

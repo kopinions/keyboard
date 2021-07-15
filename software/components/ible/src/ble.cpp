@@ -195,9 +195,9 @@ void bt::ble::gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatt
 void bt::ble::disable() {}
 void bt::ble::reset() {}
 
-void bt::ble::enroll(const bt::application_t& app) {
+void bt::ble::enroll(bt::application_t* app) {
   apps()->create(app);
-  if (esp_ble_gatts_app_register(app.id()) != ESP_OK) {
+  if (esp_ble_gatts_app_register(app->id()) != ESP_OK) {
     m_logger->error("%s: %s Register App failed", LOGGER_TAG, __func__);
 
     if (esp_bluedroid_get_status() != ESP_BLUEDROID_STATUS_ENABLED) {

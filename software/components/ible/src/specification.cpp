@@ -115,7 +115,7 @@ bt::application_t::application_t(bt::application_t&& o) noexcept {
 
 bt::application_t::~application_t() {}
 
-void bt::application_t::enroll(const bt::profile_t& profile) { m_profiles->create(profile); }
+void bt::application_t::enroll(bt::profile_t* const profile) { m_profiles->create(profile); }
 
 std::string bt::application_t::stringify() const {
   std::strstream str;

@@ -35,7 +35,7 @@ class ble {
   ble& operator=(const ble&) = delete;
   ble& operator=(ble&&) = delete;
 
-  void enroll(const bt::application_t& app);
+  void enroll(bt::application_t* app);
 
  private:
   static void gap_event_handler(esp_gap_ble_cb_event_t, esp_ble_gap_cb_param_t*);
