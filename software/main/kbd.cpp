@@ -205,12 +205,20 @@ static uint8_t hidProtocolMode = HID_PROTOCOL_MODE_REPORT;
 #define HID_INFORMATION_LEN 4     // HID Information
 #define HID_REPORT_REF_LEN 2      // HID Report Reference Descriptor
 #define HID_EXT_REPORT_REF_LEN 2  // External Report Reference Descriptor
+#include <type_traits>
 
-static uint8_t hidReportRefKeyIn[HID_REPORT_REF_LEN] = {hid::report_t::id_t::KEY_IN, hid::report_t::type_t::INPUT};
-static uint8_t hidReportRefLedOut[HID_REPORT_REF_LEN] = {hid::report_t::id_t::LED_OUT, hid::report_t::type_t::OUTPUT};
-static uint8_t hidReportRefCCIn[HID_REPORT_REF_LEN] = {hid::report_t::id_t::CC_IN, hid::report_t::type_t::INPUT};
-static uint8_t hidReportRefFeature[HID_REPORT_REF_LEN] = {hid::report_t::id_t::FEATURE_IN,
-                                                          hid::report_t::type_t::FEATURE};
+template <typename E>
+constexpr auto underlying(E e) noexcept {
+  return static_cast<std::underlying_type_t<E>>(e);
+}
+static uint8_t hidReportRefKeyIn[HID_REPORT_REF_LEN] = {underlying(hid::report_t::id_t::KEY_IN),
+                                                        underlying(hid::report_t::type_t::INPUT)};
+static uint8_t hidReportRefLedOut[HID_REPORT_REF_LEN] = {underlying(hid::report_t::id_t::LED_OUT),
+                                                         underlying(hid::report_t::type_t::OUTPUT)};
+static uint8_t hidReportRefCCIn[HID_REPORT_REF_LEN] = {underlying(hid::report_t::id_t::CC_IN),
+                                                       underlying(hid::report_t::type_t::INPUT)};
+static uint8_t hidReportRefFeature[HID_REPORT_REF_LEN] = {underlying(hid::report_t::id_t::FEATURE),
+                                                          underlying(hid::report_t::type_t::FEATURE)};
 
 typedef uint8_t key_mask_t;
 // HID keyboard input report length
@@ -230,7 +238,7 @@ static hid::report_map_t hid_rpt_map[HID_NUM_REPORTS];
 static hid::report_map_t *hid_dev_rpt_tbl;
 static uint8_t hid_dev_rpt_tbl_Len;
 
-static hid::report_map_t *hid_dev_rpt_by_id(uint8_t id, uint8_t type) {
+static hid::report_map_t *hid_dev_rpt_by_id(hid::report_t::id_t id, hid::report_t::type_t type) {
   hid::report_map_t *rpt = hid_dev_rpt_tbl;
 
   // TODO: find the report
@@ -243,8 +251,8 @@ static hid::report_map_t *hid_dev_rpt_by_id(uint8_t id, uint8_t type) {
   return NULL;
 }
 
-void hid_dev_send_report(esp_gatt_if_t gatts_if, uint16_t conn_id, uint8_t id, uint8_t type, uint8_t length,
-                         uint8_t *data) {
+void hid_dev_send_report(esp_gatt_if_t gatts_if, uint16_t conn_id, hid::report_t::id_t id, hid::report_t::type_t type,
+                         uint8_t length, uint8_t *data) {
   hid::report_map_t *p_rpt;
 
   // get att handle for report

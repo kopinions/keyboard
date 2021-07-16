@@ -167,21 +167,21 @@ enum report_mode {
 //   uint16_t value_len;             /*!< HID report length in bytes */
 // } esp_hid_report_item_t;
 
-using report_t = struct {
-  using id_t = enum i : uint8_t {
+using report_t = struct report_t {
+  enum class id_t : uint8_t {
     MOUSE_IN = 1,    // Mouse input report ID
     KEY_IN = 2,      // Keyboard input report ID
     CC_IN = 3,       // Consumer Control input report ID
     VENDOR_OUT = 4,  // Vendor output report ID
     LED_OUT = 0,     // LED output report ID
-    //TODO: why conflict with next FEATURE
-    FEATURE_IN = 0,
+    FEATURE = 0,
   };
-  using type_t = enum t : uint8_t {
+  enum class type_t : uint8_t {
     INPUT = 1,
     OUTPUT = 2,
     FEATURE = 3,
   };
+
   uint16_t handle;  // Handle of report characteristic
   // Client Characteristic Configuration Descriptor
   uint16_t cccdHandle;  // Handle of CCCD for report characteristic

@@ -35,6 +35,7 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
       } else if (e.param->add_attr_tab.svc_uuid.uuid.uuid16 == application_t::id_t::HID &&
                  e.param->add_attr_tab.status == ESP_GATT_OK) {
         auto hid_svc_handle = e.param->add_attr_tab.handles[0];
+
         auto ret = esp_ble_gatts_start_service(hid_svc_handle);
         if (ret) {
           m_logger->error("%s: %s start hid service failed", __func__);
