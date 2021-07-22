@@ -42,7 +42,7 @@ void bt::attribute_visitor::visit(bt::service_t *t) {
                                                           .perm = ESP_GATT_PERM_READ,
                                                           .max_length = 2,
                                                           .length = 2,
-                                                          .value = (uint8_t *)&s_bat_svc}});
+                                                          .value = (uint8_t *)&t->id()}});
 
   for (auto c : t->characteristics()) {
     c->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(c)>> *>(this));

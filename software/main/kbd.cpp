@@ -371,12 +371,12 @@ extern "C" void app_main() {
 
     auto b = new bt::ble("Chaos", bt::appearance_t::KEYBOARD, *lg);
 
-    auto bat =
-        bt::application_builder_t::name("kbd")
-            ->id(bt::application_t::id_t::BATTERY)
+    auto hid =
+        bt::application_builder_t::name("hid")
+            ->id(0x01)
             ->profile([](bt::profile_builder_t *p) {
               p->service([](bt::service_builder_t *s) {
-                s->id(ESP_GATT_UUID_BATTERY_SERVICE_SVC);
+                s->id(bt::service_t::id_t::BATTERY);
                 s->characteristic([](bt::characteristic_builder_t *c) {
                   c->declare([](bt::characteristic_declare_builder_t *d) {
                     d->property(bt::characteristic_t::property_t::READ | bt::characteristic_t::property_t::NOTIFY);
@@ -398,14 +398,9 @@ extern "C" void app_main() {
                   });
                 });
               });
-            })
-            ->build();
-    auto hid =
-        bt::application_builder_t::name("hid")
-            ->id(bt::application_t::id_t::HID)
-            ->profile([](bt::profile_builder_t *p) {
+
               p->service([](bt::service_builder_t *s) {
-                s->id(ESP_GATT_UUID_BATTERY_SERVICE_SVC);
+                s->id(bt::service_t::id_t::HID);
                 // TODO: include service should be specially handled
                 //                s->characteristic([](bt::characteristic_builder_t *c) {
                 //                  c->id(include_service_uuid);
@@ -571,9 +566,7 @@ extern "C" void app_main() {
             })
             ->build();
 
-    std::cout << bat->stringify();
     std::cout << hid->stringify();
-    b->enroll(bat);
     b->enroll(hid);
 
     while (true) {

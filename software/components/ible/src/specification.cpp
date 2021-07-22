@@ -18,7 +18,7 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
     }
     case ESP_GATTS_CREAT_ATTR_TAB_EVT: {
       m_logger->info("%s", "gatt create attr in the application");
-      if (e.param->add_attr_tab.svc_uuid.uuid.uuid16 == application_t::id_t::BATTERY &&
+      if (e.param->add_attr_tab.svc_uuid.uuid.uuid16 == bt::service_t::id_t::BATTERY &&
           e.param->add_attr_tab.status == ESP_GATT_OK) {
         auto bat_svc_handle = e.param->add_attr_tab.handles[0];
         //        auto bat_level_handle = e.param->add_attr_tab.handles[BAS_IDX_BATT_LVL_VAL];  // so we notify of the
@@ -26,16 +26,16 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
         //        we can send notify ESP_LOGV(TAG, "Battery CREAT_ATTR_TAB service handle = %d", dev->bat_svc.handle);
         //        dev->hid_incl_svc.start_hdl = dev->bat_svc.handle;
         //        dev->hid_incl_svc.end_hdl = dev->bat_svc.handle + BAS_IDX_NB - 1;
-
+        m_logger->info("start service %d", bat_svc_handle);
         auto ret = esp_ble_gatts_start_service(bat_svc_handle);
         if (ret) {
           m_logger->error("%s: %s start service failed", __func__);
           return;
         }
-      } else if (e.param->add_attr_tab.svc_uuid.uuid.uuid16 == application_t::id_t::HID &&
+      } else if (e.param->add_attr_tab.svc_uuid.uuid.uuid16 == bt::service_t::id_t::HID &&
                  e.param->add_attr_tab.status == ESP_GATT_OK) {
         auto hid_svc_handle = e.param->add_attr_tab.handles[0];
-
+        m_logger->info("start service %d", hid_svc_handle);
         auto ret = esp_ble_gatts_start_service(hid_svc_handle);
         if (ret) {
           m_logger->error("%s: %s start hid service failed", __func__);

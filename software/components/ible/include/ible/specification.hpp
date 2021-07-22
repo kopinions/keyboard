@@ -131,12 +131,15 @@ static inline bt::characteristic_t::permission_t operator|(bt::characteristic_t:
 
 class service_t : public visitable_t<visitor_t<service_t>>, public stringify_t {
  public:
-  using id_t = std::uint16_t;
+  using id_t = enum : uint16_t {
+    HID = 0x1812,
+    BATTERY = 0x180f,
+  };
   explicit service_t(id_t id, std::vector<characteristic_t*>);
 
   std::vector<characteristic_t*> characteristics() { return m_characteristics; };
   [[nodiscard]] std::string stringify() const override;
-  [[nodiscard]] id_t id() const { return m_id; }
+  id_t& id() { return m_id; }
 
   void accept(visitor_t<service_t>* t) override;
 
@@ -165,10 +168,7 @@ class profile_t;
 
 class application_t : public stringify_t {
  public:
-  using id_t = enum : uint16_t {
-    HID = 0x1812,
-    BATTERY = 0x180f,
-  };
+  using id_t = uint16_t;
 
   virtual id_t id() const { return m_id; }
   virtual id_t id() { return m_id; }
