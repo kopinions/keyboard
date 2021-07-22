@@ -589,8 +589,6 @@ extern "C" void app_main() {
 
       ESP_LOGD("HID_LE_PRF_TAG", "buffer[0] = %x, buffer[1] = %x", buffer[0], buffer[1]);
 
-      return;
-
       for (auto b : res) {
         auto status = b.sts;
         lg->log(level::DEBUG, "%d", status);
