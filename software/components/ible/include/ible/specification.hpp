@@ -66,7 +66,7 @@ class characteristic_t : public visitable_t<visitor_t<characteristic_t>>, public
   explicit characteristic_t(std::vector<bt::attribute_t*>);
 
   std::vector<bt::attribute_t*> attributes() { return m_attributes; };
-  [[nodiscard]] void dump(std::ostream& o) const override;
+  void dump(std::ostream& o) const override;
   friend class attribute_visitor;
 
  private:
@@ -79,20 +79,22 @@ class characteristic_t : public visitable_t<visitor_t<characteristic_t>>, public
 class attribute_t : public dumpable_t, public visitable_t<visitor_t<attribute_t>> {
  public:
   friend class attribute_visitor;
-  attribute_t(bt::uuid_t, bt::characteristic_t::permission_t, uint8_t*, uint16_t length, uint16_t maxlength,
+  attribute_t(uint16_t, bt::characteristic_t::permission_t, uint8_t*, uint16_t length, uint16_t maxlength,
               bool automated = true);
   attribute_t(const attribute_t&) = delete;
   attribute_t(attribute_t&&) = delete;
   attribute_t& operator=(const attribute_t&) = delete;
   attribute_t& operator=(attribute_t&&) = delete;
 
-  [[nodiscard]] void dump(std::ostream& o) const override;
+  void dump(std::ostream& o) const override;
 
   void accept(visitor_t<attribute_t>* t) override;
 
+  void handled_by(uint16_t);
+
  private:
+  uint16_t m_uuid;
   bt::characteristic_t::permission_t m_permission;
-  uuid_t m_uuid;
   std::uint8_t* m_value;
   std::uint16_t m_length;
   std::uint16_t m_max_length;
@@ -138,14 +140,17 @@ class service_t : public visitable_t<visitor_t<service_t>>, public dumpable_t {
   explicit service_t(id_t id, std::vector<characteristic_t*>);
 
   std::vector<characteristic_t*> characteristics() { return m_characteristics; };
-  [[nodiscard]] void dump(std::ostream& o) const override;
+  void dump(std::ostream& o) const override;
   id_t& id() { return m_id; }
+
+  void handled_by(uint16_t);
 
   void accept(visitor_t<service_t>* t) override;
 
  private:
   esp_gatt_if_t gatt_if;
   id_t m_id;
+  uint16_t m_handle;
   std::vector<characteristic_t*> m_characteristics;
 };
 
@@ -174,8 +179,10 @@ class application_t : public dumpable_t {
   virtual id_t id() { return m_id; }
   explicit application_t(id_t id);
 
-  application_t(const application_t&);
-  application_t(application_t&&) noexcept;
+  application_t(const application_t&) = delete;
+  application_t(application_t&&) = delete;
+  application_t& operator=(application_t&) = delete;
+  application_t& operator=(application_t&&) = delete;
   virtual ~application_t();
 
   virtual std::vector<profile_t> profiles() { return {}; }
@@ -187,7 +194,6 @@ class application_t : public dumpable_t {
 
  private:
   id_t m_id;
-  std::shared_ptr<attribute_visitor> m_attributes;
   std::shared_ptr<repository_t<profile_t>> m_profiles;
   kopinions::logging::logger* m_logger;
 };
@@ -211,7 +217,7 @@ class profile_t : public visitable_t<visitor_t<profile_t>>, public dumpable_t {
   virtual ~profile_t();
 
   [[nodiscard]] const id_t& id() const;
-  [[nodiscard]] void dump(std::ostream& o) const override;
+  void dump(std::ostream& o) const override;
 
  private:
   id_t m_id;

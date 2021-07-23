@@ -93,6 +93,7 @@ bt::characteristic_builder_t* bt::characteristic_builder_t::descriptor(
 }
 
 bt::characteristic_descriptor_builder_t* bt::characteristic_descriptor_builder_t::id(bt::characteristic_t::id_t id) {
+  m_id = id;
   return this;
 }
 bt::characteristic_descriptor_builder_t* bt::characteristic_descriptor_builder_t::permission(
@@ -112,6 +113,7 @@ bt::attribute_t* bt::characteristic_descriptor_builder_t::build() {
   return new bt::attribute_t(m_id, characteristic_t::permission_t::WRITE_ENC_MITM, nullptr, 0, 0);
 }
 bt::characteristic_value_builder_t* bt::characteristic_value_builder_t::id(bt::characteristic_t::id_t id) {
+  m_id = id;
   return this;
 }
 bt::characteristic_value_builder_t* bt::characteristic_value_builder_t::permission(

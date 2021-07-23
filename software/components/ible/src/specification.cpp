@@ -10,38 +10,18 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
   switch (e.event) {
     case ESP_GATTS_REG_EVT: {
       m_logger->info("%s", "gatt reg for the application");
-      if (m_attributes == nullptr) {
-        m_attributes = std::make_shared<attribute_visitor>(gatt);
-        m_profiles->foreach ([e, this](profile_t* p) { m_attributes->visit(p); });
-      }
+
+      auto register_visitor = new attribute_visitor(gatt);
+      m_profiles->foreach ([e, register_visitor, this](profile_t* p) { register_visitor->visit(p); });
+      delete register_visitor;
       break;
     }
     case ESP_GATTS_CREAT_ATTR_TAB_EVT: {
       m_logger->info("%s", "gatt create attr in the application");
-      if (e.param->add_attr_tab.svc_uuid.uuid.uuid16 == bt::service_t::id_t::BATTERY &&
-          e.param->add_attr_tab.status == ESP_GATT_OK) {
-        auto bat_svc_handle = e.param->add_attr_tab.handles[0];
-        //        auto bat_level_handle = e.param->add_attr_tab.handles[BAS_IDX_BATT_LVL_VAL];  // so we notify of the
-        //        change auto bat_ccc_handle = e.param->add_attr_tab.handles[BAS_IDX_BATT_LVL_CCC];    // so we know if
-        //        we can send notify ESP_LOGV(TAG, "Battery CREAT_ATTR_TAB service handle = %d", dev->bat_svc.handle);
-        //        dev->hid_incl_svc.start_hdl = dev->bat_svc.handle;
-        //        dev->hid_incl_svc.end_hdl = dev->bat_svc.handle + BAS_IDX_NB - 1;
-        m_logger->info("start service %d", bat_svc_handle);
-        auto ret = esp_ble_gatts_start_service(bat_svc_handle);
-        if (ret) {
-          m_logger->error("%s: %s start service failed", __func__);
-          return;
-        }
-      } else if (e.param->add_attr_tab.svc_uuid.uuid.uuid16 == bt::service_t::id_t::HID &&
-                 e.param->add_attr_tab.status == ESP_GATT_OK) {
-        auto hid_svc_handle = e.param->add_attr_tab.handles[0];
-        m_logger->info("start service %d", hid_svc_handle);
-        auto ret = esp_ble_gatts_start_service(hid_svc_handle);
-        if (ret) {
-          m_logger->error("%s: %s start hid service failed", __func__);
-          return;
-        }
-      }
+      auto param = e.param->add_attr_tab;
+      auto handles_visitor =
+          new update_handles_visitor(m_logger, gatt, param.svc_uuid.uuid.uuid16, param.num_handle, param.handles);
+      m_profiles->foreach ([e, handles_visitor, this](profile_t* p) { handles_visitor->visit(p); });
 
       // Add the info service next, because it's shared between all device maps
       break;
@@ -101,19 +81,6 @@ bt::application_t::application_t(id_t id) : dumpable_t(), m_id(id) {
   m_logger = new kopinions::logging::logger(kopinions::logging::level::INFO, sink);
 }
 
-bt::application_t::application_t(const bt::application_t& o) {
-  m_id = o.m_id;
-  m_profiles = o.m_profiles;
-  m_attributes = o.m_attributes;
-  m_logger = o.m_logger;
-}
-bt::application_t::application_t(bt::application_t&& o) noexcept {
-  m_id = o.m_id;
-  m_profiles = o.m_profiles;
-  m_attributes = o.m_attributes;
-  m_logger = o.m_logger;
-}
-
 bt::application_t::~application_t() {}
 
 void bt::application_t::enroll(bt::profile_t* const profile) { m_profiles->create(profile); }
@@ -168,6 +135,7 @@ void bt::service_t::dump(std::ostream& o) const {
     o << c;
   }
 }
+void bt::service_t::handled_by(uint16_t handle) { m_handle = handle; }
 
 void bt::characteristic_t::dump(std::ostream& o) const {
   for (auto attr : m_attributes) {
@@ -180,9 +148,23 @@ bt::characteristic_t::characteristic_t(std::vector<bt::attribute_t*> args)
 
 void bt::characteristic_t::accept(visitor_t<bt::characteristic_t>* t) { t->visit(this); }
 
-bt::attribute_t::attribute_t(bt::uuid_t, bt::characteristic_t::permission_t, uint8_t*, uint16_t length,
+bt::attribute_t::attribute_t(uint16_t uuid, bt::characteristic_t::permission_t perm, uint8_t* value, uint16_t length,
                              uint16_t maxlength, bool automated)
-    : dumpable_t("        ") {}
-void bt::attribute_t::dump(std::ostream& o) const { o << indent() << "attribute" << std::endl; }
+    : dumpable_t("        "),
+      m_uuid{uuid},
+      m_permission{perm},
+      m_value{value},
+      m_length{length},
+      m_max_length{maxlength},
+      m_automated{m_automated} {}
+void bt::attribute_t::dump(std::ostream& o) const {
+  o << indent() << "id: " << m_uuid << std::endl
+    << indent() << "permission: " << m_permission << std::endl
+    << indent() << "length: " << m_length << std::endl
+    << indent() << "max_length: " << m_max_length << std::endl
+    << indent() << "automated: " << m_automated << std::endl;
+}
 
 void bt::attribute_t::accept(visitor_t<attribute_t>* t) { t->visit(this); }
+
+void bt::attribute_t::handled_by(uint16_t handle) { m_handle = handle; }
