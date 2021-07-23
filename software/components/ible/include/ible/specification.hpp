@@ -4,10 +4,10 @@
 #include <variant>
 
 #include "ible/builder.hpp"
+#include "ible/dumpable.hpp"
 #include "ible/gatt_if.hpp"
 #include "ible/repository.hpp"
 #include "ible/specification.hpp"
-#include "ible/stringify.hpp"
 #include "ible/visitor.hpp"
 #include "vif.hpp"
 namespace bt {
@@ -23,7 +23,7 @@ enum appearance_t : uint16_t { KEYBOARD = 0x03c0 };
 class attribute_visitor;
 class attribute_t;
 
-class characteristic_t : public visitable_t<visitor_t<characteristic_t>>, public stringify_t {
+class characteristic_t : public visitable_t<visitor_t<characteristic_t>>, public dumpable_t {
  public:
   static constexpr uint16_t CHARACTERISTIC_DECLARE = ESP_GATT_UUID_CHAR_DECLARE;
 
@@ -66,7 +66,7 @@ class characteristic_t : public visitable_t<visitor_t<characteristic_t>>, public
   explicit characteristic_t(std::vector<bt::attribute_t*>);
 
   std::vector<bt::attribute_t*> attributes() { return m_attributes; };
-  [[nodiscard]] std::string stringify() const override;
+  [[nodiscard]] void dump(std::ostream& o) const override;
   friend class attribute_visitor;
 
  private:
@@ -76,7 +76,7 @@ class characteristic_t : public visitable_t<visitor_t<characteristic_t>>, public
   void accept(visitor_t<characteristic_t>* t) override;
 };
 
-class attribute_t : public stringify_t, public visitable_t<visitor_t<attribute_t>> {
+class attribute_t : public dumpable_t, public visitable_t<visitor_t<attribute_t>> {
  public:
   friend class attribute_visitor;
   attribute_t(bt::uuid_t, bt::characteristic_t::permission_t, uint8_t*, uint16_t length, uint16_t maxlength,
@@ -86,7 +86,7 @@ class attribute_t : public stringify_t, public visitable_t<visitor_t<attribute_t
   attribute_t& operator=(const attribute_t&) = delete;
   attribute_t& operator=(attribute_t&&) = delete;
 
-  [[nodiscard]] std::string stringify() const override;
+  [[nodiscard]] void dump(std::ostream& o) const override;
 
   void accept(visitor_t<attribute_t>* t) override;
 
@@ -129,7 +129,7 @@ static inline bt::characteristic_t::permission_t operator|(bt::characteristic_t:
   return static_cast<bt::characteristic_t::permission_t>(static_cast<uint16_t>(l) | static_cast<uint16_t>(r));
 }
 
-class service_t : public visitable_t<visitor_t<service_t>>, public stringify_t {
+class service_t : public visitable_t<visitor_t<service_t>>, public dumpable_t {
  public:
   using id_t = enum : uint16_t {
     HID = 0x1812,
@@ -138,7 +138,7 @@ class service_t : public visitable_t<visitor_t<service_t>>, public stringify_t {
   explicit service_t(id_t id, std::vector<characteristic_t*>);
 
   std::vector<characteristic_t*> characteristics() { return m_characteristics; };
-  [[nodiscard]] std::string stringify() const override;
+  [[nodiscard]] void dump(std::ostream& o) const override;
   id_t& id() { return m_id; }
 
   void accept(visitor_t<service_t>* t) override;
@@ -166,7 +166,7 @@ class event_t {
 
 class profile_t;
 
-class application_t : public stringify_t {
+class application_t : public dumpable_t {
  public:
   using id_t = uint16_t;
 
@@ -183,7 +183,7 @@ class application_t : public stringify_t {
   virtual void enroll(profile_t* profile);
 
   void notified(std::shared_ptr<bt::gatt_if_t>, event_t e);
-  [[nodiscard]] std::string stringify() const override;
+  void dump(std::ostream& o) const override;
 
  private:
   id_t m_id;
@@ -192,7 +192,7 @@ class application_t : public stringify_t {
   kopinions::logging::logger* m_logger;
 };
 
-class profile_t : public visitable_t<visitor_t<profile_t>>, public stringify_t {
+class profile_t : public visitable_t<visitor_t<profile_t>>, public dumpable_t {
  public:
   using id_t = std::uint16_t;
 
@@ -211,7 +211,7 @@ class profile_t : public visitable_t<visitor_t<profile_t>>, public stringify_t {
   virtual ~profile_t();
 
   [[nodiscard]] const id_t& id() const;
-  [[nodiscard]] std::string stringify() const override;
+  [[nodiscard]] void dump(std::ostream& o) const override;
 
  private:
   id_t m_id;

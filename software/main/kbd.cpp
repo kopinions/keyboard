@@ -566,7 +566,7 @@ extern "C" void app_main() {
             })
             ->build();
 
-    std::cout << hid->stringify();
+    std::cout << hid;
     b->enroll(hid);
 
     while (true) {

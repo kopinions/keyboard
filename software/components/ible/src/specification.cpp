@@ -95,7 +95,7 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
   }
 }
 
-bt::application_t::application_t(id_t id) : m_id(id) {
+bt::application_t::application_t(id_t id) : dumpable_t(), m_id(id) {
   m_profiles = std::make_shared<repository_t<bt::profile_t>>();
   auto sink = new kopinions::logging::esp_log_sink();
   m_logger = new kopinions::logging::logger(kopinions::logging::level::INFO, sink);
@@ -118,12 +118,9 @@ bt::application_t::~application_t() {}
 
 void bt::application_t::enroll(bt::profile_t* const profile) { m_profiles->create(profile); }
 
-std::string bt::application_t::stringify() const {
-  std::strstream str;
-  str << "app id:" << m_id << "; "
-      << "profiles:" << std::endl;
-  m_profiles->foreach ([&](profile_t* p) { str << p->stringify(); });
-  return str.str();
+void bt::application_t::dump(std::ostream& o) const {
+  o << "app id:" << m_id << std::endl << "profiles:" << std::endl;
+  m_profiles->foreach ([&](profile_t* p) { o << p; });
 }
 
 bt::profile_t::~profile_t() {}
@@ -138,7 +135,7 @@ std::vector<bt::service_t*> bt::profile_t::services() const {
   return s;
 }
 
-bt::profile_t::profile_t(const bt::profile_t::id_t& id) : m_id{id} {}
+bt::profile_t::profile_t(const bt::profile_t::id_t& id) : dumpable_t("  "), m_id{id} {}
 
 bt::profile_t::profile_t(const bt::profile_t& o) {
   m_id = o.m_id;
@@ -154,45 +151,38 @@ bt::profile_t& bt::profile_t::operator=(const bt::profile_t& o) {
 void bt::profile_t::accept(visitor_t<profile_t>* t) { t->visit(this); }
 
 const bt::profile_t::id_t& bt::profile_t::id() const { return m_id; }
-std::string bt::profile_t::stringify() const {
-  std::strstream str;
-  str << "profile id:" << m_id << "; "
-      << "services:" << std::endl;
+void bt::profile_t::dump(std::ostream& o) const {
+  o << indent() << "profile id:" << m_id << std::endl << indent() << "services:" << std::endl;
   for (auto [id, srv] : m_services) {
-    str << "id:" << id << "; " << srv->stringify();
+    o << srv;
   }
-  return str.str();
 }
 
 bt::service_t::service_t(id_t id, std::vector<characteristic_t*> characteristics)
-    : m_id(id), m_characteristics{std::move(characteristics)} {}
+    : dumpable_t("    "), m_id(id), m_characteristics{std::move(characteristics)} {}
 
 void bt::service_t::accept(visitor_t<service_t>* t) { t->visit(this); }
-std::string bt::service_t::stringify() const {
-  std::strstream str;
-  str << "service id:" << m_id << "; "
-      << "characteristics:" << std::endl;
+void bt::service_t::dump(std::ostream& o) const {
+  o << indent() << "id:" << m_id << std::endl << indent() << "characteristics:" << std::endl;
   for (const auto& c : m_characteristics) {
-    str << c->stringify();
+    o << c;
   }
-
-  return str.str();
 }
 
-std::string bt::characteristic_t::stringify() const {
-  std::strstream str;
+void bt::characteristic_t::dump(std::ostream& o) const {
   for (auto attr : m_attributes) {
-    str << attr->stringify();
+    o << attr;
   }
-  return str.str();
 }
 
-bt::characteristic_t::characteristic_t(std::vector<bt::attribute_t*> args) : m_attributes{std::move(args)} {}
+bt::characteristic_t::characteristic_t(std::vector<bt::attribute_t*> args)
+    : dumpable_t("      "), m_attributes{std::move(args)} {}
 
 void bt::characteristic_t::accept(visitor_t<bt::characteristic_t>* t) { t->visit(this); }
 
 bt::attribute_t::attribute_t(bt::uuid_t, bt::characteristic_t::permission_t, uint8_t*, uint16_t length,
-                             uint16_t maxlength, bool automated) {}
-std::string bt::attribute_t::stringify() const { return "attribute"; }
+                             uint16_t maxlength, bool automated)
+    : dumpable_t("        ") {}
+void bt::attribute_t::dump(std::ostream& o) const { o << indent() << "attribute" << std::endl; }
 
 void bt::attribute_t::accept(visitor_t<attribute_t>* t) { t->visit(this); }
