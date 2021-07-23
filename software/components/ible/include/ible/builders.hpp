@@ -28,7 +28,7 @@ class application_builder_t : public ibuilder<bt::application_t*> {
  private:
   std::string m_app_name;
   std::vector<bt::profile_t*> m_profiles;
-  bt::application_t::id_t m_id;
+  bt::application_t::id_t m_id{};
 };
 
 class profile_builder_t : public ibuilder<bt::profile_t*> {

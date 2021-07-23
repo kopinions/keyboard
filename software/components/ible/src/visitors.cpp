@@ -35,14 +35,14 @@ void bt::attribute_visitor::visit(bt::characteristic_t *t) {
 }
 
 void bt::attribute_visitor::visit(bt::attribute_t *t) {
-  m_attributes.push_back(
-      esp_gatts_attr_db_t{.attr_control = {.auto_rsp = static_cast<uint8_t>(t->m_automated ? 1u : 0u)},
-                          .att_desc = {.uuid_length = ESP_UUID_LEN_16,
-                                       .uuid_p = (uint8_t *)(&t->m_uuid),
-                                       .perm = static_cast<uint16_t>(t->m_permission),
-                                       .max_length = t->m_max_length,
-                                       .length = t->m_length,
-                                       .value = t->m_value}});
+  m_attributes.push_back(esp_gatts_attr_db_t{
+      .attr_control = {.auto_rsp = static_cast<uint8_t>(t->m_automated ? ESP_GATT_AUTO_RSP : ESP_GATT_RSP_BY_APP)},
+      .att_desc = {.uuid_length = ESP_UUID_LEN_16,
+                   .uuid_p = (uint8_t *)(&t->m_uuid),
+                   .perm = static_cast<uint16_t>(t->m_permission),
+                   .max_length = t->m_max_length,
+                   .length = t->m_length,
+                   .value = t->m_value}});
 }
 bt::attribute_visitor::attribute_visitor(std::shared_ptr<gatt_if_t> gatt_if) { m_gatt_if = std::move(gatt_if); }
 
