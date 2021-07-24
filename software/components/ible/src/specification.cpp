@@ -125,10 +125,11 @@ void bt::profile_t::dump(std::ostream& o) const {
   }
 }
 
-bt::service_t::service_t(id_t id, std::vector<characteristic_t*> characteristics)
-    : dumpable_t("    "), m_id(id), m_characteristics{std::move(characteristics)} {}
+bt::service_t::service_t(id_t id, std::vector<characteristic_t*> characteristics, attribute_t* included)
+    : dumpable_t("    "), m_id(id), m_characteristics{std::move(characteristics)}, m_included{included} {}
 
 void bt::service_t::accept(visitor_t<service_t>* t) { t->visit(this); }
+
 void bt::service_t::dump(std::ostream& o) const {
   o << indent() << "id:" << m_id << std::endl << indent() << "characteristics:" << std::endl;
   for (const auto& c : m_characteristics) {

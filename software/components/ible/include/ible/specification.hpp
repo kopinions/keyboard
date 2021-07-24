@@ -133,11 +133,14 @@ static inline bt::characteristic_t::permission_t operator|(bt::characteristic_t:
 
 class service_t : public visitable_t<visitor_t<service_t>>, public dumpable_t {
  public:
+  friend class attribute_visitor;
+
   using id_t = enum : uint16_t {
     HID = 0x1812,
     BATTERY = 0x180f,
   };
-  explicit service_t(id_t id, std::vector<characteristic_t*>);
+
+  service_t(id_t id, std::vector<characteristic_t*>, attribute_t*);
 
   std::vector<characteristic_t*> characteristics() { return m_characteristics; };
   void dump(std::ostream& o) const override;
@@ -152,6 +155,7 @@ class service_t : public visitable_t<visitor_t<service_t>>, public dumpable_t {
   id_t m_id;
   uint16_t m_handle;
   std::vector<characteristic_t*> m_characteristics;
+  attribute_t* m_included;
 };
 
 typedef union {

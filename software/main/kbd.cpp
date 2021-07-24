@@ -391,7 +391,7 @@ extern "C" void app_main() {
                   c->descriptor([](bt::characteristic_descriptor_builder_t *d) {
                     d->id(s_character_client_config_uuid);
                     d->permission(bt::characteristic_t::permission_t::READ | bt::characteristic_t::permission_t::WRITE);
-                    d->value((uint8_t *)&bat_lev_ccc, sizeof(bat_lev_ccc), sizeof(uint16_t));
+                    d->value(nullptr, 0, sizeof(uint16_t));
                   });
                   c->descriptor([](bt::characteristic_descriptor_builder_t *d) {
                     d->id(s_bat_char_pres_format_uuid);
@@ -403,15 +403,13 @@ extern "C" void app_main() {
 
               p->service([](bt::service_builder_t *s) {
                 s->id(bt::service_t::id_t::HID);
-                // TODO: include service should be specially handled
-                //                s->characteristic([](bt::characteristic_builder_t *c) {
-                //                  c->id(include_service_uuid);
-                //                  c->automated(true);
-                //                  c->property(bt::characteristic_t::property_t::READ);
-                //                  c->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
-                //                  c->value(reinterpret_cast<uint8_t *>(&incl_svc), sizeof(esp_gatts_incl_svc_desc_t),
-                //                           sizeof(esp_gatts_incl_svc_desc_t));
-                //                });
+                s->include([](bt::attribute_builder_t *ic) {
+                  ic->id(include_service_uuid);
+                  ic->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED |
+                                 bt::characteristic_t::permission_t::WRITE_ENCRYPTED);
+                  ic->value(reinterpret_cast<uint8_t *>(&incl_svc), sizeof(esp_gatts_incl_svc_desc_t),
+                            sizeof(esp_gatts_incl_svc_desc_t));
+                });
 
                 s->characteristic([](bt::characteristic_builder_t *c) {
                   c->declare([](bt::characteristic_declare_builder_t *d) {

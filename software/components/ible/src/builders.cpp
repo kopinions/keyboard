@@ -44,7 +44,7 @@ bt::profile_builder_t* bt::profile_builder_t::service(bt::consumer_t<bt::service
   return this;
 }
 
-bt::service_t* bt::service_builder_t::build() { return new service_t(m_id, m_characteristics); }
+bt::service_t* bt::service_builder_t::build() { return new service_t(m_id, m_characteristics, m_included); }
 
 bt::service_builder_t* bt::service_builder_t::id(bt::service_t::id_t id) {
   m_id = id;
@@ -54,6 +54,14 @@ bt::service_builder_t* bt::service_builder_t::characteristic(bt::consumer_t<bt::
   auto b = new characteristic_builder_t();
   consumer(b);
   m_characteristics.push_back(b->build());
+  delete b;
+  return this;
+}
+
+bt::service_builder_t* bt::service_builder_t::include(bt::consumer_t<bt::attribute_builder_t> consumer) {
+  auto b = new attribute_builder_t();
+  consumer(b);
+  m_included = b->build();
   delete b;
   return this;
 }
@@ -110,12 +118,13 @@ bt::characteristic_descriptor_builder_t* bt::characteristic_descriptor_builder_t
   return this;
 }
 bt::attribute_t* bt::characteristic_descriptor_builder_t::build() {
-  return new bt::attribute_t(m_id, m_permission, m_data, m_length, m_max_length);
+  return new bt::attribute_t(m_id, m_permission, m_data, m_length, m_max_length, m_automated);
 }
 bt::characteristic_value_builder_t* bt::characteristic_value_builder_t::id(bt::characteristic_t::id_t id) {
   m_id = id;
   return this;
 }
+
 bt::characteristic_value_builder_t* bt::characteristic_value_builder_t::permission(
     bt::characteristic_t::permission_t permission) {
   m_permission |= permission;
@@ -132,7 +141,29 @@ bt::characteristic_value_builder_t* bt::characteristic_value_builder_t::value(st
   m_max_length = max_length;
   return this;
 }
+
+bt::attribute_builder_t* bt::attribute_builder_t::id(bt::characteristic_t::id_t id) {
+  m_id = id;
+  return this;
+}
+bt::attribute_builder_t* bt::attribute_builder_t::permission(bt::characteristic_t::permission_t permission) {
+  m_permission |= permission;
+  return this;
+}
+bt::attribute_builder_t* bt::attribute_builder_t::automated(bool automated) {
+  m_automated = automated;
+  return this;
+}
+bt::attribute_builder_t* bt::attribute_builder_t::value(std::uint8_t* v, uint16_t length, uint16_t max_length) {
+  m_data = v;
+  m_length = length;
+  m_max_length = max_length;
+  return this;
+}
 bt::attribute_t* bt::characteristic_value_builder_t::build() {
+  return new bt::attribute_t(m_id, m_permission, m_data, m_length, m_max_length);
+}
+bt::attribute_t* bt::attribute_builder_t::build() {
   return new bt::attribute_t(m_id, m_permission, m_data, m_length, m_max_length);
 }
 bt::characteristic_declare_builder_t* bt::characteristic_declare_builder_t::property(
