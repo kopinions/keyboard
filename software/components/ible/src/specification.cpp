@@ -157,7 +157,8 @@ bt::attribute_t::attribute_t(uint16_t uuid, bt::characteristic_t::permission_t p
       m_value{value},
       m_length{length},
       m_max_length{maxlength},
-      m_automated{m_automated} {}
+      m_automated{automated} {}
+
 void bt::attribute_t::dump(std::ostream& o) const {
   o << indent() << "id: " << m_uuid << std::endl
     << indent() << "permission: " << m_permission << std::endl

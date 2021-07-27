@@ -390,12 +390,13 @@ extern "C" void app_main() {
                   });
                   c->descriptor([](bt::characteristic_descriptor_builder_t *d) {
                     d->id(s_character_client_config_uuid);
-                    d->permission(bt::characteristic_t::permission_t::READ | bt::characteristic_t::permission_t::WRITE);
+                    d->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED |
+                                  bt::characteristic_t::permission_t::WRITE_ENCRYPTED);
                     d->value(nullptr, 0, sizeof(uint16_t));
                   });
                   c->descriptor([](bt::characteristic_descriptor_builder_t *d) {
                     d->id(s_bat_char_pres_format_uuid);
-                    d->permission(bt::characteristic_t::permission_t::READ);
+                    d->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
                     d->value(nullptr, 0, sizeof(bt::characteristic_t::presentation_format));
                   });
                 });
