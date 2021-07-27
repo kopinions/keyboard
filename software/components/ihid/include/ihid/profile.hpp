@@ -126,9 +126,9 @@ static esp_attr_value_t gatts_demo_char1_val = {
 
 #include "ible.hpp"
 constexpr char* GATTS_TAG = "";
-static auto pro = bt::profile_t{
-    0x180f,
-};
+//static auto pro = bt::profile_t{
+//    0x180f,
+//};
 
 auto a = [](bt::profile_t& p, esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if,
             esp_ble_gatts_cb_param_t* param) -> void {

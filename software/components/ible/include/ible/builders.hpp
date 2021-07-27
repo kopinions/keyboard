@@ -27,36 +27,37 @@ class application_builder_t : public ibuilder<bt::application_t*> {
 
  private:
   std::string m_app_name;
-  std::vector<bt::profile_t*> m_profiles;
+
+  std::vector<consumer_t<profile_builder_t>> m_profile_consumers;
   bt::application_t::id_t m_id{};
 };
 
 class profile_builder_t : public ibuilder<bt::profile_t*> {
  public:
   friend application_builder_t;
-  profile_builder_t* service(std::function<void(service_builder_t*)> consumer);
+  profile_builder_t* service(consumer_t<service_builder_t> consumer);
 
  private:
   bt::profile_t* build() override;
+  std::vector<consumer_t<service_builder_t>> m_services_consumer;
   std::vector<bt::service_t*> m_services;
 };
 
-
-class attribute_builder_t : public ibuilder<bt::attribute_t*> {
+class service_include_builder_t : public ibuilder<bt::service_t*> {
  public:
   friend characteristic_builder_t;
+  explicit service_include_builder_t(std::vector<bt::service_t*>* services);
+  service_include_builder_t* id(bt::characteristic_t::id_t id);
 
-  attribute_builder_t* id(bt::characteristic_t::id_t id);
+  service_include_builder_t* permission(bt::characteristic_t::permission_t permission);
 
-  attribute_builder_t* permission(bt::characteristic_t::permission_t permission);
+  service_include_builder_t* automated(bool automated);
 
-  attribute_builder_t* automated(bool automated);
-
-  attribute_builder_t* value(std::uint8_t* v, uint16_t length, uint16_t max_length);
+  service_include_builder_t* value(std::uint8_t* v, uint16_t length, uint16_t max_length);
 
  private:
  public:
-  bt::attribute_t* build() override;
+  bt::service_t* build() override;
 
  private:
   bt::characteristic_t::id_t m_id;
@@ -65,15 +66,17 @@ class attribute_builder_t : public ibuilder<bt::attribute_t*> {
   std::uint8_t* m_data;
   uint16_t m_length, m_max_length;
   bool m_automated{true};
+  std::vector<service_t*>* m_services;
 };
 
 class service_builder_t : public ibuilder<bt::service_t*> {
  public:
   friend profile_builder_t;
 
+  explicit service_builder_t(std::vector<bt::service_t*>* services);
   service_builder_t* id(bt::service_t::id_t id);
 
-  service_builder_t* include(consumer_t<attribute_builder_t> consumer);
+  service_builder_t* include(consumer_t<service_include_builder_t> consumer);
 
   service_builder_t* characteristic(consumer_t<characteristic_builder_t> consumer);
 
@@ -82,8 +85,9 @@ class service_builder_t : public ibuilder<bt::service_t*> {
 
  private:
   bt::service_t::id_t m_id;
-  bt::attribute_t* m_included;
-  std::vector<characteristic_t*> m_characteristics;
+  std::vector<consumer_t<bt::characteristic_builder_t>> m_characteristic_consumers;
+  consumer_t<bt::service_include_builder_t> m_service_include_consumer;
+  std::vector<bt::service_t*>* m_services;
 };
 
 class characteristic_declare_builder_t : public ibuilder<bt::attribute_t*> {

@@ -26,7 +26,6 @@ static const uint8_t bat_lev_ccc[2] = {0x00, 0x00};
 static uint8_t bat_level = 1;
 
 static const uint16_t primary_service_uuid = ESP_GATT_UUID_PRI_SERVICE;
-static const uint16_t include_service_uuid = ESP_GATT_UUID_INCLUDE_SERVICE;
 static const uint16_t character_declaration_uuid = ESP_GATT_UUID_CHAR_DECLARE;
 static const uint16_t character_client_config_uuid = ESP_GATT_UUID_CHAR_CLIENT_CONFIG;
 static const uint16_t hid_info_char_uuid = ESP_GATT_UUID_HID_INFORMATION;
@@ -196,7 +195,6 @@ static const unsigned char hidReportMap[] = {
 };
 static uint16_t hidExtReportRefDesc = ESP_GATT_UUID_BATTERY_LEVEL;
 
-static esp_gatts_incl_svc_desc_t incl_svc = {0};
 #define HID_PROTOCOL_MODE_REPORT 0x01  // Report Protocol Mode
 static uint8_t hidProtocolMode = HID_PROTOCOL_MODE_REPORT;
 // HID Report Reference characteristic descriptor, key input
@@ -404,12 +402,10 @@ extern "C" void app_main() {
 
               p->service([](bt::service_builder_t *s) {
                 s->id(bt::service_t::id_t::HID);
-                s->include([](bt::attribute_builder_t *ic) {
-                  ic->id(include_service_uuid);
+                s->include([](bt::service_include_builder_t *ic) {
+                  ic->id(bt::service_t::id_t::BATTERY);
                   ic->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED |
                                  bt::characteristic_t::permission_t::WRITE_ENCRYPTED);
-                  ic->value(reinterpret_cast<uint8_t *>(&incl_svc), sizeof(esp_gatts_incl_svc_desc_t),
-                            sizeof(esp_gatts_incl_svc_desc_t));
                 });
 
                 s->characteristic([](bt::characteristic_builder_t *c) {

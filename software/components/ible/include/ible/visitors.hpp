@@ -7,6 +7,7 @@ namespace bt {
 
 class attribute_visitor : public visitor_t<profile_t, service_t, characteristic_t, attribute_t> {
  public:
+  friend class update_handles_visitor;
   explicit attribute_visitor(std::shared_ptr<gatt_if_t> gatt_if);
 
   void visit(profile_t* t) override;

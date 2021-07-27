@@ -2,6 +2,7 @@
 
 #include <cstring>
 #include <strstream>
+#include <utility>
 
 #include "esp_if/esp_log_sink.hpp"
 #include "ible/visitors.hpp"
@@ -92,40 +93,22 @@ void bt::application_t::dump(std::ostream& o) const {
 
 bt::profile_t::~profile_t() {}
 
-void bt::profile_t::enroll(bt::service_t* srv) { m_services.insert(std::make_pair(srv->id(), srv)); }
+std::vector<bt::service_t*> bt::profile_t::services() const { return m_services; }
 
-std::vector<bt::service_t*> bt::profile_t::services() const {
-  std::vector<service_t*> s;
-  for (auto [k, v] : m_services) {
-    s.push_back(v);
-  }
-  return s;
-}
-
-bt::profile_t::profile_t(const bt::profile_t::id_t& id) : dumpable_t("  "), m_id{id} {}
-
-bt::profile_t::profile_t(const bt::profile_t& o) {
-  m_id = o.m_id;
-  m_services = o.m_services;
-}
-
-bt::profile_t& bt::profile_t::operator=(const bt::profile_t& o) {
-  m_id = o.m_id;
-  m_services = o.m_services;
-  return *this;
-}
+bt::profile_t::profile_t(const bt::profile_t::id_t& id, std::vector<bt::service_t*> services)
+    : dumpable_t("  "), m_id{id}, m_services{std::move(services)} {}
 
 void bt::profile_t::accept(visitor_t<profile_t>* t) { t->visit(this); }
 
 const bt::profile_t::id_t& bt::profile_t::id() const { return m_id; }
 void bt::profile_t::dump(std::ostream& o) const {
   o << indent() << "profile id:" << m_id << std::endl << indent() << "services:" << std::endl;
-  for (auto [id, srv] : m_services) {
+  for (auto srv : m_services) {
     o << srv;
   }
 }
 
-bt::service_t::service_t(id_t id, std::vector<characteristic_t*> characteristics, attribute_t* included)
+bt::service_t::service_t(id_t id, std::vector<characteristic_t*> characteristics, service_t* included)
     : dumpable_t("    "), m_id(id), m_characteristics{std::move(characteristics)}, m_included{included} {}
 
 void bt::service_t::accept(visitor_t<service_t>* t) { t->visit(this); }
@@ -136,7 +119,15 @@ void bt::service_t::dump(std::ostream& o) const {
     o << c;
   }
 }
-void bt::service_t::handled_by(uint16_t handle) { m_handle = handle; }
+
+std::vector<bt::characteristic_t*> bt::service_t::characteristics() { return m_characteristics; }
+
+bt::service_t::id_t& bt::service_t::id() { return m_id; }
+
+void bt::service_t::handled_by(uint16_t handle, uint16_t end) {
+  m_handle = handle;
+  m_end = end;
+}
 
 void bt::characteristic_t::dump(std::ostream& o) const {
   for (auto attr : m_attributes) {

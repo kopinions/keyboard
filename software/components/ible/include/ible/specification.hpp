@@ -142,13 +142,14 @@ class service_t : public visitable_t<visitor_t<service_t>>, public dumpable_t {
     BATTERY = 0x180f,
   };
 
-  service_t(id_t id, std::vector<characteristic_t*>, attribute_t*);
+  service_t(id_t id, std::vector<characteristic_t*>, service_t*);
 
-  std::vector<characteristic_t*> characteristics() { return m_characteristics; };
+  std::vector<characteristic_t*> characteristics();
+  ;
   void dump(std::ostream& o) const override;
-  id_t& id() { return m_id; }
+  id_t& id();
 
-  void handled_by(uint16_t);
+  void handled_by(uint16_t, uint16_t);
 
   void accept(visitor_t<service_t>* t) override;
 
@@ -156,8 +157,9 @@ class service_t : public visitable_t<visitor_t<service_t>>, public dumpable_t {
   esp_gatt_if_t gatt_if;
   id_t m_id;
   uint16_t m_handle;
+  uint16_t m_end;
   std::vector<characteristic_t*> m_characteristics;
-  attribute_t* m_included;
+  service_t* m_included;
 };
 
 typedef union {
@@ -208,17 +210,14 @@ class profile_t : public visitable_t<visitor_t<profile_t>>, public dumpable_t {
  public:
   using id_t = std::uint16_t;
 
-  explicit profile_t(const id_t& id);
+  explicit profile_t(const id_t& id, std::vector<service_t*> services);
 
   [[nodiscard]] std::vector<service_t*> services() const;
 
-  virtual void enroll(service_t* srv);
-
   void accept(visitor_t<profile_t>* t) override;
 
-  profile_t(const profile_t& o);
-
-  profile_t& operator=(const profile_t&);
+  profile_t(const profile_t& o) = delete;
+  profile_t& operator=(const profile_t&) = delete;
 
   virtual ~profile_t();
 
@@ -227,7 +226,7 @@ class profile_t : public visitable_t<visitor_t<profile_t>>, public dumpable_t {
 
  private:
   id_t m_id;
-  std::map<id_t, service_t*> m_services;
+  std::vector<service_t*> m_services;
 };
 
 }  // namespace bt

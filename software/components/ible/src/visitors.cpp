@@ -1,5 +1,7 @@
 #include "ible/visitors.hpp"
 
+#include <ible/specification.hpp>
+
 static const uint16_t s_primary_service_uuid = ESP_GATT_UUID_PRI_SERVICE;
 static const uint16_t s_include_service_uuid = ESP_GATT_UUID_INCLUDE_SERVICE;
 
@@ -22,15 +24,23 @@ void bt::attribute_visitor::visit(bt::service_t *t) {
                                                           .max_length = 2,
                                                           .length = 2,
                                                           .value = (uint8_t *)&t->id()}});
-
+  std::cout << "incldued: " << (t->m_included != nullptr) << std::endl;
   if (t->m_included != nullptr) {
-    m_attributes.push_back(esp_gatts_attr_db_t{.attr_control = {.auto_rsp = ESP_GATT_AUTO_RSP},
-                                               .att_desc = {.uuid_length = ESP_UUID_LEN_16,
-                                                            .uuid_p = (uint8_t *)&(t->m_included->m_uuid),
-                                                            .perm = static_cast<uint16_t>(t->m_included->m_permission),
-                                                            .max_length = 2,
-                                                            .length = 2,
-                                                            .value = t->m_included->m_value}});
+    static esp_gatts_incl_svc_desc_t incl_svc = {0, 0};
+    static const uint16_t include_service_uuid = ESP_GATT_UUID_INCLUDE_SERVICE;
+
+    incl_svc.start_hdl = t->m_included->m_handle;
+    incl_svc.end_hdl = t->m_included->m_end;
+    std::cout << "incldued: " << t->m_included->m_handle << "   " << t->m_included->m_end << std::endl;
+    m_attributes.push_back(esp_gatts_attr_db_t{
+        .attr_control = {.auto_rsp = ESP_GATT_AUTO_RSP},
+        .att_desc = {.uuid_length = ESP_UUID_LEN_16,
+                     .uuid_p = (uint8_t *)&include_service_uuid,
+                     .perm = static_cast<uint16_t>(bt::characteristic_t::permission_t::READ_ENCRYPTED |
+                                                   bt::characteristic_t::permission_t::WRITE_ENCRYPTED),
+                     .max_length = 2,
+                     .length = 2,
+                     .value = reinterpret_cast<uint8_t *>(&incl_svc)}});
   }
 
   for (auto c : t->characteristics()) {
@@ -60,10 +70,19 @@ void bt::update_handles_visitor::visit(bt::profile_t *t) {
   for (auto *srv : t->services()) {
     srv->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(srv)>> *>(this));
   }
+  std::cout << "create service attr" << std::endl;
+  auto srv = t->services().at(1);
+  auto attvisitor = new attribute_visitor(m_gatt_if);
+  srv->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(srv)>> *>(attvisitor));
+  esp_err_t err = m_gatt_if->create_attr_tab(attvisitor->m_attributes.data(), static_cast<uint8_t>(attvisitor->m_attributes.size()), 0);
+  attvisitor->m_attributes.clear();
+  if (err) {
+    std::cout << "error while attribute service visitor" << std::endl;
+  }
 }
 void bt::update_handles_visitor::visit(bt::service_t *t) {
   if (t->id() == std::get<uint16_t>(m_uuid)) {
-    t->handled_by(m_handles[m_handle_index]);
+    t->handled_by(m_handles[m_handle_index], m_handles[m_handle_index] + m_num_handles);
     m_handle_index++;
     for (auto c : t->characteristics()) {
       c->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(c)>> *>(this));
