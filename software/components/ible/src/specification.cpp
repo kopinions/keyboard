@@ -170,3 +170,4 @@ void bt::attribute_t::dump(std::ostream& o) const {
 void bt::attribute_t::accept(visitor_t<attribute_t>* t) { t->visit(this); }
 
 void bt::attribute_t::handled_by(uint16_t handle) { m_handle = handle; }
+uint16_t bt::attribute_t::id() { return m_uuid; }

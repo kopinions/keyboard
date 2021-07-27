@@ -81,7 +81,7 @@ void bt::update_handles_visitor::visit(bt::characteristic_t *t) {
   }
 }
 void bt::update_handles_visitor::visit(bt::attribute_t *t) {
-  m_logger->info("%d", m_handles[m_handle_index]);
+  m_logger->info("id: %x, handle: %d", t->id(), m_handles[m_handle_index]);
   t->handled_by(m_handles[m_handle_index]);
   m_handle_index++;
 }

@@ -86,6 +86,8 @@ class attribute_t : public dumpable_t, public visitable_t<visitor_t<attribute_t>
   attribute_t& operator=(const attribute_t&) = delete;
   attribute_t& operator=(attribute_t&&) = delete;
 
+  uint16_t id();
+
   void dump(std::ostream& o) const override;
 
   void accept(visitor_t<attribute_t>* t) override;
