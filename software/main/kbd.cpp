@@ -598,7 +598,7 @@ extern "C" void app_main() {
         lg->log(level::DEBUG, "%d", status);
       }
 
-      vTaskDelay(1000 / portTICK_PERIOD_MS);
+      vTaskDelay(10000 / portTICK_PERIOD_MS);
     }
   });
 }

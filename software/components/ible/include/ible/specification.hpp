@@ -136,6 +136,7 @@ static inline bt::characteristic_t::permission_t operator|(bt::characteristic_t:
 class service_t : public visitable_t<visitor_t<service_t>>, public dumpable_t {
  public:
   friend class attribute_visitor;
+  friend class update_handles_visitor;
 
   using id_t = enum : uint16_t {
     HID = 0x1812,
@@ -145,8 +146,9 @@ class service_t : public visitable_t<visitor_t<service_t>>, public dumpable_t {
   service_t(id_t id, std::vector<characteristic_t*>, service_t*);
 
   std::vector<characteristic_t*> characteristics();
-  ;
+
   void dump(std::ostream& o) const override;
+
   id_t& id();
 
   void handled_by(uint16_t, uint16_t);

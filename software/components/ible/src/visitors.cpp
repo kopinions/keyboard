@@ -8,15 +8,16 @@ static const uint16_t s_include_service_uuid = ESP_GATT_UUID_INCLUDE_SERVICE;
 void bt::attribute_visitor::visit(bt::profile_t *t) {
   for (auto *srv : t->services()) {
     srv->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(srv)>> *>(this));
-    esp_err_t err = m_gatt_if->create_attr_tab(m_attributes.data(), static_cast<uint8_t>(m_attributes.size()), 0);
-    m_attributes.clear();
-    if (err) {
-      std::cout << "error while attribute service visitor" << std::endl;
-    }
   }
 }
 
 void bt::attribute_visitor::visit(bt::service_t *t) {
+  if (t->m_included != nullptr) {
+    if (t->m_included->m_handle == 0 || t->m_end == 0) {
+      return;
+    }
+  }
+
   m_attributes.push_back(esp_gatts_attr_db_t{.attr_control = {.auto_rsp = ESP_GATT_AUTO_RSP},
                                              .att_desc = {.uuid_length = ESP_UUID_LEN_16,
                                                           .uuid_p = (uint8_t *)&s_primary_service_uuid,
@@ -24,7 +25,6 @@ void bt::attribute_visitor::visit(bt::service_t *t) {
                                                           .max_length = 2,
                                                           .length = 2,
                                                           .value = (uint8_t *)&t->id()}});
-  std::cout << "incldued: " << (t->m_included != nullptr) << std::endl;
   if (t->m_included != nullptr) {
     static esp_gatts_incl_svc_desc_t incl_svc = {0, 0};
     static const uint16_t include_service_uuid = ESP_GATT_UUID_INCLUDE_SERVICE;
@@ -45,6 +45,12 @@ void bt::attribute_visitor::visit(bt::service_t *t) {
 
   for (auto c : t->characteristics()) {
     c->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(c)>> *>(this));
+  }
+
+  esp_err_t err = m_gatt_if->create_attr_tab(m_attributes.data(), static_cast<uint8_t>(m_attributes.size()), 0);
+  m_attributes.clear();
+  if (err) {
+    std::cout << "error while attribute service visitor" << std::endl;
   }
 }
 
@@ -69,18 +75,24 @@ bt::attribute_visitor::attribute_visitor(std::shared_ptr<gatt_if_t> gatt_if) { m
 void bt::update_handles_visitor::visit(bt::profile_t *t) {
   for (auto *srv : t->services()) {
     srv->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(srv)>> *>(this));
-  }
-  std::cout << "create service attr" << std::endl;
-  auto srv = t->services().at(1);
-  auto attvisitor = new attribute_visitor(m_gatt_if);
-  srv->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(srv)>> *>(attvisitor));
-  esp_err_t err = m_gatt_if->create_attr_tab(attvisitor->m_attributes.data(), static_cast<uint8_t>(attvisitor->m_attributes.size()), 0);
-  attvisitor->m_attributes.clear();
-  if (err) {
-    std::cout << "error while attribute service visitor" << std::endl;
+    for (auto *nsrv : t->services()) {
+      if (nsrv->m_included != nullptr && nsrv->m_included->id() == srv->id() && nsrv->m_included->m_handle != 0 &&
+          nsrv->m_included->m_end != 0 && std::get<uint16_t>(m_uuid) != nsrv->id()) {
+        std::cout << "create include service attr" << std::endl;
+        auto attvisitor = new attribute_visitor(m_gatt_if);
+        nsrv->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(nsrv)>> *>(attvisitor));
+        delete attvisitor;
+      }
+    }
   }
 }
 void bt::update_handles_visitor::visit(bt::service_t *t) {
+  if (t->m_included != nullptr) {
+    if (t->m_included->m_handle == 0 || t->m_end == 0) {
+      return;
+    }
+  }
+
   if (t->id() == std::get<uint16_t>(m_uuid)) {
     t->handled_by(m_handles[m_handle_index], m_handles[m_handle_index] + m_num_handles);
     m_handle_index++;
