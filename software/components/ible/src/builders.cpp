@@ -18,10 +18,7 @@ bt::application_t* bt::application_builder_t::build() {
     profiles.push_back(b->build());
     delete b;
   }
-  auto application = new application_t{m_id};
-  for (const auto& p : profiles) {
-    application->enroll(p);
-  }
+  auto application = new application_t{m_id, profiles};
   return application;
 }
 

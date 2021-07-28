@@ -187,7 +187,7 @@ class application_t : public dumpable_t {
 
   virtual id_t id() const { return m_id; }
   virtual id_t id() { return m_id; }
-  explicit application_t(id_t id);
+  explicit application_t(id_t id, std::vector<bt::profile_t*>);
 
   application_t(const application_t&) = delete;
   application_t(application_t&&) = delete;
@@ -195,16 +195,14 @@ class application_t : public dumpable_t {
   application_t& operator=(application_t&&) = delete;
   virtual ~application_t();
 
-  virtual std::vector<profile_t> profiles() { return {}; }
-
-  virtual void enroll(profile_t* profile);
+  std::vector<bt::profile_t*>& profiles();
 
   void notified(std::shared_ptr<bt::gatt_if_t>, event_t e);
   void dump(std::ostream& o) const override;
 
  private:
   id_t m_id;
-  std::shared_ptr<repository_t<profile_t>> m_profiles;
+  std::vector<bt::profile_t*> m_profiles;
   kopinions::logging::logger* m_logger;
 };
 

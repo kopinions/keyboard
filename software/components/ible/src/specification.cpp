@@ -13,7 +13,9 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
       m_logger->info("%s", "gatt reg for the application");
 
       auto register_visitor = new attribute_visitor(gatt);
-      m_profiles->foreach ([e, register_visitor, this](profile_t* p) { register_visitor->visit(p); });
+      for (auto* profile : m_profiles) {
+        register_visitor->visit(profile);
+      }
       delete register_visitor;
       break;
     }
@@ -21,8 +23,10 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
       m_logger->info("%s", "gatt create attr in the application");
       auto param = e.param->add_attr_tab;
       auto handles_visitor =
-          new update_handles_visitor(m_logger, gatt, param.svc_uuid.uuid.uuid16, param.num_handle, param.handles);
-      m_profiles->foreach ([e, handles_visitor, this](profile_t* p) { handles_visitor->visit(p); });
+          new update_handles_visitor(this, m_logger, gatt, param.svc_uuid.uuid.uuid16, param.num_handle, param.handles);
+      for (auto* profile : m_profiles) {
+        handles_visitor->visit(profile);
+      }
 
       // Add the info service next, because it's shared between all device maps
       break;
@@ -76,19 +80,21 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
   }
 }
 
-bt::application_t::application_t(id_t id) : dumpable_t(), m_id(id) {
-  m_profiles = std::make_shared<repository_t<bt::profile_t>>();
-  auto sink = new kopinions::logging::esp_log_sink();
-  m_logger = new kopinions::logging::logger(kopinions::logging::level::INFO, sink);
-}
-
 bt::application_t::~application_t() {}
-
-void bt::application_t::enroll(bt::profile_t* const profile) { m_profiles->create(profile); }
 
 void bt::application_t::dump(std::ostream& o) const {
   o << "app id:" << m_id << std::endl << "profiles:" << std::endl;
-  m_profiles->foreach ([&](profile_t* p) { o << p; });
+
+  for (auto* profile : m_profiles) {
+    o << profile;
+  }
+}
+std::vector<bt::profile_t*>& bt::application_t::profiles() { return m_profiles; }
+
+bt::application_t::application_t(bt::application_t::id_t id, std::vector<bt::profile_t*> profiles)
+    : m_id{id}, m_profiles{std::move(profiles)} {
+  auto sink = new kopinions::logging::esp_log_sink();
+  m_logger = new kopinions::logging::logger(kopinions::logging::level::INFO, sink);
 }
 
 bt::profile_t::~profile_t() {}

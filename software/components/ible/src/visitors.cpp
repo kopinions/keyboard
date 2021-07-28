@@ -72,31 +72,22 @@ void bt::attribute_visitor::visit(bt::attribute_t *t) {
 }
 bt::attribute_visitor::attribute_visitor(std::shared_ptr<gatt_if_t> gatt_if) { m_gatt_if = std::move(gatt_if); }
 
-void bt::update_handles_visitor::visit(bt::profile_t *t) {
-  for (auto *srv : t->services()) {
-    srv->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(srv)>> *>(this));
-    for (auto *nsrv : t->services()) {
-      if (nsrv->m_included != nullptr && nsrv->m_included->id() == srv->id() && nsrv->m_included->m_handle != 0 &&
-          nsrv->m_included->m_end != 0 && std::get<uint16_t>(m_uuid) != nsrv->id()) {
-        std::cout << "create include service attr" << std::endl;
-        auto attvisitor = new attribute_visitor(m_gatt_if);
-        nsrv->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(nsrv)>> *>(attvisitor));
-        delete attvisitor;
-      }
-    }
+void bt::update_handles_visitor::visit(bt::profile_t *profile) {
+  for (auto *svc : profile->services()) {
+    svc->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(svc)>> *>(this));
   }
 }
-void bt::update_handles_visitor::visit(bt::service_t *t) {
-  if (t->m_included != nullptr) {
-    if (t->m_included->m_handle == 0 || t->m_end == 0) {
+void bt::update_handles_visitor::visit(bt::service_t *service) {
+  if (service->m_included != nullptr) {
+    if (service->m_included->m_handle == 0 || service->m_end == 0) {
       return;
     }
   }
 
-  if (t->id() == std::get<uint16_t>(m_uuid)) {
-    t->handled_by(m_handles[m_handle_index], m_handles[m_handle_index] + m_num_handles);
+  if (service->id() == std::get<uint16_t>(m_uuid)) {
+    service->handled_by(m_handles[m_handle_index], m_handles[m_handle_index] + m_num_handles);
     m_handle_index++;
-    for (auto c : t->characteristics()) {
+    for (auto c : service->characteristics()) {
       c->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(c)>> *>(this));
     }
     auto ret = esp_ble_gatts_start_service(m_handles[0]);
@@ -105,20 +96,42 @@ void bt::update_handles_visitor::visit(bt::service_t *t) {
       return;
     }
   }
+
+  for (auto *profile : m_application->profiles()) {
+    for (auto *svc : profile->services()) {
+      if (std::get<uint16_t>(m_uuid) == svc->id()) {
+        continue;
+      }
+      if (svc->m_included != nullptr && svc->m_included->id() == service->id() && svc->m_included->m_handle != 0 &&
+          svc->m_included->m_end != 0) {
+        std::cout << "create include service attr" << std::endl;
+        auto attvisitor = new attribute_visitor(m_gatt_if);
+        svc->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(svc)>> *>(attvisitor));
+        delete attvisitor;
+      }
+    }
+  }
 }
 void bt::update_handles_visitor::visit(bt::characteristic_t *t) {
   for (auto attr : t->attributes()) {
     attr->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(attr)>> *>(this));
   }
 }
+
 void bt::update_handles_visitor::visit(bt::attribute_t *t) {
   m_logger->info("id: %x, handle: %d", t->id(), m_handles[m_handle_index]);
   t->handled_by(m_handles[m_handle_index]);
   m_handle_index++;
 }
-bt::update_handles_visitor::update_handles_visitor(kopinions::logging::logger *logger,
+
+bt::update_handles_visitor::update_handles_visitor(bt::application_t *application, kopinions::logging::logger *logger,
                                                    std::shared_ptr<gatt_if_t> gatt_if, uint16_t uuid,
                                                    uint16_t num_handles, uint16_t *handles)
-    : m_logger{logger}, m_gatt_if{gatt_if}, m_uuid{uuid}, m_num_handles{num_handles}, m_handles{handles} {
+    : m_application{application},
+      m_logger{logger},
+      m_gatt_if{gatt_if},
+      m_uuid{uuid},
+      m_num_handles{num_handles},
+      m_handles{handles} {
   m_handle_index = 0;
 }
