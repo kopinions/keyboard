@@ -18,13 +18,15 @@ void bt::attribute_visitor::visit(bt::service_t *t) {
     }
   }
 
-  m_attributes.push_back(esp_gatts_attr_db_t{.attr_control = {.auto_rsp = ESP_GATT_AUTO_RSP},
-                                             .att_desc = {.uuid_length = ESP_UUID_LEN_16,
-                                                          .uuid_p = (uint8_t *)&s_primary_service_uuid,
-                                                          .perm = ESP_GATT_PERM_READ,
-                                                          .max_length = 2,
-                                                          .length = 2,
-                                                          .value = (uint8_t *)&t->id()}});
+  m_attributes.push_back(esp_gatts_attr_db_t{
+      .attr_control = {.auto_rsp = ESP_GATT_AUTO_RSP},
+      .att_desc = {.uuid_length = ESP_UUID_LEN_16,
+                   .uuid_p = (uint8_t *)&s_primary_service_uuid,
+                   .perm = static_cast<uint16_t>(bt::characteristic_t::permission_t::READ_ENCRYPTED),
+                   .max_length = 2,
+                   .length = 2,
+                   .value = (uint8_t *)&t->id()}});
+
   if (t->m_included != nullptr) {
     static esp_gatts_incl_svc_desc_t incl_svc = {0, 0};
     static const uint16_t include_service_uuid = ESP_GATT_UUID_INCLUDE_SERVICE;
@@ -74,7 +76,9 @@ bt::attribute_visitor::attribute_visitor(std::shared_ptr<gatt_if_t> gatt_if) { m
 
 void bt::update_handles_visitor::visit(bt::profile_t *profile) {
   for (auto *svc : profile->services()) {
-    svc->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(svc)>> *>(this));
+    if (svc->id() == std::get<uint16_t>(m_uuid)) {
+      svc->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(svc)>> *>(this));
+    }
   }
 }
 void bt::update_handles_visitor::visit(bt::service_t *service) {
@@ -87,6 +91,9 @@ void bt::update_handles_visitor::visit(bt::service_t *service) {
   if (service->id() == std::get<uint16_t>(m_uuid)) {
     service->handled_by(m_handles[m_handle_index], m_handles[m_handle_index] + m_num_handles);
     m_handle_index++;
+    if (service->m_included != nullptr) {
+      m_handle_index++;
+    }
     for (auto c : service->characteristics()) {
       c->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(c)>> *>(this));
     }
