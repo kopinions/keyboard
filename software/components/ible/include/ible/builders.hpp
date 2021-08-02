@@ -55,7 +55,6 @@ class service_include_builder_t : public ibuilder<bt::service_t*> {
 
   service_include_builder_t* value(std::uint8_t* v, uint16_t length, uint16_t max_length);
 
- private:
  public:
   bt::service_t* build() override;
 
@@ -105,8 +104,8 @@ class characteristic_declare_builder_t : public ibuilder<bt::attribute_t*> {
   bt::attribute_t* build() override;
 
  private:
-  bt::characteristic_t::permission_t m_permission{};
   bt::characteristic_t::property_t m_property;
+  bt::characteristic_t::permission_t m_permission;
 };
 
 class characteristic_value_builder_t : public ibuilder<bt::attribute_t*> {

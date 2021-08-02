@@ -81,6 +81,7 @@ class attribute_t : public dumpable_t, public visitable_t<visitor_t<attribute_t>
   friend class attribute_visitor;
   attribute_t(uint16_t, bt::characteristic_t::permission_t, uint8_t*, uint16_t length, uint16_t maxlength,
               bool automated = true);
+  attribute_t(uint16_t, bt::characteristic_t::permission_t, bt::characteristic_t::property_t);
   attribute_t(const attribute_t&) = delete;
   attribute_t(attribute_t&&) = delete;
   attribute_t& operator=(const attribute_t&) = delete;
@@ -101,7 +102,7 @@ class attribute_t : public dumpable_t, public visitable_t<visitor_t<attribute_t>
   std::uint16_t m_length;
   std::uint16_t m_max_length;
   bool m_automated;
-  handle_t m_handle;
+  handle_t m_handle{};
 };
 
 inline std::ostream& operator<<(std::ostream& os, const characteristic_t::property_t obj) {
@@ -115,12 +116,14 @@ inline std::ostream& operator<<(std::ostream& os, const characteristic_t::permis
 
 static inline bt::characteristic_t::property_t operator|=(bt::characteristic_t::property_t& l,
                                                           bt::characteristic_t::property_t r) {
-  return static_cast<bt::characteristic_t::property_t>(static_cast<uint8_t>(l) | static_cast<uint8_t>(r));
+  l = static_cast<bt::characteristic_t::property_t>(static_cast<uint8_t>(l) | static_cast<uint8_t>(r));
+  return l;
 }
 
 static inline bt::characteristic_t::permission_t operator|=(bt::characteristic_t::permission_t& l,
                                                             bt::characteristic_t::permission_t r) {
-  return static_cast<bt::characteristic_t::permission_t>(static_cast<uint16_t>(l) | static_cast<uint16_t>(r));
+  l = static_cast<bt::characteristic_t::permission_t>(static_cast<uint16_t>(l) | static_cast<uint16_t>(r));
+  return l;
 }
 
 static inline bt::characteristic_t::property_t operator|(bt::characteristic_t::property_t l,

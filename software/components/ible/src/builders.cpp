@@ -202,8 +202,7 @@ bt::characteristic_declare_builder_t* bt::characteristic_declare_builder_t::perm
   return this;
 }
 bt::attribute_t* bt::characteristic_declare_builder_t::build() {
-  return new bt::attribute_t(bt::characteristic_t::CHARACTERISTIC_DECLARE, m_permission, (uint8_t*)(&m_property),
-                             sizeof(m_property), sizeof(m_property));
+  return new bt::attribute_t(bt::characteristic_t::CHARACTERISTIC_DECLARE, m_permission, m_property);
 }
 bt::characteristic_declare_builder_t::characteristic_declare_builder_t()
-    : m_permission(characteristic_t::permission_t::READ) {}
+    : m_property{characteristic_t::property_t::BROADCAST}, m_permission(characteristic_t::permission_t::READ) {}

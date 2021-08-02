@@ -146,6 +146,18 @@ bt::characteristic_t::characteristic_t(std::vector<bt::attribute_t*> args)
 
 void bt::characteristic_t::accept(visitor_t<bt::characteristic_t>* t) { t->visit(this); }
 
+bt::attribute_t::attribute_t(uint16_t uuid, bt::characteristic_t::permission_t perm,
+                             bt::characteristic_t::property_t prop)
+    : dumpable_t("        "),
+      m_uuid{uuid},
+      m_permission{perm},
+      m_length{1},
+      m_max_length{1},
+      m_automated{true} {
+  m_value = new uint8_t;
+  *m_value = static_cast<uint8_t>(prop);
+}
+
 bt::attribute_t::attribute_t(uint16_t uuid, bt::characteristic_t::permission_t perm, uint8_t* value, uint16_t length,
                              uint16_t maxlength, bool automated)
     : dumpable_t("        "),
@@ -161,7 +173,8 @@ void bt::attribute_t::dump(std::ostream& o) const {
     << indent() << "permission: " << m_permission << std::endl
     << indent() << "length: " << m_length << std::endl
     << indent() << "max_length: " << m_max_length << std::endl
-    << indent() << "automated: " << m_automated << std::endl;
+    << indent() << "automated: " << m_automated << std::endl
+    << indent() << "value: " << std::hex << (m_value != nullptr ? (*m_value) : 0) << std::endl;
 }
 
 void bt::attribute_t::accept(visitor_t<attribute_t>* t) { t->visit(this); }

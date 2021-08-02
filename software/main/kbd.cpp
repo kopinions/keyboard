@@ -43,7 +43,7 @@ static const uint16_t hid_report_ref_descr_uuid = ESP_GATT_UUID_RPT_REF_DESCR;
 #define ESP_HID_FLAGS_REMOTE_WAKE 0x01           // RemoteWake
 #define ESP_HID_FLAGS_NORMALLY_CONNECTABLE 0x02  // NormallyConnectable
 static uint16_t hid_le_svc = ATT_SVC_HID;
-static const uint8_t hidInfo[4] = {
+static uint8_t hidInfo[4] = {
     0x11, 0x11,                                                     // bcdHID (USB HID version)
     0x00,                                                           // bCountryCode
     ESP_HID_FLAGS_REMOTE_WAKE | ESP_HID_FLAGS_NORMALLY_CONNECTABLE  // Flags
@@ -58,7 +58,7 @@ typedef struct {
   uint8_t flags;
 } hids_hid_info_t;
 
-static const unsigned char hidReportMap[] = {
+static unsigned char hidReportMap[] = {
     0x05, 0x01,  // Usage Page (Generic Desktop Ctrls)
     0x09, 0x02,  // Usage (Mouse)
     0xA1, 0x01,  // Collection (Application)
@@ -415,7 +415,7 @@ extern "C" void app_main() {
                   c->value([](bt::characteristic_value_builder_t *v) {
                     v->id(hid_info_char_uuid);
                     v->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
-                    v->value(const_cast<uint8_t *>(hidInfo), sizeof(hidInfo), sizeof(hids_hid_info_t));
+                    v->value(hidInfo, sizeof(hidInfo), sizeof(hids_hid_info_t));
                   });
                 });
                 s->characteristic([](bt::characteristic_builder_t *c) {
@@ -437,8 +437,7 @@ extern "C" void app_main() {
                   c->value([](bt::characteristic_value_builder_t *v) {
                     v->id(hid_report_map_uuid);
                     v->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
-                    v->value(const_cast<uint8_t *>(hidReportMap), sizeof(hidReportMap),
-                             hid::HIDD_LE_REPORT_MAP_MAX_LEN);
+                    v->value(hidReportMap, sizeof(hidReportMap), hid::HIDD_LE_REPORT_MAP_MAX_LEN);
                   });
                   c->descriptor([](bt::characteristic_descriptor_builder_t *d) {
                     d->id(hid_repot_map_ext_desc_uuid);
@@ -455,7 +454,7 @@ extern "C" void app_main() {
                     v->id(hid_proto_mode_uuid);
                     v->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED |
                                   bt::characteristic_t::permission_t::WRITE_ENCRYPTED);
-                    v->value(reinterpret_cast<uint8_t *>(&hidProtocolMode), sizeof(hidProtocolMode), sizeof(uint8_t));
+                    v->value(&hidProtocolMode, sizeof(hidProtocolMode), sizeof(uint8_t));
                   });
                 });
                 s->characteristic([](bt::characteristic_builder_t *c) {
