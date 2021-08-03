@@ -396,8 +396,6 @@ extern "C" void app_main() {
                 s->id(bt::service_t::id_t::HID);
                 s->include([](bt::service_include_builder_t *ic) {
                   ic->id(bt::service_t::id_t::BATTERY);
-                  ic->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED |
-                                 bt::characteristic_t::permission_t::WRITE_ENCRYPTED);
                 });
 
                 s->characteristic([](bt::characteristic_builder_t *c) {

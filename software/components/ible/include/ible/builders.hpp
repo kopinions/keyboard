@@ -47,24 +47,13 @@ class service_include_builder_t : public ibuilder<bt::service_t*> {
  public:
   friend characteristic_builder_t;
   explicit service_include_builder_t(std::vector<bt::service_t*>* services);
-  service_include_builder_t* id(bt::characteristic_t::id_t id);
-
-  service_include_builder_t* permission(bt::characteristic_t::permission_t permission);
-
-  service_include_builder_t* automated(bool automated);
-
-  service_include_builder_t* value(std::uint8_t* v, uint16_t length, uint16_t max_length);
+  service_include_builder_t* id(bt::service_t::id_t id);
 
  public:
   bt::service_t* build() override;
 
  private:
-  bt::characteristic_t::id_t m_id;
-  bt::characteristic_t::permission_t m_permission;
-  bt::characteristic_t::property_t m_property;
-  std::uint8_t* m_data;
-  uint16_t m_length, m_max_length;
-  bool m_automated{true};
+  bt::service_t::id_t m_id;
   std::vector<service_t*>* m_services;
 };
 
@@ -105,7 +94,7 @@ class characteristic_declare_builder_t : public ibuilder<bt::attribute_t*> {
 
  private:
   bt::characteristic_t::property_t m_property;
-  bt::characteristic_t::permission_t m_permission;
+  bt::characteristic_t::permission_t m_permission{bt::characteristic_t::permission_t::READ};
 };
 
 class characteristic_value_builder_t : public ibuilder<bt::attribute_t*> {
@@ -125,8 +114,7 @@ class characteristic_value_builder_t : public ibuilder<bt::attribute_t*> {
 
  private:
   bt::characteristic_t::id_t m_id;
-  bt::characteristic_t::permission_t m_permission;
-  bt::characteristic_t::property_t m_property;
+  bt::characteristic_t::permission_t m_permission{bt::characteristic_t::permission_t::READ};
   std::uint8_t* m_data;
   uint16_t m_length, m_max_length;
   bool m_automated{true};
@@ -147,7 +135,7 @@ class characteristic_descriptor_builder_t : public ibuilder<bt::attribute_t*> {
 
  private:
   bt::characteristic_t::id_t m_id;
-  bt::characteristic_t::permission_t m_permission;
+  bt::characteristic_t::permission_t m_permission{bt::characteristic_t::permission_t::READ};
   std::uint8_t* m_data;
   uint16_t m_length, m_max_length;
   bool m_automated{true};

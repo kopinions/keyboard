@@ -12,7 +12,7 @@ class attribute_visitor : public visitor_t<profile_t, service_t, characteristic_
 
   void visit(profile_t* t) override;
 
-  void visit(service_t* t) override;
+  void visit(service_t* service) override;
 
   void visit(characteristic_t* t) override;
 
@@ -50,7 +50,7 @@ class update_handles_visitor : public visitor_t<profile_t, service_t, characteri
   bt::uuid_t m_uuid;
   uint16_t m_num_handles;
   uint16_t* m_handles;
-  uint16_t m_handle_index;
+  uint16_t m_handle_index{0};
 };
 
 }  // namespace bt

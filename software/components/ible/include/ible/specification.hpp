@@ -159,10 +159,10 @@ class service_t : public visitable_t<visitor_t<service_t>>, public dumpable_t {
   void accept(visitor_t<service_t>* t) override;
 
  private:
-  esp_gatt_if_t gatt_if;
+  esp_gatt_if_t gatt_if{0};
   id_t m_id;
-  uint16_t m_handle;
-  uint16_t m_end;
+  uint16_t m_handle{0};
+  uint16_t m_end{0};
   std::vector<characteristic_t*> m_characteristics;
   service_t* m_included;
 };

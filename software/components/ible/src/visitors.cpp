@@ -11,9 +11,10 @@ void bt::attribute_visitor::visit(bt::profile_t *t) {
   }
 }
 
-void bt::attribute_visitor::visit(bt::service_t *t) {
-  if (t->m_included != nullptr) {
-    if (t->m_included->m_handle == 0 || t->m_end == 0) {
+void bt::attribute_visitor::visit(bt::service_t *service) {
+  if (service->m_included != nullptr) {
+    if (service->m_included->m_handle == 0 || service->m_included->m_end == 0) {
+      std::cout << "service include is not ready" << std::endl;
       return;
     }
   }
@@ -25,27 +26,27 @@ void bt::attribute_visitor::visit(bt::service_t *t) {
                    .perm = static_cast<uint16_t>(bt::characteristic_t::permission_t::READ_ENCRYPTED),
                    .max_length = 2,
                    .length = 2,
-                   .value = (uint8_t *)&t->id()}});
+                   .value = (uint8_t *)&service->id()}});
 
-  if (t->m_included != nullptr) {
+  if (service->m_included != nullptr) {
     static esp_gatts_incl_svc_desc_t incl_svc = {0, 0};
     static const uint16_t include_service_uuid = ESP_GATT_UUID_INCLUDE_SERVICE;
 
-    incl_svc.start_hdl = t->m_included->m_handle;
-    incl_svc.end_hdl = t->m_included->m_end;
-    std::cout << "incldued: " << t->m_included->m_handle << "   " << t->m_included->m_end << std::endl;
+    incl_svc.start_hdl = service->m_included->m_handle;
+    incl_svc.end_hdl = service->m_included->m_end;
+    std::cout << "incldued: " << service->m_included->m_handle << "   " << service->m_included->m_end << std::endl;
     m_attributes.push_back(esp_gatts_attr_db_t{
         .attr_control = {.auto_rsp = ESP_GATT_AUTO_RSP},
         .att_desc = {.uuid_length = ESP_UUID_LEN_16,
                      .uuid_p = (uint8_t *)&include_service_uuid,
-                     .perm = static_cast<uint16_t>(bt::characteristic_t::permission_t::READ_ENCRYPTED |
-                                                   bt::characteristic_t::permission_t::WRITE_ENCRYPTED),
+                     .perm = static_cast<uint16_t>(bt::characteristic_t::permission_t::READ |
+                                                   bt::characteristic_t::permission_t::WRITE),
                      .max_length = 2,
                      .length = 2,
                      .value = reinterpret_cast<uint8_t *>(&incl_svc)}});
   }
 
-  for (auto c : t->characteristics()) {
+  for (auto c : service->characteristics()) {
     c->accept(dynamic_cast<visitor_t<std::remove_pointer_t<decltype(c)>> *>(this));
   }
 
@@ -83,7 +84,8 @@ void bt::update_handles_visitor::visit(bt::profile_t *profile) {
 }
 void bt::update_handles_visitor::visit(bt::service_t *service) {
   if (service->m_included != nullptr) {
-    if (service->m_included->m_handle == 0 || service->m_end == 0) {
+    if (service->m_included->m_handle == 0 || service->m_included->m_end == 0) {
+      m_logger->info("service include is not ready %x", static_cast<uint16_t>(service->id()));
       return;
     }
   }

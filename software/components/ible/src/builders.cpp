@@ -34,14 +34,14 @@ bt::profile_t* bt::profile_builder_t::build() {
   for (const auto& consumer : m_services_consumer) {
     auto b = new service_builder_t(&services);
     consumer(b);
-    services.push_back(b->build());
+    services.emplace_back(b->build());
     delete b;
   }
   return new profile_t(1, services);
 }
 
 bt::profile_builder_t* bt::profile_builder_t::service(bt::consumer_t<bt::service_builder_t> consumer) {
-  m_services_consumer.push_back(consumer);
+  m_services_consumer.emplace_back(consumer);
   return this;
 }
 
@@ -163,35 +163,20 @@ bt::characteristic_value_builder_t* bt::characteristic_value_builder_t::value(st
   return this;
 }
 
-bt::service_include_builder_t* bt::service_include_builder_t::id(bt::characteristic_t::id_t id) {
+bt::service_include_builder_t* bt::service_include_builder_t::id(bt::service_t::id_t id) {
   m_id = id;
   return this;
 }
-bt::service_include_builder_t* bt::service_include_builder_t::permission(
-    bt::characteristic_t::permission_t permission) {
-  m_permission |= permission;
-  return this;
-}
-bt::service_include_builder_t* bt::service_include_builder_t::automated(bool automated) {
-  m_automated = automated;
-  return this;
-}
-bt::service_include_builder_t* bt::service_include_builder_t::value(std::uint8_t* v, uint16_t length,
-                                                                    uint16_t max_length) {
-  m_data = v;
-  m_length = length;
-  m_max_length = max_length;
-  return this;
-}
+
 bt::attribute_t* bt::characteristic_value_builder_t::build() {
   return new bt::attribute_t(m_id, m_permission, m_data, m_length, m_max_length);
 }
 bt::characteristic_value_builder_t::characteristic_value_builder_t(bt::characteristic_t::id_t id) : m_id(id) {}
 
 bt::service_t* bt::service_include_builder_t::build() {
-  for (auto& m_service : *m_services) {
-    if (m_service->id() == m_id) {
-      return m_service;
+  for (auto& service : *m_services) {
+    if (service->id() == m_id) {
+      return service;
     }
   }
   return nullptr;

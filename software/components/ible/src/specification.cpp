@@ -38,7 +38,7 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
       break;
     }
     case ESP_GATTS_CONNECT_EVT: {
-      m_logger->info("%s", "gatt connect");
+      m_logger->info("%s %x", "gatt connect ", e.param->connect.conn_id);
       break;
     }
 
@@ -120,7 +120,14 @@ bt::service_t::service_t(id_t id, std::vector<characteristic_t*> characteristics
 void bt::service_t::accept(visitor_t<service_t>* t) { t->visit(this); }
 
 void bt::service_t::dump(std::ostream& o) const {
-  o << indent() << "id:" << m_id << std::endl << indent() << "characteristics:" << std::endl;
+  o << indent() << "id:" << m_id << std::endl;
+  o<< indent() <<  "start:" <<  m_handle << std::endl;
+  o<< indent() <<  "end:" <<  m_end << std::endl;
+  if (m_included != nullptr) {
+    o << indent() << "included: " << std::endl;
+    o << indent() << m_included << std::endl;
+  }
+  o << indent() << "characteristics:" << std::endl;
   for (const auto& c : m_characteristics) {
     o << c;
   }
@@ -148,12 +155,7 @@ void bt::characteristic_t::accept(visitor_t<bt::characteristic_t>* t) { t->visit
 
 bt::attribute_t::attribute_t(uint16_t uuid, bt::characteristic_t::permission_t perm,
                              bt::characteristic_t::property_t prop)
-    : dumpable_t("        "),
-      m_uuid{uuid},
-      m_permission{perm},
-      m_length{1},
-      m_max_length{1},
-      m_automated{true} {
+    : dumpable_t("        "), m_uuid{uuid}, m_permission{perm}, m_length{1}, m_max_length{1}, m_automated{true} {
   m_value = new uint8_t;
   *m_value = static_cast<uint8_t>(prop);
 }
