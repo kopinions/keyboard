@@ -2,7 +2,6 @@
 
 #include <cstring>
 #include <strstream>
-#include <utility>
 
 #include "esp_if/esp_log_sink.hpp"
 #include "ible/visitors.hpp"
@@ -38,6 +37,7 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
       break;
     }
     case ESP_GATTS_CONNECT_EVT: {
+      this->m_connection = e.param->connect.conn_id;
       m_logger->info("%s %x", "gatt connect ", e.param->connect.conn_id);
       break;
     }
@@ -96,8 +96,23 @@ bt::application_t::application_t(bt::application_t::id_t id, std::vector<bt::pro
   auto sink = new kopinions::logging::esp_log_sink();
   m_logger = new kopinions::logging::logger(kopinions::logging::level::INFO, sink);
 }
+bt::profile_t* bt::application_t::profile(bt::profile_t::id_t id) const {
+  for (auto profile : m_profiles) {
+    if (profile->id() == id) {
+      return profile;
+    }
+  }
+  return nullptr;
+}
 
-bt::profile_t::~profile_t() {}
+bt::characteristic_t* bt::application_t::select(selector_t<bt::characteristic_t*>* selector) {
+  for (auto profile : m_profiles) {
+    selector->visit(profile);
+  }
+  return selector->selected();
+}
+
+bt::profile_t::~profile_t() = default;
 
 std::vector<bt::service_t*> bt::profile_t::services() const { return m_services; }
 
@@ -112,6 +127,14 @@ void bt::profile_t::dump(std::ostream& o) const {
   for (auto srv : m_services) {
     o << srv;
   }
+}
+bt::service_t* bt::profile_t::service(bt::service_t::id_t id) const {
+  for (auto service : m_services) {
+    if (service->id() == id) {
+      return service;
+    }
+  }
+  return nullptr;
 }
 
 bt::service_t::service_t(id_t id, std::vector<characteristic_t*> characteristics, service_t* included)
@@ -148,10 +171,11 @@ void bt::characteristic_t::dump(std::ostream& o) const {
   }
 }
 
-bt::characteristic_t::characteristic_t(std::vector<bt::attribute_t*> args)
-    : dumpable_t("      "), m_attributes{std::move(args)} {}
+bt::characteristic_t::characteristic_t(bt::characteristic_t::id_t id, std::vector<bt::attribute_t*> args)
+    : dumpable_t("      "), m_id{id}, m_attributes{std::move(args)} {}
 
 void bt::characteristic_t::accept(visitor_t<bt::characteristic_t>* t) { t->visit(this); }
+bt::characteristic_t::id_t bt::characteristic_t::id() const { return m_id; }
 
 bt::attribute_t::attribute_t(uint16_t uuid, bt::characteristic_t::permission_t perm,
                              bt::characteristic_t::property_t prop)

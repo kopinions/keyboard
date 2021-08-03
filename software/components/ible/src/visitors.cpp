@@ -35,15 +35,15 @@ void bt::attribute_visitor::visit(bt::service_t *service) {
     incl_svc.start_hdl = service->m_included->m_handle;
     incl_svc.end_hdl = service->m_included->m_end;
     std::cout << "incldued: " << service->m_included->m_handle << "   " << service->m_included->m_end << std::endl;
-    m_attributes.push_back(esp_gatts_attr_db_t{
-        .attr_control = {.auto_rsp = ESP_GATT_AUTO_RSP},
-        .att_desc = {.uuid_length = ESP_UUID_LEN_16,
-                     .uuid_p = (uint8_t *)&include_service_uuid,
-                     .perm = static_cast<uint16_t>(bt::characteristic_t::permission_t::READ |
-                                                   bt::characteristic_t::permission_t::WRITE),
-                     .max_length = 2,
-                     .length = 2,
-                     .value = reinterpret_cast<uint8_t *>(&incl_svc)}});
+    m_attributes.push_back(
+        esp_gatts_attr_db_t{.attr_control = {.auto_rsp = ESP_GATT_AUTO_RSP},
+                            .att_desc = {.uuid_length = ESP_UUID_LEN_16,
+                                         .uuid_p = (uint8_t *)&include_service_uuid,
+                                         .perm = static_cast<uint16_t>(bt::characteristic_t::permission_t::READ |
+                                                                       bt::characteristic_t::permission_t::WRITE),
+                                         .max_length = 2,
+                                         .length = 2,
+                                         .value = reinterpret_cast<uint8_t *>(&incl_svc)}});
   }
 
   for (auto c : service->characteristics()) {
@@ -143,4 +143,22 @@ bt::update_handles_visitor::update_handles_visitor(bt::application_t *applicatio
       m_num_handles{num_handles},
       m_handles{handles} {
   m_handle_index = 0;
+}
+
+bt::ble_selector_t *bt::ble_selector_t::profile(bt::profile_t::id_t pid) {
+  ble_selector_t *pSe = new bt::ble_selector_t{};
+  pSe->m_pid = pid;
+  return pSe;
+}
+bt::ble_selector_t *bt::ble_selector_t::service(bt::service_t::id_t sid) {
+  m_sid = sid;
+  return this;
+}
+bt::ble_selector_t *bt::ble_selector_t::characteristic(bt::characteristic_t::id_t cid) {
+  m_cid = cid;
+  return this;
+}
+bt::ble_selector_t *bt::ble_selector_t::nth(uint32_t nth) {
+  m_nth = nth;
+  return this;
 }

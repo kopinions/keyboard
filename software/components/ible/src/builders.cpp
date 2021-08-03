@@ -102,7 +102,7 @@ bt::characteristic_t* bt::characteristic_builder_t::build() {
     delete b;
   }
 
-  return new bt::characteristic_t(attributes);
+  return new bt::characteristic_t(m_id, attributes);
 }
 
 bt::characteristic_builder_t* bt::characteristic_builder_t::declare(

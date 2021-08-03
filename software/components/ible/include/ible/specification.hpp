@@ -63,13 +63,17 @@ class characteristic_t : public visitable_t<visitor_t<characteristic_t>>, public
     uint8_t name_space;
   };
 
-  explicit characteristic_t(std::vector<bt::attribute_t*>);
+  explicit characteristic_t(id_t id, std::vector<bt::attribute_t*>);
+
+  [[nodiscard]] id_t id() const;
 
   std::vector<bt::attribute_t*> attributes() { return m_attributes; };
+
   void dump(std::ostream& o) const override;
   friend class attribute_visitor;
 
  private:
+  id_t m_id;
   std::vector<bt::attribute_t*> m_attributes;
 
  public:
@@ -95,6 +99,8 @@ class attribute_t : public dumpable_t, public visitable_t<visitor_t<attribute_t>
 
   void handled_by(uint16_t);
 
+  handle_t m_handle{};
+
  private:
   uint16_t m_uuid;
   bt::characteristic_t::permission_t m_permission;
@@ -102,7 +108,6 @@ class attribute_t : public dumpable_t, public visitable_t<visitor_t<attribute_t>
   std::uint16_t m_length;
   std::uint16_t m_max_length;
   bool m_automated;
-  handle_t m_handle{};
 };
 
 inline std::ostream& operator<<(std::ostream& os, const characteristic_t::property_t obj) {
@@ -182,7 +187,34 @@ class event_t {
   esp_ble_gatts_cb_param_t* param;
 };
 
-class profile_t;
+class profile_t : public visitable_t<visitor_t<profile_t>>, public dumpable_t {
+ public:
+  using id_t = std::uint16_t;
+
+  explicit profile_t(const id_t& id, std::vector<service_t*> services);
+
+  [[nodiscard]] std::vector<service_t*> services() const;
+  [[nodiscard]] bt::service_t* service(bt::service_t::id_t) const;
+
+  void accept(visitor_t<profile_t>* t) override;
+
+  profile_t(const profile_t& o) = delete;
+  profile_t(profile_t&&) = delete;
+  profile_t& operator=(const profile_t&) = delete;
+  profile_t& operator=(profile_t&&) = delete;
+
+  virtual ~profile_t();
+
+  [[nodiscard]] const id_t& id() const;
+  void dump(std::ostream& o) const override;
+
+ private:
+  id_t m_id;
+  std::vector<service_t*> m_services;
+};
+
+template<typename T>
+class selector_t;
 
 class application_t : public dumpable_t {
  public:
@@ -199,37 +231,18 @@ class application_t : public dumpable_t {
   virtual ~application_t();
 
   std::vector<bt::profile_t*>& profiles();
+  [[nodiscard]] bt::profile_t* profile(bt::profile_t::id_t) const;
+
+  bt::characteristic_t* select(selector_t<bt::characteristic_t*>*);
 
   void notified(std::shared_ptr<bt::gatt_if_t>, event_t e);
   void dump(std::ostream& o) const override;
+  uint16_t m_connection;
 
  private:
   id_t m_id;
   std::vector<bt::profile_t*> m_profiles;
   kopinions::logging::logger* m_logger;
-};
-
-class profile_t : public visitable_t<visitor_t<profile_t>>, public dumpable_t {
- public:
-  using id_t = std::uint16_t;
-
-  explicit profile_t(const id_t& id, std::vector<service_t*> services);
-
-  [[nodiscard]] std::vector<service_t*> services() const;
-
-  void accept(visitor_t<profile_t>* t) override;
-
-  profile_t(const profile_t& o) = delete;
-  profile_t& operator=(const profile_t&) = delete;
-
-  virtual ~profile_t();
-
-  [[nodiscard]] const id_t& id() const;
-  void dump(std::ostream& o) const override;
-
- private:
-  id_t m_id;
-  std::vector<service_t*> m_services;
 };
 
 }  // namespace bt
