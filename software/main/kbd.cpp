@@ -575,7 +575,11 @@ extern "C" void app_main() {
           bt::ble_selector_t::profile(0x1)->service(bt::service_t::HID)->characteristic(hid_report_uuid)->nth(0)));
 
       lg->log(level::INFO, "%d", a->id());
-      esp_hidd_send_keyboard_value(hid->m_connection, 0, a->attributes()[1]->m_handle, static_cast<key_mask_t>(special_key_mask), buffer, 2);
+
+      if (hid->m_gatt != nullptr) {
+        bt::esp_gatt *pGatt = (bt::esp_gatt *)(hid->m_gatt.get());
+        esp_hidd_send_keyboard_value(hid->m_connection, pGatt->m_gatt_if, a->attributes()[1]->m_handle, static_cast<key_mask_t>(special_key_mask), buffer, 2);
+      }
 
       ESP_LOGD("HID_LE_PRF_TAG", "buffer[0] = %x, buffer[1] = %x", buffer[0], buffer[1]);
 

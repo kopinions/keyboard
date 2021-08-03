@@ -19,7 +19,7 @@ class esp_gatt : public gatt_if_t {
                             uint8_t srvc_inst_id) override;
   esp_err_t response(uint16_t conn_id, uint32_t trans_id, esp_gatt_status_t status, esp_gatt_rsp_t* rsp) override;
 
- private:
   esp_gatt_if_t m_gatt_if;
+ private:
 };
 }  // namespace bt

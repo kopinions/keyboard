@@ -10,7 +10,7 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
   switch (e.event) {
     case ESP_GATTS_REG_EVT: {
       m_logger->info("%s", "gatt reg for the application");
-
+      this->m_gatt = gatt;
       auto register_visitor = new attribute_visitor(gatt);
       for (auto* profile : m_profiles) {
         register_visitor->visit(profile);

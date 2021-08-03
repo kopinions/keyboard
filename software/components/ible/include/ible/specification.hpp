@@ -239,6 +239,7 @@ class application_t : public dumpable_t {
   void dump(std::ostream& o) const override;
   uint16_t m_connection;
 
+  std::shared_ptr<gatt_if_t> m_gatt;
  private:
   id_t m_id;
   std::vector<bt::profile_t*> m_profiles;
