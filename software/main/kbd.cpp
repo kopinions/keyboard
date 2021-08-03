@@ -264,19 +264,20 @@ void esp_hidd_send_keyboard_value(uint16_t conn_id, esp_gatt_if_t ga, uint16_t h
     buffer[i + 2] = keyboard_cmd[i];
   }
 
-  ESP_LOGD("HID_LE_PRF_TAG", "the key vaule = %d,%d,%d, %d, %d, %d,%d, %d", buffer[0], buffer[1], buffer[2], buffer[3],
+  ESP_LOGI("HID_LE_PRF_TAG", "the key vaule = %d,%d,%d, %d, %d, %d,%d, %d", buffer[0], buffer[1], buffer[2], buffer[3],
            buffer[4], buffer[5], buffer[6], buffer[7]);
   // TODO: replace the gattif with actual gattif
   //  esp_gatt_if_t anIf = hidd_le_env.gatt_if;
 
   hid::report_map_t *p_rpt;
-
+  esp_ble_gatts_send_indicate(ga, conn_id, handle, HID_KEYBOARD_IN_RPT_LEN, buffer, false);
+  ESP_LOGI("HID_LE_PRF_TAG", "%s(), send the report, handle = %d", __func__, handle);
   // get att handle for report
   if ((p_rpt = hid_dev_rpt_by_id(hid::report_t ::id_t::KEY_IN, hid::report_t::type_t::INPUT)) != NULL) {
     // if notifications are enabled
     // TODO(neo): replace the handle with create table handle
     //    uint16_t handle = p_rpt->handle;
-    ESP_LOGD("HID_LE_PRF_TAG", "%s(), send the report, handle = %d", __func__, handle);
+
     esp_ble_gatts_send_indicate(ga, conn_id, handle, HID_KEYBOARD_IN_RPT_LEN, buffer, false);
   }
   return;
