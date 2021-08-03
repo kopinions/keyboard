@@ -84,35 +84,44 @@ bt::service_builder_t::service_builder_t(std::vector<bt::service_t*>* services) 
 
 bt::characteristic_t* bt::characteristic_builder_t::build() {
   std::vector<attribute_t*> attributes;
-  attributes.emplace_back(m_declare);
-  attributes.emplace_back(m_value);
-  attributes.insert(attributes.end(), m_descriptors.begin(), m_descriptors.end());
+
+  auto db = new characteristic_declare_builder_t();
+  m_declare_builder(db);
+  attributes.emplace_back(db->build());
+  delete db;
+
+  auto vb = new characteristic_value_builder_t(m_id);
+  m_value_builder(vb);
+  attributes.emplace_back(vb->build());
+  delete vb;
+
+  for (const auto& desc : m_descriptor_builders) {
+    auto b = new characteristic_descriptor_builder_t();
+    desc(b);
+    attributes.emplace_back(b->build());
+    delete b;
+  }
 
   return new bt::characteristic_t(attributes);
 }
 
 bt::characteristic_builder_t* bt::characteristic_builder_t::declare(
     consumer_t<characteristic_declare_builder_t> consumer) {
-  auto b = new characteristic_declare_builder_t();
-  consumer(b);
-  m_declare = b->build();
-  delete b;
+  m_declare_builder = std::move(consumer);
   return this;
 }
 bt::characteristic_builder_t* bt::characteristic_builder_t::value(
     bt::consumer_t<bt::characteristic_value_builder_t> consumer) {
-  auto b = new characteristic_value_builder_t();
-  consumer(b);
-  m_value = b->build();
-  delete b;
+  m_value_builder = std::move(consumer);
   return this;
 }
 bt::characteristic_builder_t* bt::characteristic_builder_t::descriptor(
     bt::consumer_t<bt::characteristic_descriptor_builder_t> consumer) {
-  auto b = new characteristic_descriptor_builder_t();
-  consumer(b);
-  m_descriptors.emplace_back(b->build());
-  delete b;
+  m_descriptor_builders.emplace_back(consumer);
+  return this;
+}
+bt::characteristic_builder_t* bt::characteristic_builder_t::id(bt::characteristic_t::id_t id) {
+  m_id = id;
   return this;
 }
 
@@ -135,10 +144,6 @@ bt::characteristic_descriptor_builder_t* bt::characteristic_descriptor_builder_t
 }
 bt::attribute_t* bt::characteristic_descriptor_builder_t::build() {
   return new bt::attribute_t(m_id, m_permission, m_data, m_length, m_max_length, m_automated);
-}
-bt::characteristic_value_builder_t* bt::characteristic_value_builder_t::id(bt::characteristic_t::id_t id) {
-  m_id = id;
-  return this;
 }
 
 bt::characteristic_value_builder_t* bt::characteristic_value_builder_t::permission(
@@ -181,6 +186,8 @@ bt::service_include_builder_t* bt::service_include_builder_t::value(std::uint8_t
 bt::attribute_t* bt::characteristic_value_builder_t::build() {
   return new bt::attribute_t(m_id, m_permission, m_data, m_length, m_max_length);
 }
+bt::characteristic_value_builder_t::characteristic_value_builder_t(bt::characteristic_t::id_t id) : m_id(id) {}
+
 bt::service_t* bt::service_include_builder_t::build() {
   for (auto& m_service : *m_services) {
     if (m_service->id() == m_id) {

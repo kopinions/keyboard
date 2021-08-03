@@ -376,12 +376,12 @@ extern "C" void app_main() {
               p->service([](bt::service_builder_t *s) {
                 s->id(bt::service_t::id_t::BATTERY);
                 s->characteristic([](bt::characteristic_builder_t *c) {
+                  c->id(s_bat_level_uuid);
                   c->declare([](bt::characteristic_declare_builder_t *d) {
                     d->property(bt::characteristic_t::property_t::READ | bt::characteristic_t::property_t::NOTIFY);
                     d->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
                   });
                   c->value([](bt::characteristic_value_builder_t *v) {
-                    v->id(s_bat_level_uuid);
                     v->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
                     v->value(&bat_level, 1, 1);
                   });
@@ -408,34 +408,34 @@ extern "C" void app_main() {
                 });
 
                 s->characteristic([](bt::characteristic_builder_t *c) {
+                  c->id(hid_info_char_uuid);
                   c->declare([](bt::characteristic_declare_builder_t *d) {
                     d->property(bt::characteristic_t::property_t::READ);
                     d->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
                   });
                   c->value([](bt::characteristic_value_builder_t *v) {
-                    v->id(hid_info_char_uuid);
                     v->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
                     v->value(hidInfo, sizeof(hidInfo), sizeof(hids_hid_info_t));
                   });
                 });
                 s->characteristic([](bt::characteristic_builder_t *c) {
+                  c->id(hid_control_point_uuid);
                   c->declare([](bt::characteristic_declare_builder_t *d) {
                     d->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
                     d->property(bt::characteristic_t::property_t::WRITE_NR);
                   });
                   c->value([](bt::characteristic_value_builder_t *v) {
-                    v->id(hid_control_point_uuid);
                     v->permission(bt::characteristic_t::permission_t::WRITE_ENCRYPTED);
                     v->value(nullptr, 0, sizeof(uint8_t));
                   });
                 });
                 s->characteristic([](bt::characteristic_builder_t *c) {
+                  c->id(hid_report_map_uuid);
                   c->declare([](bt::characteristic_declare_builder_t *d) {
                     d->property(bt::characteristic_t::property_t::READ);
                     d->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
                   });
                   c->value([](bt::characteristic_value_builder_t *v) {
-                    v->id(hid_report_map_uuid);
                     v->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
                     v->value(hidReportMap, sizeof(hidReportMap), hid::HIDD_LE_REPORT_MAP_MAX_LEN);
                   });
@@ -446,24 +446,24 @@ extern "C" void app_main() {
                   });
                 });
                 s->characteristic([](bt::characteristic_builder_t *c) {
+                  c->id(hid_proto_mode_uuid);
                   c->declare([](bt::characteristic_declare_builder_t *d) {
                     d->property(bt::characteristic_t::property_t::READ | bt::characteristic_t::property_t::WRITE);
                     d->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
                   });
                   c->value([](bt::characteristic_value_builder_t *v) {
-                    v->id(hid_proto_mode_uuid);
                     v->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED |
                                   bt::characteristic_t::permission_t::WRITE_ENCRYPTED);
                     v->value(&hidProtocolMode, sizeof(hidProtocolMode), sizeof(uint8_t));
                   });
                 });
                 s->characteristic([](bt::characteristic_builder_t *c) {
+                  c->id(hid_report_uuid);
                   c->declare([](bt::characteristic_declare_builder_t *d) {
                     d->property(bt::characteristic_t::property_t::READ | bt::characteristic_t::property_t::NOTIFY);
                     d->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
                   });
                   c->value([](bt::characteristic_value_builder_t *v) {
-                    v->id(hid_report_uuid);
                     v->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
                     v->value(nullptr, 0, HIDD_LE_REPORT_MAX_LEN);
                   });
@@ -481,12 +481,12 @@ extern "C" void app_main() {
                 });
 
                 s->characteristic([](bt::characteristic_builder_t *c) {
+                  c->id(hid_report_uuid);
                   c->declare([](bt::characteristic_declare_builder_t *d) {
                     d->property(bt::characteristic_t::property_t::READ | bt::characteristic_t::property_t::WRITE);
                     d->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
                   });
                   c->value([](bt::characteristic_value_builder_t *v) {
-                    v->id(hid_report_uuid);
                     v->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED |
                                   bt::characteristic_t::permission_t::WRITE_ENCRYPTED);
                     v->value(nullptr, 0, HIDD_LE_REPORT_MAX_LEN);
@@ -499,12 +499,12 @@ extern "C" void app_main() {
                 });
 
                 s->characteristic([](bt::characteristic_builder_t *c) {
+                  c->id(hid_report_uuid);
                   c->declare([](bt::characteristic_declare_builder_t *d) {
                     d->property(bt::characteristic_t::property_t::READ | bt::characteristic_t::property_t::NOTIFY);
                     d->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
                   });
                   c->value([](bt::characteristic_value_builder_t *v) {
-                    v->id(hid_report_uuid);
                     v->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
                     v->value(nullptr, 0, HIDD_LE_REPORT_MAX_LEN);
                   });
@@ -522,12 +522,12 @@ extern "C" void app_main() {
                 });
 
                 s->characteristic([](bt::characteristic_builder_t *c) {
+                  c->id(hid_kb_input_uuid);
                   c->declare([](bt::characteristic_declare_builder_t *d) {
                     d->property(bt::characteristic_t::property_t::READ | bt::characteristic_t::property_t::NOTIFY);
                     d->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
                   });
                   c->value([](bt::characteristic_value_builder_t *v) {
-                    v->id(hid_kb_input_uuid);
                     v->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
                     v->value(nullptr, 0, hid::HIDD_LE_BOOT_REPORT_MAX_LEN);
                   });
@@ -539,12 +539,12 @@ extern "C" void app_main() {
                   });
                 });
                 s->characteristic([](bt::characteristic_builder_t *c) {
+                  c->id(hid_kb_output_uuid);
                   c->declare([](bt::characteristic_declare_builder_t *d) {
                     d->property(bt::characteristic_t::property_t::READ | bt::characteristic_t::property_t::WRITE);
                     d->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
                   });
                   c->value([](bt::characteristic_value_builder_t *v) {
-                    v->id(hid_kb_output_uuid);
                     v->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED |
                                   bt::characteristic_t::permission_t::WRITE_ENCRYPTED);
                     v->value(nullptr, 0, hid::HIDD_LE_BOOT_REPORT_MAX_LEN);
@@ -552,12 +552,12 @@ extern "C" void app_main() {
                 });
 
                 s->characteristic([](bt::characteristic_builder_t *c) {
+                  c->id(hid_report_uuid);
                   c->declare([](bt::characteristic_declare_builder_t *d) {
                     d->property(bt::characteristic_t::property_t::READ | bt::characteristic_t::property_t::WRITE);
                     d->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
                   });
                   c->value([](bt::characteristic_value_builder_t *v) {
-                    v->id(hid_report_uuid);
                     v->permission(bt::characteristic_t::permission_t::READ_ENCRYPTED);
                     v->value(nullptr, 0, HIDD_LE_REPORT_MAX_LEN);
                   });

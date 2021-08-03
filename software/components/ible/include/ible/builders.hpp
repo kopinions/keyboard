@@ -83,7 +83,7 @@ class service_builder_t : public ibuilder<bt::service_t*> {
   service_t* build() override;
 
  private:
-  bt::service_t::id_t m_id;
+  bt::service_t::id_t m_id{};
   std::vector<consumer_t<bt::characteristic_builder_t>> m_characteristic_consumers;
   consumer_t<bt::service_include_builder_t> m_service_include_consumer;
   std::vector<bt::service_t*>* m_services;
@@ -112,8 +112,7 @@ class characteristic_value_builder_t : public ibuilder<bt::attribute_t*> {
  public:
   friend characteristic_builder_t;
 
-  characteristic_value_builder_t* id(bt::characteristic_t::id_t id);
-
+  explicit characteristic_value_builder_t(bt::characteristic_t::id_t);
   characteristic_value_builder_t* permission(bt::characteristic_t::permission_t permission);
 
   characteristic_value_builder_t* automated(bool automated);
@@ -157,14 +156,16 @@ class characteristic_descriptor_builder_t : public ibuilder<bt::attribute_t*> {
 class characteristic_builder_t : public ibuilder<bt::characteristic_t*> {
  public:
   friend service_builder_t;
+  characteristic_builder_t* id(bt::characteristic_t::id_t id);
   characteristic_builder_t* declare(consumer_t<characteristic_declare_builder_t>);
   characteristic_builder_t* value(consumer_t<characteristic_value_builder_t>);
   characteristic_builder_t* descriptor(consumer_t<characteristic_descriptor_builder_t>);
 
  private:
   characteristic_t* build() override;
-  attribute_t* m_declare;
-  attribute_t* m_value;
-  std::vector<attribute_t*> m_descriptors;
+  bt::characteristic_t::id_t m_id;
+  bt::consumer_t<bt::characteristic_declare_builder_t> m_declare_builder;
+  bt::consumer_t<bt::characteristic_value_builder_t> m_value_builder;
+  std::vector<bt::consumer_t<bt::characteristic_descriptor_builder_t>> m_descriptor_builders;
 };
 }  // namespace bt
