@@ -249,22 +249,6 @@ static hid::report_map_t *hid_dev_rpt_by_id(hid::report_t::id_t id, hid::report_
   return NULL;
 }
 
-void hid_dev_send_report(esp_gatt_if_t gatts_if, uint16_t conn_id, hid::report_t::id_t id, hid::report_t::type_t type,
-                         uint8_t length, uint8_t *data) {
-  hid::report_map_t *p_rpt;
-
-  // get att handle for report
-  if ((p_rpt = hid_dev_rpt_by_id(id, type)) != NULL) {
-    // if notifications are enabled
-    // TODO(neo): replace the handle with create table handle
-    //    uint16_t handle = p_rpt->handle;
-    uint16_t handle = 0;
-    ESP_LOGD("HID_LE_PRF_TAG", "%s(), send the report, handle = %d", __func__, handle);
-    esp_ble_gatts_send_indicate(gatts_if, conn_id, handle, length, data, false);
-  }
-
-  return;
-}
 
 void esp_hidd_send_keyboard_value(uint16_t conn_id, key_mask_t special_key_mask, uint8_t *keyboard_cmd,
                                   uint8_t num_key) {
@@ -286,8 +270,17 @@ void esp_hidd_send_keyboard_value(uint16_t conn_id, key_mask_t special_key_mask,
   // TODO: replace the gattif with actual gattif
   //  esp_gatt_if_t anIf = hidd_le_env.gatt_if;
   esp_gatt_if_t anIf = 0;
-  hid_dev_send_report(anIf, conn_id, hid::report_t ::id_t::KEY_IN, hid::report_t::type_t::INPUT,
-                      HID_KEYBOARD_IN_RPT_LEN, buffer);
+  hid::report_map_t *p_rpt;
+
+  // get att handle for report
+  if ((p_rpt = hid_dev_rpt_by_id(hid::report_t ::id_t::KEY_IN, hid::report_t::type_t::INPUT)) != NULL) {
+    // if notifications are enabled
+    // TODO(neo): replace the handle with create table handle
+    //    uint16_t handle = p_rpt->handle;
+    uint16_t handle = 0;
+    ESP_LOGD("HID_LE_PRF_TAG", "%s(), send the report, handle = %d", __func__, handle);
+    esp_ble_gatts_send_indicate(anIf, conn_id, handle, HID_KEYBOARD_IN_RPT_LEN, buffer, false);
+  }
   return;
 }
 
