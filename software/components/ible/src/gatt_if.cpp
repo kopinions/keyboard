@@ -11,3 +11,7 @@ esp_err_t bt::esp_gatt::create_attr_tab(const esp_gatts_attr_db_t *gatts_attr_db
 esp_err_t bt::esp_gatt::response(uint16_t conn_id, uint32_t trans_id, esp_gatt_status_t status, esp_gatt_rsp_t *rsp) {
   return esp_ble_gatts_send_response(m_gatt_if, conn_id, trans_id, ESP_GATT_OK, rsp);
 }
+esp_err_t bt::esp_gatt::send_indicate(uint16_t conn_id, uint16_t attr_handle, uint16_t value_len, uint8_t *value,
+                                      bool need_confirm) {
+  return esp_ble_gatts_send_indicate(m_gatt_if, conn_id, attr_handle, value_len, value, need_confirm);
+}

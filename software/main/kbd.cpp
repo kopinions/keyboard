@@ -249,8 +249,8 @@ static hid::report_map_t *hid_dev_rpt_by_id(hid::report_t::id_t id, hid::report_
   return NULL;
 }
 
-void esp_hidd_send_keyboard_value(uint16_t conn_id, esp_gatt_if_t ga, uint16_t handle, key_mask_t special_key_mask, uint8_t *keyboard_cmd,
-                                  uint8_t num_key) {
+void esp_hidd_send_keyboard_value(uint16_t conn_id, esp_gatt_if_t ga, uint16_t handle, key_mask_t special_key_mask,
+                                  uint8_t *keyboard_cmd, uint8_t num_key) {
   if (num_key > HID_KEYBOARD_IN_RPT_LEN - 2) {
     ESP_LOGE("HID_LE_PRF_TAG", "%s(), the number key should not be more than %d", __func__, HID_KEYBOARD_IN_RPT_LEN);
     return;
@@ -571,14 +571,14 @@ extern "C" void app_main() {
       uint8_t buffer[HID_CC_IN_RPT_LEN] = {0, 28};
       auto special_key_mask = 0;
 
-      auto a = hid->select(bt::selector_t<bt::characteristic_t*>::$(
+      auto a = hid->select(bt::selector_t<bt::characteristic_t *>::$(
           bt::ble_selector_t::profile(0x1)->service(bt::service_t::HID)->characteristic(hid_report_uuid)->nth(0)));
 
       lg->log(level::INFO, "%d", a->id());
 
       if (hid->m_gatt != nullptr) {
-        bt::esp_gatt *pGatt = (bt::esp_gatt *)(hid->m_gatt.get());
-        esp_hidd_send_keyboard_value(hid->m_connection, pGatt->m_gatt_if, a->attributes()[1]->m_handle, static_cast<key_mask_t>(special_key_mask), buffer, 2);
+        hid->m_gatt->send_indicate(hid->m_connection, a->attributes()[1]->m_handle,
+                                   static_cast<key_mask_t>(special_key_mask), buffer, 2);
       }
 
       ESP_LOGD("HID_LE_PRF_TAG", "buffer[0] = %x, buffer[1] = %x", buffer[0], buffer[1]);
