@@ -561,24 +561,30 @@ extern "C" void app_main() {
 
     std::cout << hid;
     b->enroll(hid);
-
     while (true) {
       lg->log(level::INFO, "%s %d", "xxx1111", 222);
 
       auto &&res = kbd->scan();
       auto tx = trans->select();
 
-      uint8_t buffer[HID_CC_IN_RPT_LEN] = {0, 28};
-      auto special_key_mask = 0;
+      uint8_t buffer[HID_KEYBOARD_IN_RPT_LEN] = {0, 28};
+      uint8_t special_key_mask = 0;
 
       auto a = hid->select(bt::selector_t<bt::characteristic_t *>::$(
           bt::ble_selector_t::profile(0x1)->service(bt::service_t::HID)->characteristic(hid_report_uuid)->nth(0)));
 
       lg->log(level::INFO, "%d", a->id());
 
+      buffer[0] = special_key_mask;
+
+      for (int i = 0; i < 2; i++) {
+        buffer[i + 2] = 28;
+      }
+
       if (hid->m_gatt != nullptr) {
-        hid->m_gatt->send_indicate(hid->m_connection, a->attributes()[1]->m_handle,
-                                   static_cast<key_mask_t>(special_key_mask), buffer, 2);
+        lg->log(level::INFO, "send indicate to the device");
+
+        hid->m_gatt->send_indicate(a->attributes()[1]->m_handle, HID_KEYBOARD_IN_RPT_LEN, buffer, false);
       }
 
       ESP_LOGD("HID_LE_PRF_TAG", "buffer[0] = %x, buffer[1] = %x", buffer[0], buffer[1]);

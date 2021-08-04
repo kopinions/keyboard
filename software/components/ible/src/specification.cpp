@@ -37,8 +37,9 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
       break;
     }
     case ESP_GATTS_CONNECT_EVT: {
-      this->m_connection = e.param->connect.conn_id;
-      m_logger->info("%s %x", "gatt connect ", e.param->connect.conn_id);
+      auto& connect_param = e.param->connect;
+      this->m_gatt->connected_with(connect_param.conn_id, connect_param.remote_bda, connect_param.conn_params);
+      m_logger->info("%s %x", "gatt connect ", connect_param.conn_id);
       break;
     }
 
@@ -55,7 +56,7 @@ void bt::application_t::notified(std::shared_ptr<gatt_if_t> gatt, event_t e) {
       rsp.attr_value.value[1] = 0xed;
       rsp.attr_value.value[2] = 0xbe;
       rsp.attr_value.value[3] = 0xef;
-      gatt->response(e.param->read.conn_id, e.param->read.trans_id, ESP_GATT_OK, &rsp);
+      gatt->response(e.param->read.trans_id, ESP_GATT_OK, &rsp);
       break;
     }
     case ESP_GATTS_WRITE_EVT: {
