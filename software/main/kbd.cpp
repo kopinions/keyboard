@@ -14,19 +14,12 @@
 using namespace kopinions;
 using namespace kopinions::logging;
 
-static const uint16_t s_primary_service_uuid = ESP_GATT_UUID_PRI_SERVICE;
-static const uint16_t s_include_service_uuid = ESP_GATT_UUID_INCLUDE_SERVICE;
-static const uint16_t s_character_declaration_uuid = ESP_GATT_UUID_CHAR_DECLARE;
 static const uint16_t s_character_client_config_uuid = ESP_GATT_UUID_CHAR_CLIENT_CONFIG;
-
 static const uint16_t s_bat_level_uuid = ESP_GATT_UUID_BATTERY_LEVEL;
 static const uint16_t s_bat_char_pres_format_uuid = ESP_GATT_UUID_CHAR_PRESENT_FORMAT;
-static const uint8_t s_char_prop_read_notify = ESP_GATT_CHAR_PROP_BIT_READ | ESP_GATT_CHAR_PROP_BIT_NOTIFY;
 static const uint8_t bat_lev_ccc[2] = {0x00, 0x00};
 static uint8_t bat_level = 1;
 
-static const uint16_t primary_service_uuid = ESP_GATT_UUID_PRI_SERVICE;
-static const uint16_t character_declaration_uuid = ESP_GATT_UUID_CHAR_DECLARE;
 static const uint16_t character_client_config_uuid = ESP_GATT_UUID_CHAR_CLIENT_CONFIG;
 static const uint16_t hid_info_char_uuid = ESP_GATT_UUID_HID_INFORMATION;
 static const uint16_t hid_report_map_uuid = ESP_GATT_UUID_HID_REPORT_MAP;
@@ -39,10 +32,8 @@ static const uint16_t hid_mouse_input_uuid = ESP_GATT_UUID_HID_BT_MOUSE_INPUT;
 static const uint16_t hid_repot_map_ext_desc_uuid = ESP_GATT_UUID_EXT_RPT_REF_DESCR;
 static const uint16_t hid_report_ref_descr_uuid = ESP_GATT_UUID_RPT_REF_DESCR;
 
-#define ATT_SVC_HID 0x1812
 #define ESP_HID_FLAGS_REMOTE_WAKE 0x01           // RemoteWake
 #define ESP_HID_FLAGS_NORMALLY_CONNECTABLE 0x02  // NormallyConnectable
-static uint16_t hid_le_svc = ATT_SVC_HID;
 static uint8_t hidInfo[4] = {
     0x11, 0x11,                                                     // bcdHID (USB HID version)
     0x00,                                                           // bCountryCode
@@ -222,121 +213,6 @@ typedef uint8_t key_mask_t;
 // HID keyboard input report length
 #define HID_KEYBOARD_IN_RPT_LEN 8
 
-// HID LED output report length
-#define HID_LED_OUT_RPT_LEN 1
-
-// HID mouse input report length
-#define HID_MOUSE_IN_RPT_LEN 5
-
-// HID consumer control input report length
-#define HID_CC_IN_RPT_LEN 2
-
-#define HID_NUM_REPORTS 9
-static hid::report_map_t hid_rpt_map[HID_NUM_REPORTS];
-static hid::report_map_t *hid_dev_rpt_tbl;
-static uint8_t hid_dev_rpt_tbl_Len;
-
-static hid::report_map_t *hid_dev_rpt_by_id(hid::report_t::id_t id, hid::report_t::type_t type) {
-  hid::report_map_t *rpt = hid_dev_rpt_tbl;
-
-  // TODO: find the report
-  //  for (uint8_t i = hid_dev_rpt_tbl_Len; i > 0; i--, rpt++) {
-  //    if (rpt->id == id && rpt->type == type && rpt->mode == hidProtocolMode) {
-  //      return rpt;
-  //    }
-  //  }
-
-  return NULL;
-}
-
-void esp_hidd_send_keyboard_value(uint16_t conn_id, esp_gatt_if_t ga, uint16_t handle, key_mask_t special_key_mask,
-                                  uint8_t *keyboard_cmd, uint8_t num_key) {
-  if (num_key > HID_KEYBOARD_IN_RPT_LEN - 2) {
-    ESP_LOGE("HID_LE_PRF_TAG", "%s(), the number key should not be more than %d", __func__, HID_KEYBOARD_IN_RPT_LEN);
-    return;
-  }
-
-  uint8_t buffer[HID_KEYBOARD_IN_RPT_LEN] = {0};
-
-  buffer[0] = special_key_mask;
-
-  for (int i = 0; i < num_key; i++) {
-    buffer[i + 2] = keyboard_cmd[i];
-  }
-
-  ESP_LOGI("HID_LE_PRF_TAG", "the key vaule = %d,%d,%d, %d, %d, %d,%d, %d", buffer[0], buffer[1], buffer[2], buffer[3],
-           buffer[4], buffer[5], buffer[6], buffer[7]);
-  // TODO: replace the gattif with actual gattif
-  //  esp_gatt_if_t anIf = hidd_le_env.gatt_if;
-
-  hid::report_map_t *p_rpt;
-  esp_ble_gatts_send_indicate(ga, conn_id, handle, HID_KEYBOARD_IN_RPT_LEN, buffer, false);
-  ESP_LOGI("HID_LE_PRF_TAG", "%s(), send the report, handle = %d", __func__, handle);
-  // get att handle for report
-  if ((p_rpt = hid_dev_rpt_by_id(hid::report_t ::id_t::KEY_IN, hid::report_t::type_t::INPUT)) != NULL) {
-    // if notifications are enabled
-    // TODO(neo): replace the handle with create table handle
-    //    uint16_t handle = p_rpt->handle;
-
-    esp_ble_gatts_send_indicate(ga, conn_id, handle, HID_KEYBOARD_IN_RPT_LEN, buffer, false);
-  }
-  return;
-}
-
-void hid_dev_register_reports(uint8_t num_reports, hid::report_map_t *p_report) {
-  hid_dev_rpt_tbl = p_report;
-  hid_dev_rpt_tbl_Len = num_reports;
-  return;
-}
-static void hid_add_id_tbl(void) {
-  // Key input report
-  //  hid_rpt_map[1].id = hidReportRefKeyIn[0];
-  //  hid_rpt_map[1].type = hidReportRefKeyIn[1];
-  //  hid_rpt_map[1].handle = hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_REPORT_KEY_IN_VAL];
-  //  hid_rpt_map[1].cccdHandle = hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_REPORT_KEY_IN_CCC];
-  //  hid_rpt_map[1].mode = HID_PROTOCOL_MODE_REPORT;
-  //
-  //  // Consumer Control input report
-  //  hid_rpt_map[2].id = hidReportRefCCIn[0];
-  //  hid_rpt_map[2].type = hidReportRefCCIn[1];
-  //  hid_rpt_map[2].handle = hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_REPORT_CC_IN_VAL];
-  //  hid_rpt_map[2].cccdHandle = hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_REPORT_CC_IN_CCC];
-  //  hid_rpt_map[2].mode = HID_PROTOCOL_MODE_REPORT;
-  //
-  //  // LED output report
-  //  hid_rpt_map[3].id = hidReportRefLedOut[0];
-  //  hid_rpt_map[3].type = hidReportRefLedOut[1];
-  //  hid_rpt_map[3].handle = hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_REPORT_LED_OUT_VAL];
-  //  hid_rpt_map[3].cccdHandle = 0;
-  //  hid_rpt_map[3].mode = HID_PROTOCOL_MODE_REPORT;
-  //
-  //  // Boot keyboard input report
-  //  // Use same ID and type as key input report
-  //  hid_rpt_map[4].id = hidReportRefKeyIn[0];
-  //  hid_rpt_map[4].type = hidReportRefKeyIn[1];
-  //  hid_rpt_map[4].handle = hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_BOOT_KB_IN_REPORT_VAL];
-  //  hid_rpt_map[4].cccdHandle = 0;
-  //  hid_rpt_map[4].mode = HID_PROTOCOL_MODE_BOOT;
-  //
-  //  // Boot keyboard output report
-  //  // Use same ID and type as LED output report
-  //  hid_rpt_map[5].id = hidReportRefLedOut[0];
-  //  hid_rpt_map[5].type = hidReportRefLedOut[1];
-  //  hid_rpt_map[5].handle = hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_BOOT_KB_OUT_REPORT_VAL];
-  //  hid_rpt_map[5].cccdHandle = 0;
-  //  hid_rpt_map[5].mode = HID_PROTOCOL_MODE_BOOT;
-  //
-  //  // Feature report
-  //  hid_rpt_map[7].id = hidReportRefFeature[0];
-  //  hid_rpt_map[7].type = hidReportRefFeature[1];
-  //  hid_rpt_map[7].handle = hidd_le_env.hidd_inst.att_tbl[HIDD_LE_IDX_REPORT_VAL];
-  //  hid_rpt_map[7].cccdHandle = 0;
-  //  hid_rpt_map[7].mode = HID_PROTOCOL_MODE_REPORT;
-
-  // Setup report ID map
-
-  hid_dev_register_reports(HID_NUM_REPORTS, hid_rpt_map);
-}
 
 extern "C" void app_main() {
   auto ret = nvs_flash_init();
