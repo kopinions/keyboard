@@ -29,7 +29,7 @@ class matrix {
 std::map<std::pair<pin::id, pin::id>, pin::status> matrix::scan() {
   std::map<std::pair<pin::id, pin::id>, pin::status> changes;
   for (auto col_id : m_conf->col()) {
-    auto col_io = m_gpios->select(pin::id::IO27);
+    auto col_io = m_gpios->select(col_id);
     col_io->set(pin::status::HIGH);
     for (auto row_id : m_conf->row()) {
       auto row_io = m_gpios->select(row_id);
