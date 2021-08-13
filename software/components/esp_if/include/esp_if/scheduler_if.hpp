@@ -4,7 +4,7 @@
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "tasks.hpp"
+#include "vif/tasks.hpp"
 
 namespace kopinions {
 template <typename...>

@@ -1,6 +1,6 @@
 #pragma once
 #include "driver/gpio.h"
-#include "gpio.hpp"
+#include "vif/gpio.hpp"
 
 namespace kopinions {
 

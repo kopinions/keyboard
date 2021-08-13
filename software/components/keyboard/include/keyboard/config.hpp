@@ -1,6 +1,8 @@
 #pragma once
+#include <vector>
+
 #include "key.hpp"
-#include "vif.hpp"
+#include "vif/pin.hpp"
 namespace kopinions {
 
 class config {

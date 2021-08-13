@@ -1,6 +1,6 @@
 #include "esp_if/gpios_if.hpp"
 
-#include "pin.hpp"
+#include "vif/pin.hpp"
 
 kopinions::gpio* kopinions::gpios_if::select(kopinions::pin::id p) {
   if (auto it = m_gpios.find(p); it != m_gpios.end()) {

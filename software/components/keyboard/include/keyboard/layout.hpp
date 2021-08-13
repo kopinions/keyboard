@@ -1,8 +1,9 @@
 #pragma once
 #include <map>
 #include <vector>
+
+#include "vif/pin.hpp"
 #include "key.hpp"
-#include "pin.hpp"
 namespace kopinions {
 
 class layout {

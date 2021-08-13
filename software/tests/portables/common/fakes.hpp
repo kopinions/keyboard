@@ -1,8 +1,8 @@
 #pragma once
 #include <boost/di.hpp>
-#include "vif.hpp"
 
 #include "common/mocks_provider.hpp"
+#include "vif.hpp"
 namespace di = boost::di;
 using namespace kopinions;
 using namespace fakeit;

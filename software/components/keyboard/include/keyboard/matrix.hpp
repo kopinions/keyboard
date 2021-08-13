@@ -6,7 +6,10 @@
 #include <vector>
 
 #include "config.hpp"
-#include "vif.hpp"
+#include "vif/chrono.hpp"
+#include "vif/gpio.hpp"
+#include "vif/gpios.hpp"
+#include "vif/pin.hpp"
 
 namespace kopinions {
 class matrix {

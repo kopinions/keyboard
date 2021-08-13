@@ -1,7 +1,7 @@
 #pragma once
 
 #include "esp_log.h"
-#include "logger.hpp"
+#include "vif/logger.hpp"
 namespace kopinions::logging {
 class esp_log_sink : public sink {
  public:

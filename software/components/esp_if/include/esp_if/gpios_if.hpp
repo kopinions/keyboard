@@ -2,7 +2,7 @@
 #include <map>
 
 #include "esp_if/gpio_if.hpp"
-#include "vif.hpp"
+#include "vif/gpios.hpp"
 namespace kopinions {
 class gpios_if : public gpios {
  public:

@@ -1,9 +1,9 @@
 #include "keyboard.hpp"
 
 #include "common/fakes.hpp"
+#include "vif.hpp"
 #include "supporting/mapping.hpp"
 #include "supporting/matrix_conf.hpp"
-#include "vif.hpp"
 
 namespace di = boost::di;
 using namespace kopinions;

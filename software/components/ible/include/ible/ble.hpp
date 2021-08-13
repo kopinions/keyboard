@@ -19,7 +19,7 @@
 #include <string_view>
 
 #include "ible/specification.hpp"
-#include "logger.hpp"
+#include "vif/logger.hpp"
 #include "repository.hpp"
 namespace bt {
 class ble {

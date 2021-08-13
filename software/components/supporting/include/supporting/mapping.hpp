@@ -2,8 +2,8 @@
 #include <boost/di.hpp>
 #include <map>
 
+#include "vif/pin.hpp"
 #include "keyboard/key.hpp"
-#include "pin.hpp"
 using namespace kopinions;
 
 static const std::map<std::pair<pin::id, pin::id>, key::identification> layout_mapping{
