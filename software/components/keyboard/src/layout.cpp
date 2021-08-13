@@ -1,20 +1,6 @@
-#pragma once
-#include <map>
-#include <vector>
+#include "keyboard/layout.hpp"
 
-#include "key.hpp"
-#include "pin.hpp"
-namespace kopinions {
-
-class layout {
- public:
-  explicit layout(const std::map<std::pair<pin::id, pin::id>, key::identification> &) noexcept;
-  std::vector<key> mapping(const std::map<std::pair<pin::id, pin::id>, pin::status> &);
-  ~layout() = default;
-
- private:
-  std::map<std::pair<pin::id, pin::id>, key::identification> m_mapping;
-};
+using namespace kopinions;
 
 layout::layout(const std::map<std::pair<pin::id, pin::id>, key::identification> &mapping) noexcept
     : m_mapping{mapping} {}
@@ -27,5 +13,3 @@ std::vector<kopinions::key> layout::mapping(const std::map<std::pair<pin::id, pi
   }
   return pressed;
 }
-
-}  // namespace kopinions

@@ -18,7 +18,4 @@ class keyboard {
   config* m_config;
 };
 
-std::vector<key> keyboard::scan() { return m_layout->mapping(m_matrix->scan()); }
-
-keyboard::keyboard(layout& layout, matrix& mat, config& conf) : m_matrix{&mat}, m_layout{&layout}, m_config{&conf} {}
 }  // namespace kopinions

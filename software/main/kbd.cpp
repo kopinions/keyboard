@@ -5,8 +5,8 @@
 #include "esp_if/esp_if.hpp"
 #include "ible.hpp"
 #include "ihid.hpp"
-#include "keyboard.hpp"
-#include "matrix.hpp"
+#include "keyboard/keyboard.hpp"
+#include "keyboard/matrix.hpp"
 #include "object.hpp"
 #include "supporting/mapping.hpp"
 #include "transports.hpp"
@@ -212,7 +212,6 @@ static uint8_t hidReportRefFeature[HID_REPORT_REF_LEN] = {underlying(hid::report
 typedef uint8_t key_mask_t;
 // HID keyboard input report length
 #define HID_KEYBOARD_IN_RPT_LEN 8
-
 
 extern "C" void app_main() {
   auto ret = nvs_flash_init();

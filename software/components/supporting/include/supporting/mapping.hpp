@@ -2,7 +2,7 @@
 #include <boost/di.hpp>
 #include <map>
 
-#include "key.hpp"
+#include "keyboard/key.hpp"
 #include "pin.hpp"
 using namespace kopinions;
 
@@ -76,7 +76,7 @@ static const std::map<std::pair<pin::id, pin::id>, key::identification> layout_m
     {{pin::id::IO33, pin::id::IO25}, key::identification::PAUSE_BREAK},
 
     // fifth row
-    {{pin::id::IO34, pin::id::IO2}, key::identification::SHIFT},
+    {{pin::id::IO34, pin::id::IO2}, key::identification::LSHIFT},
     {{pin::id::IO34, pin::id::IO4}, key::identification::Z},
     {{pin::id::IO34, pin::id::IO5}, key::identification::X},
     {{pin::id::IO34, pin::id::IO12}, key::identification::C},
@@ -94,9 +94,9 @@ static const std::map<std::pair<pin::id, pin::id>, key::identification> layout_m
 
     // sixth row
     {{pin::id::IO35, pin::id::IO2}, key::identification::FN},
-    {{pin::id::IO35, pin::id::IO4}, key::identification::CTRL},
-    {{pin::id::IO35, pin::id::IO5}, key::identification::GUI},
-    {{pin::id::IO35, pin::id::IO12}, key::identification::ALT},
+    {{pin::id::IO35, pin::id::IO4}, key::identification::LCTRL},
+    {{pin::id::IO35, pin::id::IO5}, key::identification::LGUI},
+    {{pin::id::IO35, pin::id::IO12}, key::identification::LALT},
     {{pin::id::IO35, pin::id::IO13}, key::identification::SPACE},
     {{pin::id::IO35, pin::id::IO14}, key::identification::HOME},
     {{pin::id::IO35, pin::id::IO15}, key::identification::END},

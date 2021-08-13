@@ -1,8 +1,5 @@
 #include "ible/builders.hpp"
 
-#include <ible/specification.hpp>
-#include <utility>
-
 bt::application_builder_t* bt::application_builder_t::name(const std::string& name) {
   return new bt::application_builder_t(name);
 }
