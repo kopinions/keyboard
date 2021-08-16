@@ -10,7 +10,7 @@ namespace kopinions {
 class keyboard {
  public:
   keyboard(layout&, matrix&, config&);
-  std::vector<key> scan();
+  std::vector<key_t> scan();
 
  private:
   matrix* m_matrix;

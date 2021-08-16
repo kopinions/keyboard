@@ -150,14 +150,14 @@ enum key_id : uint8_t {
   WAKE_UP,
 };
 
-struct key {
-  using identification = key_id;
+struct key_t {
+  using id_t = key_id;
 
   enum class status { RELEASED, PRESSED };
 
   enum class type { MEDIA, MODIFIER, PAD, SYSTEM };
 
-  identification id;
+  id_t id;
   status sts;
 };
 }  // namespace kopinions
