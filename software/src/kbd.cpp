@@ -2,14 +2,14 @@
 
 #include <cstring>
 
+#include "../include/object.hpp"
+#include "../include/transports.hpp"
 #include "esp_if/esp_if.hpp"
 #include "ible.hpp"
 #include "ihid.hpp"
 #include "keyboard/keyboard.hpp"
 #include "keyboard/matrix.hpp"
-#include "object.hpp"
 #include "supporting/mapping.hpp"
-#include "transports.hpp"
 
 using namespace kopinions;
 using namespace kopinions::logging;

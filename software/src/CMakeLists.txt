@@ -1,0 +1,10 @@
+set(elf_file ${CMAKE_PROJECT_NAME}.elf)
+add_executable(${elf_file})
+target_sources(${elf_file} PRIVATE kbd.cpp)
+target_compile_features(${elf_file} PUBLIC cxx_std_17)
+target_compile_options(${elf_file} PUBLIC "$<$<NOT:$<CXX_COMPILER_ID:AppleClang>>:-mlongcalls>")
+target_compile_options(${elf_file} PUBLIC "$<$<CXX_COMPILER_ID:AppleClang>:-mlong-calls>")
+target_compile_options(${elf_file} PUBLIC "$<$<CONFIG:DEBUG>:-g3>")
+target_compile_options(${elf_file} PUBLIC "$<$<CONFIG:RELEASE>:-O2>")
+
+target_link_libraries(${elf_file} idf::esp_common idf::esp32 idf::freertos idf::spi_flash idf::nvs_flash)

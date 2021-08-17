@@ -1,8 +1,7 @@
 #pragma once
+#include <optional>
 namespace kopinions {
-class transport {
-
-};
+class transport {};
 class transports {
  public:
   std::optional<transport> select() { return std::nullopt; };

@@ -1,6 +1,13 @@
-#idf_component_register(SRCS src/chrono_if.cpp src/esp_log_sink.cpp src/gpio_if.cpp src/gpios_if.cpp
-#        INCLUDE_DIRS "include"
-#        REQUIRES vif)
-add_library(esp_if)
-
-target_compile_options(${COMPONENT_LIB} PRIVATE -std=c++17)
+add_library(esp_if SHARED)
+target_sources(esp_if PRIVATE
+        src/chrono_if.cpp src/esp_log_sink.cpp src/gpio_if.cpp src/gpios_if.cpp)
+target_include_directories(esp_if PUBLIC include)
+target_compile_features(esp_if PUBLIC cxx_std_17)
+target_compile_options(esp_if PUBLIC "$<$<NOT:$<CXX_COMPILER_ID:AppleClang>>:-mlongcalls>")
+target_compile_options(esp_if PUBLIC "$<$<CXX_COMPILER_ID:AppleClang>:-mlong-calls>")
+target_compile_options(esp_if PUBLIC "$<$<CONFIG:DEBUG>:-g3>")
+target_compile_options(esp_if PUBLIC "$<$<CONFIG:RELEASE>:-O2>")
+target_link_libraries(esp_if PUBLIC vif)
+target_link_libraries(esp_if PUBLIC idf::esp_timer)
+target_link_libraries(esp_if PUBLIC idf::log)
+target_link_libraries(esp_if PUBLIC idf::driver)
