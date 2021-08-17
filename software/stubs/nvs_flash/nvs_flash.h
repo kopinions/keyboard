@@ -1,0 +1,16 @@
+#ifndef NVS_FLASH_H
+#define NVS_FLASH_H
+
+#include "nvs.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+esp_err_t nvs_flash_init(void);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* NVS_FLASH_H */

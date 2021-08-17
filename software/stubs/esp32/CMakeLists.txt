@@ -1,0 +1,5 @@
+add_library(stub_esp32 STATIC system_api.c flash_ops.c cpu_start.c)
+target_include_directories(stub_esp32 PUBLIC .)
+add_library(idf::esp32 ALIAS stub_esp32)
+target_compile_features(stub_esp32 PUBLIC cxx_std_17)
+target_link_libraries(stub_esp32 idf::spi_flash)

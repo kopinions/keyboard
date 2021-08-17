@@ -4,7 +4,8 @@ idf_component_register(
         src/layout.cpp
         src/matrix.cpp
         src/config.cpp
-        INCLUDE_DIRS "include"
-        REQUIRES vif)
+        INCLUDE_DIRS "include")
+
+target_link_libraries(vif)
 
 component_compile_options(-std=c++17)
