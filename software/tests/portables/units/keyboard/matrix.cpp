@@ -1,4 +1,4 @@
-#include "matrix.hpp"
+#include "keyboard/matrix.hpp"
 
 #include "common/fakes.hpp"
 #include "common/mocks_provider.hpp"

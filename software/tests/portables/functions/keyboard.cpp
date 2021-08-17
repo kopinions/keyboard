@@ -1,4 +1,4 @@
-#include "keyboard.hpp"
+#include "keyboard/keyboard.hpp"
 
 #include "common/fakes.hpp"
 #include "vif.hpp"

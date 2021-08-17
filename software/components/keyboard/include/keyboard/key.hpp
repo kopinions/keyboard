@@ -153,11 +153,11 @@ enum key_id : uint8_t {
 struct key_t {
   using id_t = key_id;
 
-  enum class status { RELEASED, PRESSED };
+  enum class status_t { RELEASED, PRESSED };
 
-  enum class type { MEDIA, MODIFIER, PAD, SYSTEM };
+  key_t(id_t id, status_t sts) : id(id), sts(sts) {}
 
   id_t id;
-  status sts;
+  status_t sts;
 };
 }  // namespace kopinions

@@ -17,15 +17,14 @@ macro(functional TESTNAME)
 endmacro()
 
 include_directories(.)
-include_directories(${CMAKE_CURRENT_LIST_DIR}/../components/vif)
-include_directories(${CMAKE_CURRENT_LIST_DIR}/../components/keyboard)
+message(STATUS xxx ${CMAKE_SOURCE_DIR}/../../components/supporting/include)
+include_directories(${CMAKE_SOURCE_DIR}/../../components/vif/include)
+include_directories(${CMAKE_SOURCE_DIR}/../../components/keyboard/include)
 include_directories(${CMAKE_CURRENT_LIST_DIR})
-include_directories(${CMAKE_CURRENT_LIST_DIR}/../components/supporting/include)
-include_directories(${CMAKE_CURRENT_LIST_DIR}/../3rdparty/di)
+include_directories(${CMAKE_SOURCE_DIR}/../../components/supporting/include)
+include_directories(${CMAKE_SOURCE_DIR}/../../3rdparty/di)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -include ${CMAKE_CURRENT_LIST_DIR}/common/test.hpp")
 add_subdirectory(units)
-add_subdirectory(functions)
-
-
+#add_subdirectory(functions)
 
 project(tests)

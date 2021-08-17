@@ -1,6 +1,11 @@
 #pragma once
+
 #include <memory>
 #include <vector>
+
+#include "keyboard/key.hpp"
+
 class sedes {
-  std::unique_ptr<char*> serialize(std::vector<key_t>& const);
+public:
+    std::unique_ptr<char[]> serialize(const std::vector<kopinions::key_t> &);
 };

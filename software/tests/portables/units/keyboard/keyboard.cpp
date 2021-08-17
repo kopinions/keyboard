@@ -1,4 +1,4 @@
-#include "keyboard.hpp"
+#include "keyboard/keyboard.hpp"
 
 #include "common/mocks_provider.hpp"
 #include "supporting/mapping.hpp"
