@@ -1,4 +1,4 @@
-add_library(supporting SHARED)
+add_library(supporting STATIC)
 target_sources(supporting PRIVATE
         src/sedes.cpp)
 target_include_directories(supporting PUBLIC include)

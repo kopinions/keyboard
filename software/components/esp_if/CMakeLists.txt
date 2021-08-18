@@ -1,4 +1,4 @@
-add_library(esp_if SHARED)
+add_library(esp_if STATIC)
 target_sources(esp_if PRIVATE
         src/chrono_if.cpp src/esp_log_sink.cpp src/gpio_if.cpp src/gpios_if.cpp)
 target_include_directories(esp_if PUBLIC include)

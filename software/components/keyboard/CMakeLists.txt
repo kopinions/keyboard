@@ -1,4 +1,4 @@
-add_library(kdb SHARED)
+add_library(kdb STATIC)
 target_sources(kdb PRIVATE
         src/keyboard.cpp
         src/layout.cpp

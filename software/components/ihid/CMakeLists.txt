@@ -1,4 +1,4 @@
-add_library(ihid SHARED)
+add_library(ihid STATIC)
 target_sources(ihid PRIVATE src/ihid.cpp)
 target_include_directories(ihid PUBLIC include)
 target_compile_features(ihid PUBLIC cxx_std_17)

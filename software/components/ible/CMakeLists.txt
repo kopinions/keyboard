@@ -1,4 +1,4 @@
-add_library(ible SHARED)
+add_library(ible STATIC)
 target_sources(ible PRIVATE
         src/ble.cpp src/specification.cpp src/visitors.cpp src/builders.cpp src/gatt_if.cpp)
 target_include_directories(ible PUBLIC include)
