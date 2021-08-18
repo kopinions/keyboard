@@ -1,5 +1,12 @@
-idf_component_register(
-        SRCS
-        src/sedes.cpp
-        INCLUDE_DIRS include
-        REQUIRES vif esp_if keyboard)
+add_library(supporting SHARED)
+target_sources(supporting PRIVATE
+        src/sedes.cpp)
+target_include_directories(supporting PUBLIC include)
+target_compile_features(supporting PUBLIC cxx_std_17)
+target_compile_options(supporting PUBLIC "$<$<NOT:$<CXX_COMPILER_ID:AppleClang>>:-mlongcalls>")
+target_compile_options(supporting PUBLIC "$<$<CXX_COMPILER_ID:AppleClang>:-mlong-calls>")
+target_compile_options(supporting PUBLIC "$<$<CONFIG:DEBUG>:-g3>")
+target_compile_options(supporting PUBLIC "$<$<CONFIG:RELEASE>:-O2>")
+target_link_libraries(supporting PUBLIC idf::esp_timer idf::log idf::driver idf::bt)
+target_link_libraries(supporting PUBLIC kbd::esp_if kbd::vif kbd::kbd)
+add_library(kbd::supporting ALIAS supporting)

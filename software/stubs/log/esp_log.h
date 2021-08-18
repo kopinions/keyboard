@@ -12,7 +12,8 @@ typedef enum {
   ESP_LOG_VERBOSE /*!< Bigger chunks of debugging information, or frequent messages which can potentially flood the
                      output. */
 } esp_log_level_t;
-#define LOG_LOCAL_LEVEL  ESP_LOG_INFO
+
+#define LOG_LOCAL_LEVEL ESP_LOG_INFO
 
 void esp_log_write(esp_log_level_t level, const char *tag, const char *format, ...) {
   va_list list;

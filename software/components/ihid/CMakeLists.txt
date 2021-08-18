@@ -1,3 +1,11 @@
-idf_component_register(
-        INCLUDE_DIRS "include"
-        REQUIRES vif esp_if keyboard ible)
+add_library(ihid SHARED)
+target_sources(ihid PRIVATE src/ihid.cpp)
+target_include_directories(ihid PUBLIC include)
+target_compile_features(ihid PUBLIC cxx_std_17)
+target_compile_options(ihid PUBLIC "$<$<NOT:$<CXX_COMPILER_ID:AppleClang>>:-mlongcalls>")
+target_compile_options(ihid PUBLIC "$<$<CXX_COMPILER_ID:AppleClang>:-mlong-calls>")
+target_compile_options(ihid PUBLIC "$<$<CONFIG:DEBUG>:-g3>")
+target_compile_options(ihid PUBLIC "$<$<CONFIG:RELEASE>:-O2>")
+target_link_libraries(ihid PUBLIC idf::esp_timer idf::log idf::driver idf::bt)
+target_link_libraries(ihid PUBLIC kbd::esp_if)
+add_library(kbd::ihid ALIAS ihid)
