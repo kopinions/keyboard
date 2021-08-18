@@ -1,7 +1,5 @@
-#include <utility>
-
-#ifndef DUMPABLE_HPP
-#define DUMPABLE_HPP
+#pragma once
+#include <string>
 
 class dumpable_t {
  public:
@@ -21,4 +19,3 @@ std::ostream& operator<<(std::ostream& o, T* src) {
   src->dump(o);
   return o;
 }
-#endif  // DUMPABLE_HPP

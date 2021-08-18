@@ -2,10 +2,12 @@
 
 #include <memory>
 #include <variant>
+#include <vector>
 
 #include "ible/builder.hpp"
 #include "ible/dumpable.hpp"
 #include "ible/gatt_if.hpp"
+#include "esp_gap_ble_api.h"
 #include "ible/repository.hpp"
 #include "ible/specification.hpp"
 #include "ible/visitor.hpp"
@@ -13,7 +15,7 @@
 namespace bt {
 
 using uint128_t = uint64_t[2];
-using uuid_t = std::variant<std::uint16_t, std::uint32_t, bt::uint128_t>;
+using uuid_t = std::variant<std::uint16_t, std::uint32_t>;
 using handle_t = std::uint16_t;
 
 class attribute_visitor;

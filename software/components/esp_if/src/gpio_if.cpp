@@ -1,4 +1,5 @@
 #include "esp_if/gpio_if.hpp"
+#include "driver/gpio.h"
 
 kopinions::gpio_if::~gpio_if() = default;
 

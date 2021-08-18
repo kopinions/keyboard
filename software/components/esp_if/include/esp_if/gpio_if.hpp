@@ -1,5 +1,4 @@
 #pragma once
-#include "driver/gpio.h"
 #include "vif/gpio.hpp"
 
 namespace kopinions {

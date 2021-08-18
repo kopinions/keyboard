@@ -1,5 +1,7 @@
 #include "ible/ble.hpp"
 
+#include <esp_bt_main.h>
+
 #include <cstring>
 #define LOGGER_TAG "ble"
 bool bt::ble::secure = false;
@@ -36,7 +38,7 @@ bt::ble::ble(const std::string& device_name, bt::appearance_t device_appearance,
 
   ret = esp_ble_gatts_register_callback(ble::gatts_event_handler);
   if (ret) {
-    ESP_LOGE("GATTS_TAG", "gatts register error, error code = %x", ret);
+    m_logger->error("%s: %s gatts register error, error code = %x", LOGGER_TAG, __func__, ret);
     return;
   }
 
@@ -79,17 +81,17 @@ bt::ble::ble(const std::string& device_name, bt::appearance_t device_appearance,
     m_logger->error("set name failed", "set name failed");
   }
 
-  esp_ble_auth_req_t auth_req = ESP_LE_AUTH_BOND;     //bonding with peer device after authentication
-  esp_ble_io_cap_t iocap = ESP_IO_CAP_NONE;           //set the IO capability to No output No input
-  uint8_t key_size = 16;      //the key size should be 7~16 bytes
+  esp_ble_auth_req_t auth_req = ESP_LE_AUTH_BOND;  // bonding with peer device after authentication
+  esp_ble_io_cap_t iocap = ESP_IO_CAP_NONE;        // set the IO capability to No output No input
+  uint8_t key_size = 16;                           // the key size should be 7~16 bytes
   uint8_t init_key = ESP_BLE_ENC_KEY_MASK | ESP_BLE_ID_KEY_MASK;
   uint8_t rsp_key = ESP_BLE_ENC_KEY_MASK | ESP_BLE_ID_KEY_MASK;
   esp_ble_gap_set_security_param(ESP_BLE_SM_AUTHEN_REQ_MODE, &auth_req, sizeof(uint8_t));
   esp_ble_gap_set_security_param(ESP_BLE_SM_IOCAP_MODE, &iocap, sizeof(uint8_t));
   esp_ble_gap_set_security_param(ESP_BLE_SM_MAX_KEY_SIZE, &key_size, sizeof(uint8_t));
-  /* If your BLE device act as a Slave, the init_key means you hope which types of key of the master should distribute to you,
-  and the response key means which key you can distribute to the Master;
-  If your BLE device act as a master, the response key means you hope which types of key of the slave should distribute to you,
+  /* If your BLE device act as a Slave, the init_key means you hope which types of key of the master should distribute
+  to you, and the response key means which key you can distribute to the Master; If your BLE device act as a master, the
+  response key means you hope which types of key of the slave should distribute to you,
   and the init key means which key you can distribute to the slave. */
   esp_ble_gap_set_security_param(ESP_BLE_SM_SET_INIT_KEY, &init_key, sizeof(uint8_t));
   esp_ble_gap_set_security_param(ESP_BLE_SM_SET_RSP_KEY, &rsp_key, sizeof(uint8_t));
@@ -164,8 +166,7 @@ void bt::ble::gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_par
       }
       break;
     case ESP_GAP_BLE_UPDATE_CONN_PARAMS_EVT:
-      ESP_LOGI(
-          "GATTS_TAG",
+      m_logger->info(
           "update connection params status = %d, min_int = %d, max_int = %d,conn_int = %d,latency = %d, timeout = %d",
           param->update_conn_params.status, param->update_conn_params.min_int, param->update_conn_params.max_int,
           param->update_conn_params.conn_int, param->update_conn_params.latency, param->update_conn_params.timeout);
