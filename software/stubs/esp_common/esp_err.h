@@ -1,8 +1,8 @@
 #pragma once
 
-#include <cassert>
-#include <cstdint>
-#include <cstdio>
+#include <assert.h>
+#include <stdint.h>
+#include <stdio.h>
 
 #ifdef __cplusplus
 extern "C" {

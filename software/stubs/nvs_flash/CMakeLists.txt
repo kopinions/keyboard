@@ -1,5 +1,5 @@
 add_library(stub_nvs_flash STATIC)
-target_sources(stub_nvs_flash PRIVATE src/nvs_flash.cpp)
+target_sources(stub_nvs_flash PRIVATE src/nvs_flash.c)
 target_include_directories(stub_nvs_flash PUBLIC include)
 add_library(idf::nvs_flash ALIAS stub_nvs_flash)
 target_link_libraries(stub_nvs_flash PUBLIC idf::esp_common)

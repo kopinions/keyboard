@@ -1,5 +1,6 @@
 #pragma once
 #include <functional>
+#include <type_traits>
 namespace kopinions {
 
 template <class>
@@ -54,13 +55,13 @@ struct task<R(TArgs...)> {
   }
 
  private:
-  template <typename T>
-  static auto invoke_impl(void* data, TArgs... args) -> typename std::enable_if_t<!(std::is_void<R>::value), R> {
+  template <typename T, typename R1=R>
+  static auto invoke_impl(void* data, TArgs... args) -> typename std::enable_if_t<!(std::is_void<R>::value), R1> {
     return (*static_cast<T*>(data))(std::forward<TArgs...>(args)...);
   }
 
-  template <typename T>
-  static auto invoke_impl(void* data, TArgs... args) -> typename std::enable_if_t<std::is_void<R>::value, void> {
+  template <typename T, typename R1=R>
+  static auto invoke_impl(void* data, TArgs... args) -> typename std::enable_if_t<std::is_void<R1>::value, void> {
     (*static_cast<T*>(data))(std::forward<TArgs...>(args)...);
   }
 
