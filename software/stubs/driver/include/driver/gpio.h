@@ -1,7 +1,9 @@
 #pragma once
-#ifndef KBD_GPIO_H
-#define KBD_GPIO_H
 #include <esp_err.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifndef BIT0
 
@@ -123,11 +125,14 @@ typedef enum {
   /** @endcond */
 } gpio_num_t;
 
-esp_err_t gpio_set_drive_capability(gpio_num_t gpio_num, gpio_drive_cap_t strength) { return ESP_OK; }
+esp_err_t gpio_set_drive_capability(gpio_num_t gpio_num, gpio_drive_cap_t strength);
 
-int gpio_get_level(gpio_num_t gpio_num) { return 0; }
+int gpio_get_level(gpio_num_t gpio_num);
 
-esp_err_t gpio_set_level(gpio_num_t gpio_num, uint32_t level) { return ESP_OK; }
+esp_err_t gpio_set_level(gpio_num_t gpio_num, uint32_t level);
 
-esp_err_t gpio_set_direction(gpio_num_t gpio_num, gpio_mode_t mode) { return ESP_OK; }
-#endif  // KBD_GPIO_H
+esp_err_t gpio_set_direction(gpio_num_t gpio_num, gpio_mode_t mode);
+
+#ifdef __cplusplus
+}
+#endif

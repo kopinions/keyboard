@@ -132,11 +132,6 @@
 #define ESP_GATT_UUID_SCAN_INT_WINDOW 0x2A4F
 #define ESP_GATT_UUID_SCAN_REFRESH 0x2A31
 
-/// Bluetooth address length
-#define ESP_BD_ADDR_LEN 6
-
-/// Bluetooth device address
-typedef uint8_t esp_bd_addr_t[ESP_BD_ADDR_LEN];
 
 typedef struct {
   uint16_t uuid_length; /*!< UUID length */

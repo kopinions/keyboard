@@ -1,4 +1,5 @@
-add_library(stub_driver INTERFACE)
-target_include_directories(stub_driver INTERFACE include)
-target_link_libraries(stub_driver INTERFACE idf::esp_common)
+add_library(stub_driver STATIC)
+target_sources(stub_driver PRIVATE src/gpio.c)
+target_include_directories(stub_driver PUBLIC include)
+target_link_libraries(stub_driver PUBLIC idf::esp_common)
 add_library(idf::driver ALIAS stub_driver)

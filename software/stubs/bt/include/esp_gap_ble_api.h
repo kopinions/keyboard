@@ -1,5 +1,11 @@
 #pragma once
+#include <stdbool.h>
+
 #include "esp_bt_defs.h"
+#include "esp_err.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /// Advertising data maximum length
 #define ESP_BLE_ADV_DATA_LEN_MAX 31
@@ -13,9 +19,9 @@
 #define ESP_BLE_ADV_FLAG_DMT_HOST_SPT (0x01 << 4)
 #define ESP_BLE_ADV_FLAG_NON_LIMIT_DISC (0x00)
 
-#define ESP_LE_AUTH_BOND                    0x01                                     /*!< 1 << 0 */               /* relate to BTM_LE_AUTH_BOND in stack/btm_api.h */
+#define ESP_LE_AUTH_BOND 0x01 /*!< 1 << 0 */ /* relate to BTM_LE_AUTH_BOND in stack/btm_api.h */
 
-#define ESP_IO_CAP_NONE                     3   /*!< NoInputNoOutput */     /* relate to BTM_IO_CAP_NONE in stack/btm_api.h */
+#define ESP_IO_CAP_NONE 3 /*!< NoInputNoOutput */ /* relate to BTM_IO_CAP_NONE in stack/btm_api.h */
 
 typedef enum {
   ESP_GAP_BLE_ADV_DATA_SET_COMPLETE_EVT = 0,      /*!< When advertising data set complete, the event comes */
@@ -457,9 +463,13 @@ typedef union {
 typedef uint8_t esp_ble_auth_req_t; /*!< combination of the above bit pattern */
 typedef uint8_t esp_ble_io_cap_t;   /*!< combination of the io capability */
 typedef void (*esp_gap_ble_cb_t)(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *param);
-esp_err_t esp_ble_gap_register_callback(esp_gap_ble_cb_t callback) { return ESP_OK; }
-esp_err_t esp_ble_gap_set_device_name(const char *name) { return ESP_OK; }
-esp_err_t esp_ble_gap_config_adv_data(esp_ble_adv_data_t *adv_data) { return ESP_OK; }
-esp_err_t esp_ble_gap_start_advertising(esp_ble_adv_params_t *adv_params) { return ESP_OK; }
-esp_err_t esp_ble_gap_set_security_param(esp_ble_sm_param_t param_type, void *value, uint8_t len) { return ESP_OK; }
-esp_err_t esp_ble_gap_security_rsp(esp_bd_addr_t bd_addr, bool accept) { return ESP_OK; }
+
+esp_err_t esp_ble_gap_register_callback(esp_gap_ble_cb_t callback);
+esp_err_t esp_ble_gap_set_device_name(const char *name);
+esp_err_t esp_ble_gap_config_adv_data(esp_ble_adv_data_t *adv_data);
+esp_err_t esp_ble_gap_start_advertising(esp_ble_adv_params_t *adv_params);
+esp_err_t esp_ble_gap_set_security_param(esp_ble_sm_param_t param_type, void *value, uint8_t len);
+esp_err_t esp_ble_gap_security_rsp(esp_bd_addr_t bd_addr, bool accept);
+#ifdef __cplusplus
+}
+#endif

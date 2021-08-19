@@ -1,8 +1,10 @@
-#ifndef KBD_ESP_LOG_H
-#define KBD_ESP_LOG_H
+#pragma once
 
-#include <cstdarg>
-#include <cstdio>
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include <stdarg.h>
+#include <stdio.h>
 typedef enum {
   ESP_LOG_NONE,   /*!< No log output */
   ESP_LOG_ERROR,  /*!< Critical errors, software module can not recover on its own */
@@ -15,13 +17,7 @@ typedef enum {
 
 #define LOG_LOCAL_LEVEL ESP_LOG_INFO
 
-void esp_log_write(esp_log_level_t level, const char *tag, const char *format, ...) {
-  va_list list;
-  va_start(list, format);
-  printf(format, list);
-  va_end(list);
-}
-
+void esp_log_write(esp_log_level_t level, const char *tag, const char *format, ...);
 #define ESP_LOG_LEVEL(level, tag, format, ...)                    \
   do {                                                            \
     if (level == ESP_LOG_ERROR) {                                 \
@@ -47,4 +43,7 @@ void esp_log_write(esp_log_level_t level, const char *tag, const char *format, .
 #define ESP_LOGI(tag, format, ...) ESP_LOG_LEVEL_LOCAL(ESP_LOG_INFO, tag, format, ##__VA_ARGS__)
 #define ESP_LOGD(tag, format, ...) ESP_LOG_LEVEL_LOCAL(ESP_LOG_DEBUG, tag, format, ##__VA_ARGS__)
 #define ESP_LOGV(tag, format, ...) ESP_LOG_LEVEL_LOCAL(ESP_LOG_VERBOSE, tag, format, ##__VA_ARGS__)
-#endif  // KBD_ESP_LOG_H
+
+#ifdef __cplusplus
+}
+#endif

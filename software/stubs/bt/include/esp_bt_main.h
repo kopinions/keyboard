@@ -1,5 +1,9 @@
 #pragma once
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <esp_err.h>
+
 #include "esp_gap_ble_api.h"
 typedef enum {
   ESP_BT_MODE_IDLE = 0x00,       /*!< Bluetooth is not running */
@@ -40,18 +44,21 @@ typedef struct {
   uint32_t magic;           /*!< Magic number */
 } esp_bt_controller_config_t;
 
-esp_err_t esp_bluedroid_enable(void) { return ESP_OK; }
-esp_err_t esp_bluedroid_init(void) { return ESP_OK; }
-
-esp_err_t esp_bt_controller_mem_release(esp_bt_mode_t mode) { return ESP_OK; }
-
-#define BT_CONTROLLER_INIT_CONFIG_DEFAULT() {};
-
-esp_err_t esp_bt_controller_init(esp_bt_controller_config_t *cfg) { return ESP_OK; }
-esp_err_t esp_bt_controller_enable(esp_bt_mode_t mode) { return ESP_OK; }
 typedef enum {
   ESP_BLUEDROID_STATUS_UNINITIALIZED = 0, /*!< Bluetooth not initialized */
   ESP_BLUEDROID_STATUS_INITIALIZED,       /*!< Bluetooth initialized but not enabled */
   ESP_BLUEDROID_STATUS_ENABLED            /*!< Bluetooth initialized and enabled */
 } esp_bluedroid_status_t;
-esp_bluedroid_status_t esp_bluedroid_get_status(void) { return ESP_BLUEDROID_STATUS_ENABLED; }
+
+#define BT_CONTROLLER_INIT_CONFIG_DEFAULT() {};
+
+esp_err_t esp_bluedroid_enable(void);
+esp_err_t esp_bluedroid_init(void);
+esp_err_t esp_bt_controller_mem_release(esp_bt_mode_t mode);
+esp_err_t esp_bt_controller_init(esp_bt_controller_config_t *cfg);
+esp_err_t esp_bt_controller_enable(esp_bt_mode_t mode);
+esp_bluedroid_status_t esp_bluedroid_get_status(void);
+
+#ifdef __cplusplus
+}
+#endif
