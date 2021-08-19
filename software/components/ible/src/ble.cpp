@@ -1,6 +1,7 @@
 #include "ible/ble.hpp"
 
 #include <esp_bt_main.h>
+#include <esp_bt.h>
 
 #include <cstring>
 #define LOGGER_TAG "ble"

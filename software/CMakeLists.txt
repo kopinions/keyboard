@@ -3,13 +3,14 @@ project(kbd C CXX)
 set(CMAKE_EXPORT_COMPILE_COMMANDS, ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
-
+set(elf_file ${CMAKE_PROJECT_NAME}.elf)
+add_executable(${elf_file})
 if ("${TARGET}" STREQUAL "esp32")
     include($ENV{IDF_PATH}/tools/cmake/idf.cmake)
     # Create idf::esp32 and idf::freertos static libraries
     idf_build_executable(${elf_file})
     idf_build_process(esp32
-            COMPONENTS esp32 freertos esptool_py
+            COMPONENTS esp32 freertos esptool_py bt
             SDKCONFIG ${CMAKE_CURRENT_LIST_DIR}/sdkconfig
             BUILD_DIR ${CMAKE_BINARY_DIR})
 else ()
