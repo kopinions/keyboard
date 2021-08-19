@@ -1,12 +1,23 @@
 cmake_minimum_required(VERSION 3.14)
 
-set(EXTRA_COMPONENT_DIRS "../components")
+enable_testing()
 
-# Set the components to include the tests for.
-# This can be overriden from CMake cache:
-# - when invoking CMake directly: cmake -D TEST_COMPONENTS="xxxxx" ..
-# - when using idf.py: idf.py -T xxxxx build
-set(TEST_COMPONENTS "esp_if" CACHE STRING "List of components to test")
+macro(unit TESTNAME)
+    add_executable(${TESTNAME}.ut ${ARGN})
+    add_test(${TESTNAME}.ut ${TESTNAME}.ut)
+    target_link_libraries(${TESTNAME}.ut PRIVATE kbd::vif kbd::supporting)
+    target_include_directories(${TESTNAME}.ut PRIVATE ${CMAKE_CURRENT_LIST_DIR}/common)
+    target_include_directories(${TESTNAME}.ut PRIVATE ${CMAKE_SOURCE_DIR}/3rdparty/di)
+endmacro()
 
-include($ENV{IDF_PATH}/tools/cmake/project.cmake)
-project(tests)
+macro(functional TESTNAME)
+    add_executable(${TESTNAME}.ft ${ARGN})
+    add_test(${TESTNAME}.ft ${TESTNAME}.ft)
+    target_link_libraries(${TESTNAME}.ft PRIVATE kbd::vif kbd::supporting)
+    target_include_directories(${TESTNAME}.ft PRIVATE ${CMAKE_SOURCE_DIR}/tests/common)
+    target_include_directories(${TESTNAME}.ft PRIVATE ${CMAKE_SOURCE_DIR}/3rdparty/di)
+endmacro()
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -include ${CMAKE_CURRENT_LIST_DIR}/common/test.hpp")
+add_subdirectory(units)
+#add_subdirectory(functions)

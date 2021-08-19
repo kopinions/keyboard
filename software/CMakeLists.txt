@@ -33,3 +33,5 @@ add_subdirectory(components/ihid)
 add_subdirectory(components/keyboard)
 add_subdirectory(components/supporting)
 add_subdirectory(src)
+
+add_subdirectory(tests)
