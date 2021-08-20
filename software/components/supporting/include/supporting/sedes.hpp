@@ -6,6 +6,6 @@
 #include "keyboard/key.hpp"
 
 class sedes {
-public:
-    std::unique_ptr<char[]> serialize(const std::vector<kopinions::key_t> &);
+ public:
+  std::unique_ptr<uint8_t[]> serialize(const std::vector<kopinions::key_t> &);
 };
