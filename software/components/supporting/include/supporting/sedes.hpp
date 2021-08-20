@@ -6,7 +6,7 @@
 
 #include "keyboard/key.hpp"
 
-class sedes {
+class sedes_t {
  public:
   std::unique_ptr<uint8_t[]> serialize(const std::vector<kopinions::key_t> &);
 

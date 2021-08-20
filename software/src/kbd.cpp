@@ -9,6 +9,7 @@
 #include "keyboard/matrix.hpp"
 #include "object.hpp"
 #include "supporting/mapping.hpp"
+#include "supporting/sedes.hpp"
 #include "transports.hpp"
 
 using namespace kopinions;
@@ -442,27 +443,32 @@ extern "C" void app_main() {
       auto &&res = kbd->scan();
       auto tx = trans->select();
 
-      uint8_t buffer[HID_KEYBOARD_IN_RPT_LEN] = {0, 28};
-      uint8_t special_key_mask = 0;
-
       auto a = hid->select(bt::selector_t<bt::characteristic_t *>::$(
           bt::ble_selector_t::profile(0x1)->service(bt::service_t::HID)->characteristic(hid_report_uuid)->nth(0)));
 
       lg->log(level::INFO, "%d", a->id());
+      auto sedes = std::make_shared<sedes_t>();
+      std::vector<kopinions::key_t> keys = {{kopinions::key_t::id_t::LALT, kopinions::key_t::status_t::PRESSED},
+                                            {kopinions::key_t::id_t::SPACE, kopinions::key_t::status_t::PRESSED}};
 
-      buffer[0] = special_key_mask;
-
-      for (int i = 0; i < 2; i++) {
-        buffer[i + 2] = 28;
-      }
+      auto buff = sedes->serialize(keys);
 
       if (hid->m_gatt != nullptr) {
         lg->log(level::INFO, "send indicate to the device");
 
-        hid->m_gatt->send_indicate(a->attributes()[1]->m_handle, HID_KEYBOARD_IN_RPT_LEN, buffer, false);
+        hid->m_gatt->send_indicate(a->attributes()[1]->m_handle, HID_KEYBOARD_IN_RPT_LEN, buff.get(), false);
+      }
+      vTaskDelay(5000 / portTICK_PERIOD_MS);
+      std::vector<kopinions::key_t> keys1 = {{kopinions::key_t::id_t::LALT, kopinions::key_t::status_t::PRESSED},
+                                            {kopinions::key_t::id_t::SPACE, kopinions::key_t::status_t::PRESSED}};
+      const std::unique_ptr<uint8_t[]> &buff1 = sedes->serialize(keys1);
+      if (hid->m_gatt != nullptr) {
+        lg->log(level::INFO, "send indicate to the device");
+
+        hid->m_gatt->send_indicate(a->attributes()[1]->m_handle, HID_KEYBOARD_IN_RPT_LEN, buff1.get(), false);
       }
 
-      ESP_LOGD("HID_LE_PRF_TAG", "buffer[0] = %x, buffer[1] = %x", buffer[0], buffer[1]);
+      ESP_LOGD("HID_LE_PRF_TAG", "buffer[0] = %x, buffer[1] = %x", buff1[0], buff1[1]);
 
       for (auto b : res) {
         auto status = b.sts;

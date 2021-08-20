@@ -6,7 +6,7 @@
 int main() {
   "should_serialize_to_0b01000000_when_ralt_pressed"_test = [] {
     std::vector<kopinions::key_t> keys{{kopinions::key_t::id_t::RALT, kopinions::key_t::status_t::PRESSED}};
-    auto *s = new sedes{};
+    auto *s = new sedes_t{};
     const std::unique_ptr<uint8_t[]> &ptr = s->serialize(keys);
     uint8_t *buf = ptr.get();
 
@@ -18,7 +18,7 @@ int main() {
         {kopinions::key_t::id_t::RALT, kopinions::key_t::status_t::PRESSED},
         {kopinions::key_t::id_t::LSHIFT, kopinions::key_t::status_t::PRESSED},
     };
-    auto *s = new sedes{};
+    auto *s = new sedes_t{};
     const std::unique_ptr<uint8_t[]> &ptr = s->serialize(keys);
     uint8_t *buf = ptr.get();
 
@@ -30,7 +30,7 @@ int main() {
         {kopinions::key_t::id_t::RALT, kopinions::key_t::status_t::RELEASED},
         {kopinions::key_t::id_t::LSHIFT, kopinions::key_t::status_t::RELEASED},
     };
-    auto *s = new sedes{};
+    auto *s = new sedes_t{};
     const std::unique_ptr<uint8_t[]> &ptr = s->serialize(keys);
     uint8_t *buf = ptr.get();
 
@@ -41,7 +41,7 @@ int main() {
     std::vector<kopinions::key_t> keys{
         {kopinions::key_t::id_t::A, kopinions::key_t::status_t::PRESSED},
     };
-    auto *s = new sedes{};
+    auto *s = new sedes_t{};
     const std::unique_ptr<uint8_t[]> &ptr = s->serialize(keys);
     uint8_t *buf = ptr.get();
 
