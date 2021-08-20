@@ -14,11 +14,10 @@ std::unique_ptr<uint8_t[]> sedes::serialize(const std::vector<kopinions::key_t>&
     uint8_t mask{0};
     for (auto i = 0u; i < 8; i++) {
       if (specials[i] == k.id && k.sts == kopinions::key_t::status_t::PRESSED) {
-        std::cout << "xx" << i << std::endl;
         mask |= (1 << i);
       }
     }
-    chars[0] = mask;
+    chars[0] |= mask;
   }
-  return chars;
+  return std::move(chars);
 }
