@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 pushd build
 PORT="$(ls /dev|grep "cu.usb"|head -n 1)"
+cmake --build .
 python $IDF_PATH/components/esptool_py/esptool/esptool.py -p "/dev/${PORT}"  write_flash @flash_project_args
 popd
