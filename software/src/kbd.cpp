@@ -452,30 +452,29 @@ extern "C" void app_main() {
                                             {kopinions::key_t::id_t::SPACE, kopinions::key_t::status_t::PRESSED}};
 
       auto buff = sedes->serialize(keys);
-
+      ESP_LOGI("HID_LE_PRF_TAG", "buffer[0] = %x, buffer[1] = %x buff[2] =%x ", buff[0], buff[1], buff[2]);
       if (hid->m_gatt != nullptr) {
         lg->log(level::INFO, "send indicate to the device");
 
         hid->m_gatt->send_indicate(a->attributes()[1]->m_handle, HID_KEYBOARD_IN_RPT_LEN, buff.get(), false);
       }
-      vTaskDelay(5000 / portTICK_PERIOD_MS);
-      std::vector<kopinions::key_t> keys1 = {{kopinions::key_t::id_t::LALT, kopinions::key_t::status_t::PRESSED},
-                                            {kopinions::key_t::id_t::SPACE, kopinions::key_t::status_t::PRESSED}};
+      vTaskDelay(500 / portTICK_PERIOD_MS);
+      std::vector<kopinions::key_t> keys1 = {{kopinions::key_t::id_t::LALT, kopinions::key_t::status_t::RELEASED},
+                                             {kopinions::key_t::id_t::SPACE, kopinions::key_t::status_t::RELEASED}};
       const std::unique_ptr<uint8_t[]> &buff1 = sedes->serialize(keys1);
+      ESP_LOGI("HID_LE_PRF_TAG", "buffer[0] = %x, buffer[1] = %x buff[2] =%x ", buff1[0], buff1[1], buff1[2]);
       if (hid->m_gatt != nullptr) {
         lg->log(level::INFO, "send indicate to the device");
 
         hid->m_gatt->send_indicate(a->attributes()[1]->m_handle, HID_KEYBOARD_IN_RPT_LEN, buff1.get(), false);
       }
 
-      ESP_LOGD("HID_LE_PRF_TAG", "buffer[0] = %x, buffer[1] = %x", buff1[0], buff1[1]);
-
       for (auto b : res) {
         auto status = b.sts;
         lg->log(level::DEBUG, "%d", status);
       }
 
-      vTaskDelay(60000 / portTICK_PERIOD_MS);
+      vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
   });
 }
