@@ -10,7 +10,9 @@ std::unique_ptr<uint8_t[]> sedes_t::serialize(const std::vector<kopinions::key_t
         chars[0] |= mask;
       }
     } else {
-      chars[cursor++] = static_cast<uint8_t>(k.id);
+      if (k.sts == kopinions::key_t::status_t::PRESSED) {
+        chars[cursor++] = static_cast<uint8_t>(k.id);
+      }
     }
   }
   return std::move(chars);
