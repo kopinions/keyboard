@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 set -e pipefail
+pushd "$(git rev-parse --show-toplevel)/software" > /dev/null
 
 if [[ -f build/Makefile ]]; then
   rm -rf build && mkdir build
-  pushd build
+  pushd build > /dev/null
   cmake .. -DCMAKE_TOOLCHAIN_FILE=$IDF_PATH/tools/cmake/toolchain-esp32.cmake -DTARGET=esp32 -GNinja
-  pop
+  popd > /dev/null
 fi
 
 cmake --build build
+popd > /dev/null

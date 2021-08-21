@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
 set -e pipefail
 
-pushd build
-PORT="$(find /dev -name "cu.usb*" |head -n 1)"
+PORT="$(find /dev -name "cu.usb*" 2>/dev/null |head -n 1)"
 if [[ -z ${PORT} ]]; then
   >&2 echo "No serial port found" && exit 1
 fi
-cmake --build .
+
+pushd "$(git rev-parse --show-toplevel)/software" > /dev/null
+build
+
+pushd build > /dev/null
 python $IDF_PATH/components/esptool_py/esptool/esptool.py -p "${PORT}"  write_flash @flash_project_args
-popd
+popd > /dev/null # build
+
+popd > /dev/null
