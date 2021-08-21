@@ -11,6 +11,9 @@ int main() {
     uint8_t *buf = ptr.get();
 
     expect_that<uint8_t>(*buf, matchers::eq((uint8_t)0b01000000));
+    for (auto i = 1; i < 8; i++) {
+      expect_that<uint8_t>(*(buf+i), matchers::eq((uint8_t)0x0));
+    }
   };
 
   "should_serialize_to_0b01000010_when_ralt_lshift_pressed"_test = [] {
@@ -23,6 +26,9 @@ int main() {
     uint8_t *buf = ptr.get();
 
     expect_that<uint8_t>(*buf, matchers::eq((uint8_t)0b01000010));
+    for (auto i = 1; i < 8; i++) {
+      expect_that<uint8_t>(*(buf+i), matchers::eq((uint8_t)0x0));
+    }
   };
 
   "should_serialize_to_0x00_when_ralt_lshift_released"_test = [] {
@@ -35,6 +41,9 @@ int main() {
     uint8_t *buf = ptr.get();
 
     expect_that<uint8_t>(*buf, matchers::eq((uint8_t)0x00));
+    for (auto i = 1; i < 8; i++) {
+      expect_that<uint8_t>(*(buf+i), matchers::eq((uint8_t)0x0));
+    }
   };
 
   "should_serialize_the_third_byte_to_0x04_when_key_is_a"_test = [] {
@@ -46,5 +55,8 @@ int main() {
     uint8_t *buf = ptr.get();
 
     expect_that<uint8_t>(*(buf+2), matchers::eq((uint8_t)0x04));
+    for (auto i = 3; i < 8; i++) {
+      expect_that<uint8_t>(*(buf+i), matchers::eq((uint8_t)0x0));
+    }
   };
 }
