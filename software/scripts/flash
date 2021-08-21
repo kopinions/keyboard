@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
+set -e pipefail
+
 pushd build
-PORT="$(ls /dev|grep "cu.usb"|head -n 1)"
+PORT="$(find /dev -name "cu.usb*" |head -n 1)"
+if [[ -z ${PORT} ]]; then
+  >&2 echo "No serial port found" && exit 1
+fi
 cmake --build .
-python $IDF_PATH/components/esptool_py/esptool/esptool.py -p "/dev/${PORT}"  write_flash @flash_project_args
+python $IDF_PATH/components/esptool_py/esptool/esptool.py -p "${PORT}"  write_flash @flash_project_args
 popd

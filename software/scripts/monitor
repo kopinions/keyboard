@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
+set -e pipefail
+
 pushd build
-PORT="$(ls /dev|grep "cu.usb"|head -n 1)"
-python $IDF_PATH/tools/idf_monitor.py -p "/dev/${PORT}" kbd.elf
+PORT="$(find /dev -name "cu.usb*" |head -n 1)"
+if [[ -z ${PORT} ]]; then
+  >&2 echo "No serial port found" && exit 1
+fi
+python $IDF_PATH/tools/idf_monitor.py -p "${PORT}" kbd.elf
 popd

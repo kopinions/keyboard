@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -e pipefail
+
+if [[ -f build/Makefile ]]; then
+  rm -rf build && mkdir build
+  pushd build
+  cmake .. -DCMAKE_TOOLCHAIN_FILE=$IDF_PATH/tools/cmake/toolchain-esp32.cmake -DTARGET=esp32 -GNinja
+  pop
+fi
+
+cmake --build build
