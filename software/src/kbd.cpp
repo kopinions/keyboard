@@ -461,7 +461,7 @@ extern "C" void app_main() {
       if (hid->m_gatt != nullptr) {
         lg->log(level::INFO, "send indicate to the device");
 
-        hid->m_gatt->send_indicate(a->attributes()[1]->m_handle, HID_KEYBOARD_IN_RPT_LEN, buff, false);
+        hid->m_gatt->send_indicate(a->attributes()[1]->m_handle, HID_KEYBOARD_IN_RPT_LEN, const_cast<uint8_t *>(buff), false);
       }
       link->send(std::move(ptr));
       vTaskDelay(500 / portTICK_PERIOD_MS);
@@ -473,7 +473,7 @@ extern "C" void app_main() {
       if (hid->m_gatt != nullptr) {
         lg->log(level::INFO, "send indicate to the device");
 
-        hid->m_gatt->send_indicate(a->attributes()[1]->m_handle, HID_KEYBOARD_IN_RPT_LEN, buff1, false);
+        hid->m_gatt->send_indicate(a->attributes()[1]->m_handle, HID_KEYBOARD_IN_RPT_LEN, const_cast<uint8_t *>(buff), false);
       }
       link->send(std::move(ptr1));
 

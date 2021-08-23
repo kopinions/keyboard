@@ -273,7 +273,7 @@ esp_err_t esp_ble_gatts_send_response(esp_gatt_if_t gatts_if, uint16_t conn_id, 
                                       esp_gatt_status_t status, esp_gatt_rsp_t *rsp);
 
 esp_err_t esp_ble_gatts_send_indicate(esp_gatt_if_t gatts_if, uint16_t conn_id, uint16_t attr_handle,
-                                      uint16_t value_len, const uint8_t *value, bool need_confirm);
+                                      uint16_t value_len, uint8_t *value, bool need_confirm);
 
 esp_err_t esp_ble_gatts_start_service(uint16_t service_handle);
 #ifdef __cplusplus
