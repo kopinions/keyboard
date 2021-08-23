@@ -12,3 +12,5 @@ std::vector<kopinions::key_t> layout::mapping(const std::map<std::pair<pin::id, 
   }
   return pressed;
 }
+
+layout::~layout() = default;

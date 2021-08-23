@@ -9,13 +9,12 @@
 namespace kopinions {
 class keyboard {
  public:
-  keyboard(layout&, matrix&, config&);
-  std::vector<key_t> scan();
+  keyboard(layout&, matrix&);
+  virtual std::vector<key_t> scan();
 
  private:
   matrix* m_matrix;
   layout* m_layout;
-  config* m_config;
 };
 
 }  // namespace kopinions

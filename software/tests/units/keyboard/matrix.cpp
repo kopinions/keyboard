@@ -49,7 +49,7 @@ int main() {
     When(Method(clk, now)).AlwaysDo([]() { return kopinions::time{0}; });
 
     When(Method(gpios_stub, select)).AlwaysDo([&high_ptr, &low_ptr](auto&& id) {
-      if (id == pin::id::IO3) {
+      if (id == pin::id::IO0) {
         return low_ptr;
       } else {
         return high_ptr;
@@ -88,7 +88,7 @@ int main() {
       return times[idx];
     });
     When(Method(gpios_stub, select)).AlwaysDo([&high_ptr, &low_ptr, &idx](auto&& id) {
-      if (id == pin::id::IO3) {
+      if (id == pin::id::IO0) {
         return low_ptr;
       } else {
         return high_ptr;

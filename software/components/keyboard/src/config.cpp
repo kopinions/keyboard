@@ -2,8 +2,6 @@
 
 using namespace kopinions;
 
-unsigned int config::debounce() const noexcept { return m_debounce; }
-
 matrix_config::matrix_config(const std::vector<pin::id> &row, const std::vector<pin::id> &col, unsigned int bounce)
     : m_row{row}, m_col{col}, m_bounce{bounce} {}
 

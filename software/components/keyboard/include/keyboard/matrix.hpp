@@ -14,7 +14,7 @@
 namespace kopinions {
 class matrix {
  public:
-  explicit matrix(gpios &, kopinions::clock &) noexcept;
+  explicit matrix(gpios &, kopinions::clock &, matrix_config& conf) noexcept;
 
   std::map<std::pair<pin::id, pin::id>, pin::status> scan();
 

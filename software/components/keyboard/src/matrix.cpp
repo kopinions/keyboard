@@ -26,26 +26,7 @@ std::map<std::pair<pin::id, pin::id>, pin::status> matrix::scan() {
   return changes;
 }
 
-matrix::matrix(gpios &gpios, kopinions::clock &clk) noexcept : m_gpios{&gpios}, m_clk{&clk} {
-  m_conf = new matrix_config(
-      std::vector<pin::id>{
-          pin::id::IO2,
-          pin::id::IO4,
-          pin::id::IO5,
-          pin::id::IO12,
-          pin::id::IO13,
-          pin::id::IO14,
-          pin::id::IO15,
-          pin::id::IO16,
-          pin::id::IO17,
-          pin::id::IO18,
-          pin::id::IO19,
-          pin::id::IO21,
-          pin::id::IO22,
-          pin::id::IO23,
-          pin::id::IO25,
-      },
-      std::vector<pin::id>{pin::id::IO26, pin::id::IO27, pin::id::IO32, pin::id::IO33}, 4);
+matrix::matrix(gpios &gpios, kopinions::clock &clk, matrix_config& conf) noexcept : m_gpios{&gpios}, m_clk{&clk}, m_conf{&conf} {
   for (auto row_id : m_conf->row()) {
     auto io = m_gpios->select(row_id);
     io->option(pin::opt{.mode = pin::mode_t::BIDIRECTIONAL, .cap = pin::capability_t::WEAK});

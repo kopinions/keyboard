@@ -227,10 +227,9 @@ extern "C" void app_main() {
   sche->schedule("test", []() -> void {
     auto ios = new gpios_if;
     auto clk = new clock_if;
-    auto mtx = new matrix(*ios, *clk);
+    auto mtx = new matrix(*ios, *clk, matrix_config{});
     auto lay = new layout(layout_mapping);
-    auto cfg = new config();
-    auto kbd = new keyboard(*lay, *mtx, *cfg);
+    auto kbd = new keyboard(*lay, *mtx);
     auto sink = new esp_log_sink();
     auto lg = new logger(level::INFO, sink);
     auto links = new link_control_t();

@@ -5,15 +5,6 @@
 #include "vif/pin.hpp"
 namespace kopinions {
 
-class config {
- public:
-  config() { m_debounce = 4; }
-  unsigned int debounce() const noexcept;
-
- private:
-  unsigned int m_debounce;
-};
-
 class matrix_config {
  public:
   matrix_config(const std::vector<pin::id> &row, const std::vector<pin::id> &col, unsigned int bounce);
