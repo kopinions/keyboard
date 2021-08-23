@@ -14,7 +14,7 @@ esp_err_t esp_ble_gatts_send_response(esp_gatt_if_t gatts_if, uint16_t conn_id, 
 }
 
 esp_err_t esp_ble_gatts_send_indicate(esp_gatt_if_t gatts_if, uint16_t conn_id, uint16_t attr_handle,
-                                      uint16_t value_len, uint8_t *value, bool need_confirm) {
+                                      uint16_t value_len, const uint8_t *value, bool need_confirm) {
   return ESP_OK;
 }
 

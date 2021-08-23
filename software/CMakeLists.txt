@@ -27,6 +27,7 @@ else ()
 endif ()
 
 add_subdirectory(components/vif)
+add_subdirectory(components/link)
 add_subdirectory(components/esp_if)
 add_subdirectory(components/ible)
 add_subdirectory(components/ihid)

@@ -1,14 +1,14 @@
 #pragma once
-
 #include <map>
 #include <memory>
 #include <vector>
 
 #include "keyboard/key.hpp"
+#include "link/message.hpp"
 
 class sedes_t {
  public:
-  std::unique_ptr<uint8_t[]> serialize(const std::vector<kopinions::key_t> &);
+  std::unique_ptr<kopinions::message_t> serialize(const std::vector<kopinions::key_t> &keys);
 
  private:
   const std::map<kopinions::key_t::id_t, std::uint8_t> m_modifiers = {

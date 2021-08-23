@@ -8,5 +8,5 @@ target_compile_options(supporting PUBLIC "$<$<CXX_COMPILER_ID:AppleClang>:-mlong
 target_compile_options(supporting PUBLIC "$<$<CONFIG:DEBUG>:-g3>")
 target_compile_options(supporting PUBLIC "$<$<CONFIG:RELEASE>:-O2>")
 target_link_libraries(supporting PUBLIC idf::esp_timer idf::log idf::driver idf::bt)
-target_link_libraries(supporting PUBLIC kbd::esp_if kbd::vif kbd::kbd)
+target_link_libraries(supporting PUBLIC kbd::esp_if kbd::vif kbd::kbd kbd::link)
 add_library(kbd::supporting ALIAS supporting)
