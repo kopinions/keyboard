@@ -1,5 +1,7 @@
 #pragma once
-#include "matrix.hpp"
+#include <boost/di.hpp>
+
+#include "keyboard/matrix.hpp"
 // row1-row6
 static auto rows = std::array<pin::id, 6>{pin::id::IO26, pin::id::IO27, pin::id::IO32, pin::id::IO33};
 

@@ -1,7 +1,7 @@
 #pragma once
 #include <boost/di.hpp>
 
-#include "common/mocks_provider.hpp"
+#include "mocks_provider.hpp"
 #include "vif.hpp"
 namespace di = boost::di;
 using namespace kopinions;
@@ -26,14 +26,13 @@ class fake_gpio : public kopinions::gpio {
 
 class fake_gpios : public kopinions::gpios {
  public:
-  std::shared_ptr<gpio> select(const pin::id& p) override { return std::make_shared<fake_gpio>(pin::status::HIGH); }
+  gpio* select(pin::id p) override { return new fake_gpio(pin::status::HIGH); }
 };
 
 class fake_scheduled : public kopinions::scheduled {
  public:
   void cancel() override {}
 };
-
 
 template <typename... Args>
 class fake_scheduler : public scheduler<Args...> {
@@ -48,7 +47,7 @@ class fake_scheduler : public scheduler<Args...> {
 
 template <typename... Args>
 std::shared_ptr<scheduled> fake_scheduler<Args...>::schedule(const std::string& id,
-                                                           const kopinions::task<void(Args...)>& f, Args... args) {
+                                                             const kopinions::task<void(Args...)>& f, Args... args) {
   m_f = f;
   closure = [this, &args...]() -> void { m_f(std::forward<Args...>(args)...); };
   auto tf = [](void* d) -> void { (*static_cast<decltype(closure)*>(d))(); };
@@ -59,16 +58,17 @@ std::shared_ptr<scheduled> fake_scheduler<Args...>::schedule(const std::string& 
   return ptr;
 }
 
-class fake_sink : public kopinions::sink {
+class fake_sink : public kopinions::logging::sink {
  public:
-  void consume(record&& record) override { std::cout << record.message() << std::endl; }
+  void consume(const logging::record& record) override { std::cout << record.message() << std::endl; }
 };
 
 constexpr auto fakes = [] {
-  return di::make_injector(
-      di::bind<gpios>.to<fake_gpios>().in(di::singleton), di::bind<kopinions::clock>.to<fake_clk>().in(di::singleton),
-      di::bind<sink>.to<fake_sink>().in(di::singleton), di::bind<scheduler<>>.to<fake_scheduler<>>().in(di::singleton),
-      di::bind<logger::level>.to(logger::level::DEBUG));
+  return di::make_injector(di::bind<kopinions::gpios>.to<fake_gpios>().in(di::singleton),
+                           di::bind<kopinions::clock>.to<fake_clk>().in(di::singleton),
+                           di::bind<kopinions::logging::sink>.to<fake_sink>().in(di::singleton),
+                           di::bind<kopinions::scheduler<int>>.to<fake_scheduler<int>>().in(di::singleton),
+                           di::bind<kopinions::logging::level>.to(kopinions::logging::level::DEBUG));
 };
 
-std::shared_ptr<gpio> keep(pin::status s) { return std::shared_ptr<fake_gpio>(new fake_gpio(s)); }
+gpio* keep(pin::status s) { return new fake_gpio(s); }

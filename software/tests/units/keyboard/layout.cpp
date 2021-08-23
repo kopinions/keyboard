@@ -1,10 +1,11 @@
 #include "keyboard/layout.hpp"
 
 #include <boost/di.hpp>
-#include <vector>
 
-#include "common/mocks_provider.hpp"
+#include "matchers.hpp"
+#include "mocks_provider.hpp"
 #include "supporting/mapping.hpp"
+#include "test.hpp"
 
 namespace di = boost::di;
 using namespace kopinions;
@@ -19,8 +20,8 @@ int main() {
     auto mapped = lay.mapping(std::move(esc_pressed));
 
     expect_that<int>(mapped.size(), matchers::eq(1));
-    expect_that<key::status>(mapped[0].sts, matchers::eq(key::status::PRESSED));
-    expect_that<key::identification>(mapped[0].id, matchers::eq(key::identification::ESC));
+    expect_that<kopinions::key_t::status_t>(mapped[0].sts, matchers::eq(kopinions::key_t::status_t::PRESSED));
+    expect_that<kopinions::key_t::id_t>(mapped[0].id, matchers::eq(kopinions::key_t::id_t::ESC));
   };
 
   "should_parse_keyboard_layout_for_multiple_keys"_test = [] {
@@ -35,9 +36,10 @@ int main() {
     auto mapped = lay.mapping(std::move(ctrl_alt_gui_shift_a));
 
     expect_that<int>(mapped.size(), matchers::eq(5));
-    expect_that<key::status>(mapped[0].sts, matchers::eq(key::status::PRESSED));
+    expect_that<kopinions::key_t::status_t>(mapped[0].sts, matchers::eq(kopinions::key_t::status_t::PRESSED));
 
-    auto ctrl = std::find_if(mapped.begin(), mapped.end(), [](auto&& $) { return $.id == key::identification::CTRL; });
-    expect_that<key::status>(ctrl->sts, matchers::eq(key::status::PRESSED));
+    auto ctrl =
+        std::find_if(mapped.begin(), mapped.end(), [](auto&& $) { return $.id == kopinions::key_t::id_t::LCTRL; });
+    expect_that<kopinions::key_t::status_t>(ctrl->sts, matchers::eq(kopinions::key_t::status_t::PRESSED));
   };
 }

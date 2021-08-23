@@ -1,7 +1,8 @@
 #include "keyboard/matrix.hpp"
 
-#include "common/fakes.hpp"
-#include "common/mocks_provider.hpp"
+#include "fakes.hpp"
+#include "matchers.hpp"
+#include "test.hpp"
 
 namespace di = boost::di;
 using namespace kopinions;
@@ -9,7 +10,7 @@ using namespace fakeit;
 
 int main() {
   "matrix_scan_change"_test = [] {
-    auto injector = di::make_injector<mocks_provider>(di::bind<>.to(std::make_shared<matrix::conf>(
+    auto injector = di::make_injector<mocks_provider>(di::bind<>.to(std::make_shared<matrix_config>(
         std::vector<pin::id>{
             pin::id::IO0,
         },
@@ -30,7 +31,7 @@ int main() {
   };
 
   "matrix_scan_change_for_multiple_gpios"_test = [] {
-    auto injector = di::make_injector<mocks_provider>(di::bind<>.to(std::make_shared<matrix::conf>(
+    auto injector = di::make_injector<mocks_provider>(di::bind<>.to(std::make_shared<matrix_config>(
         std::vector<pin::id>{
             pin::id::IO0,
             pin::id::IO1,
@@ -64,7 +65,7 @@ int main() {
   };
 
   "matrix_scan_ignore_debounce_in_tolerable_range"_test = [] {
-    auto injector = di::make_injector<mocks_provider>(di::bind<>.to(std::make_shared<matrix::conf>(
+    auto injector = di::make_injector<mocks_provider>(di::bind<>.to(std::make_shared<matrix_config>(
         std::vector<pin::id>{
             pin::id::IO0,
             pin::id::IO1,
