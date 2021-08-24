@@ -25,7 +25,7 @@ class application_builder_t : public ibuilder<bt::application_t*> {
 
   application_t* build() override;
 
- private:
+ public:
   std::string m_app_name;
 
   std::vector<consumer_t<profile_builder_t>> m_profile_consumers;

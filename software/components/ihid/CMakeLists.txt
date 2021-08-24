@@ -7,5 +7,5 @@ target_compile_options(ihid PUBLIC "$<$<CXX_COMPILER_ID:AppleClang>:-mlong-calls
 target_compile_options(ihid PUBLIC "$<$<CONFIG:DEBUG>:-g3>")
 target_compile_options(ihid PUBLIC "$<$<CONFIG:RELEASE>:-O2>")
 target_link_libraries(ihid PUBLIC idf::esp_timer idf::log idf::driver idf::bt)
-target_link_libraries(ihid PUBLIC kbd::esp_if)
+target_link_libraries(ihid PUBLIC kbd::esp_if kbd::ible)
 add_library(kbd::ihid ALIAS ihid)

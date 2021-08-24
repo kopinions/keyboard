@@ -9,6 +9,7 @@ bt::application_builder_t* bt::application_builder_t::profile(bt::consumer_t<pro
 }
 bt::application_t* bt::application_builder_t::build() {
   std::vector<bt::profile_t*> profiles;
+  std::cout << "xxx" << std::endl;
   for (const auto& consumer : m_profile_consumers) {
     auto b = new profile_builder_t();
     consumer(b);

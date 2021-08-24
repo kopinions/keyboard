@@ -2,7 +2,6 @@
 #include <type_traits>
 #include <variant>
 
-//#include "esp_event.h"
 #include "specification.hpp"
 
 namespace hid {
