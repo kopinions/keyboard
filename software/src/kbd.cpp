@@ -11,6 +11,7 @@
 #include "object.hpp"
 #include "supporting/mapping.hpp"
 #include "supporting/sedes.hpp"
+#include "supporting/implementation.hpp"
 
 using namespace kopinions;
 using namespace kopinions::logging;
@@ -195,6 +196,7 @@ static uint8_t hidProtocolMode = HID_PROTOCOL_MODE_REPORT;
 #define HID_INFORMATION_LEN 4     // HID Information
 #define HID_REPORT_REF_LEN 2      // HID Report Reference Descriptor
 #define HID_EXT_REPORT_REF_LEN 2  // External Report Reference Descriptor
+#include <supporting/matrix_conf.hpp>
 #include <type_traits>
 
 template <typename E>
@@ -222,12 +224,14 @@ extern "C" void app_main() {
   }
   ESP_ERROR_CHECK(ret);
 
-  auto sche = new scheduler_if<>;
+  static auto injector = di ::make_injector<>(mapping(), conf(), implementation());
+  auto sche = injector.create<std::shared_ptr<kopinions::scheduler<>>>();
 
   sche->schedule("test", []() -> void {
     auto ios = new gpios_if;
     auto clk = new clock_if;
-    auto mtx = new matrix(*ios, *clk, matrix_config{});
+    auto conf = injector.create<matrix_config*>();
+    auto mtx = new matrix(*ios, *clk, *conf);
     auto lay = new layout(layout_mapping);
     auto kbd = new keyboard(*lay, *mtx);
     auto sink = new esp_log_sink();
