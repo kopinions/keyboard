@@ -1,15 +1,11 @@
 #include <nvs_flash.h>
 
-#include <cstring>
-
 #include "esp_if/esp_if.hpp"
 #include "ible.hpp"
-#include "ihid.hpp"
-#include "profiles.hpp"
 #include "keyboard/keyboard.hpp"
-#include "keyboard/matrix.hpp"
 #include "link/link_control.hpp"
 #include "object.hpp"
+#include "profiles.hpp"
 #include "supporting/implementation.hpp"
 #include "supporting/mapping.hpp"
 #include "supporting/matrix_conf.hpp"
@@ -33,7 +29,7 @@ extern "C" void app_main() {
     auto kbd = injector.create<std::shared_ptr<kopinions::keyboard>>();
     auto lg = injector.create<std::shared_ptr<kopinions::logging::logger>>();
     auto sedes = injector.create<std::shared_ptr<kopinions::sedes_t>>();
-    auto keyboard_definition = injector.create<bt::application_builder_t*>();
+    auto keyboard_definition = injector.create<bt::application_builder_t *>();
     auto links = new link_control_t();
 
     auto b = new bt::ble("Chaos", bt::appearance_t::KEYBOARD, *lg);
