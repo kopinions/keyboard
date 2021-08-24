@@ -47,7 +47,7 @@ class record {
 class sink {
  public:
   virtual void consume(const record&) = 0;
-  virtual ~sink() = default;
+  virtual ~sink() noexcept = default;
 };
 
 class logger {

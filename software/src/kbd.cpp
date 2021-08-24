@@ -2,16 +2,16 @@
 
 #include <cstring>
 
-#include "link/link_control.hpp"
 #include "esp_if/esp_if.hpp"
 #include "ible.hpp"
 #include "ihid.hpp"
 #include "keyboard/keyboard.hpp"
 #include "keyboard/matrix.hpp"
+#include "link/link_control.hpp"
 #include "object.hpp"
+#include "supporting/implementation.hpp"
 #include "supporting/mapping.hpp"
 #include "supporting/sedes.hpp"
-#include "supporting/implementation.hpp"
 
 using namespace kopinions;
 using namespace kopinions::logging;
@@ -228,17 +228,10 @@ extern "C" void app_main() {
   auto sche = injector.create<std::shared_ptr<kopinions::scheduler<>>>();
 
   sche->schedule("test", []() -> void {
-    auto ios = new gpios_if;
-    auto clk = new clock_if;
-    auto conf = injector.create<matrix_config*>();
-    auto mtx = new matrix(*ios, *clk, *conf);
-    auto lay = new layout(layout_mapping);
-    auto kbd = new keyboard(*lay, *mtx);
-    auto sink = new esp_log_sink();
-    auto lg = new logger(level::INFO, sink);
+    auto kbd = injector.create<std::shared_ptr<kopinions::keyboard>>();
+    auto lg = injector.create<std::shared_ptr<kopinions::logging::logger>>();
+    auto sedes = injector.create<std::shared_ptr<kopinions::sedes_t>>();
     auto links = new link_control_t();
-    auto sedes = std::make_shared<sedes_t>();
-
 
     auto b = new bt::ble("Chaos", bt::appearance_t::KEYBOARD, *lg);
 
@@ -448,8 +441,6 @@ extern "C" void app_main() {
       auto &&res = kbd->scan();
       auto link = links->select();
 
-      
-
       auto a = hid->select(bt::selector_t<bt::characteristic_t *>::$(
           bt::ble_selector_t::profile(0x1)->service(bt::service_t::HID)->characteristic(hid_report_uuid)->nth(0)));
 
@@ -458,13 +449,14 @@ extern "C" void app_main() {
                                             {kopinions::key_t::id_t::SPACE, kopinions::key_t::status_t::PRESSED}};
 
       auto ptr = sedes->serialize(keys);
-      
+
       auto buff = ptr->payload();
       ESP_LOGI("HID_LE_PRF_TAG", "buffer[0] = %x, buffer[1] = %x buff[2] =%x ", buff[0], buff[1], buff[2]);
       if (hid->m_gatt != nullptr) {
         lg->log(level::INFO, "send indicate to the device");
 
-        hid->m_gatt->send_indicate(a->attributes()[1]->m_handle, HID_KEYBOARD_IN_RPT_LEN, const_cast<uint8_t *>(buff), false);
+        hid->m_gatt->send_indicate(a->attributes()[1]->m_handle, HID_KEYBOARD_IN_RPT_LEN, const_cast<uint8_t *>(buff),
+                                   false);
       }
       link->send(std::move(ptr));
       vTaskDelay(500 / portTICK_PERIOD_MS);
@@ -476,7 +468,8 @@ extern "C" void app_main() {
       if (hid->m_gatt != nullptr) {
         lg->log(level::INFO, "send indicate to the device");
 
-        hid->m_gatt->send_indicate(a->attributes()[1]->m_handle, HID_KEYBOARD_IN_RPT_LEN, const_cast<uint8_t *>(buff), false);
+        hid->m_gatt->send_indicate(a->attributes()[1]->m_handle, HID_KEYBOARD_IN_RPT_LEN, const_cast<uint8_t *>(buff),
+                                   false);
       }
       link->send(std::move(ptr1));
 

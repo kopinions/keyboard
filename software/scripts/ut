@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -e pipefail
+pushd "$(git rev-parse --show-toplevel)/software" > /dev/null
+
+
+if [[ ! -f build-tests/Makefile ]]; then
+  rm -rf build-tests && mkdir build-tests
+  pushd build-tests > /dev/null
+  cmake ..
+  popd > /dev/null
+fi
+echo "xxx"
+cmake --build build-tests --target ut
+popd > /dev/null

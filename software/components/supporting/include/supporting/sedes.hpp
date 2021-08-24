@@ -5,6 +5,7 @@
 
 #include "keyboard/key.hpp"
 #include "link/message.hpp"
+namespace kopinions {
 
 class sedes_t {
  public:
@@ -18,3 +19,4 @@ class sedes_t {
       {kopinions::key_t::id_t::RALT, 0x40},  {kopinions::key_t::id_t::RGUI, 0x80},
   };
 };
+}  // namespace kopinions

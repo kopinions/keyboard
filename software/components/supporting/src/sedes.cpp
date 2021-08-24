@@ -1,6 +1,6 @@
 #include "supporting/sedes.hpp"
 
-std::unique_ptr<kopinions::message_t> sedes_t::serialize(const std::vector<kopinions::key_t>& keys) {
+std::unique_ptr<kopinions::message_t> kopinions::sedes_t::serialize(const std::vector<kopinions::key_t>& keys) {
   auto chars = std::unique_ptr<uint8_t[]>(new uint8_t[8]{0});
   int cursor = 2;
   for (auto k : keys) {

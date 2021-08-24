@@ -13,8 +13,6 @@ void kopinions::logging::esp_log_sink::consume(const kopinions::logging::record&
       ESP_LOGW("kbd", "%s", msg);
       break;
     case level::ERROR:
-      ESP_LOGE("kbd", "%s", msg);
-      break;
     case level::FATAL:
       ESP_LOGE("kbd", "%s", msg);
       break;
