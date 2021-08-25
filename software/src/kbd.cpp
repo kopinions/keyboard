@@ -4,12 +4,10 @@
 #include "ible.hpp"
 #include "keyboard/keyboard.hpp"
 #include "link/link_control.hpp"
-#include "object.hpp"
 #include "profiles.hpp"
 #include "supporting/implementation.hpp"
 #include "supporting/mapping.hpp"
 #include "supporting/matrix_conf.hpp"
-#include "supporting/sedes.hpp"
 
 using namespace kopinions;
 using namespace kopinions::logging;
@@ -29,11 +27,11 @@ extern "C" void app_main() {
     auto kbd = injector.create<std::shared_ptr<kopinions::keyboard>>();
     auto lg = injector.create<std::shared_ptr<kopinions::logging::logger>>();
     auto sedes = injector.create<std::shared_ptr<kopinions::sedes_t>>();
-    auto keyboard_definition = injector.create<bt::application_builder_t *>();
+    auto keyboard_definition = injector.create<bt::application_builder_t&>();
     auto links = new link_control_t();
 
     auto b = new bt::ble("Chaos", bt::appearance_t::KEYBOARD, *lg);
-    auto hid = keyboard_definition->build();
+    auto hid = keyboard_definition.build();
     std::cout << hid;
     b->enroll(hid);
     while (true) {

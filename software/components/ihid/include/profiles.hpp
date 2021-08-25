@@ -214,7 +214,7 @@ typedef uint8_t key_mask_t;
 #define HID_KEYBOARD_IN_RPT_LEN 8
 
 constexpr auto definitions = [] {
-  bt::application_builder_t *keyboard_definition =
+  di::aux::owner<bt::application_builder_t *> keyboard_definition{
       bt::application_builder_t::name("hid")->id(0x01)->profile([](bt::profile_builder_t *p) {
         p->service([](bt::service_builder_t *s) {
           s->id(bt::service_t::id_t::BATTERY);
@@ -407,7 +407,7 @@ constexpr auto definitions = [] {
             });
           });
         });
-      });
+      })};
 
-  return di::make_injector(di::bind<>.to(keyboard_definition));
+  return di::make_injector(di::bind<bt::application_builder_t>.to(*keyboard_definition));
 };
