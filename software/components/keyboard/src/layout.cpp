@@ -2,9 +2,9 @@
 
 using namespace kopinions;
 
-layout::layout(const std::map<std::pair<pin::id, pin::id>, key_t::id_t> &mapping) noexcept : m_mapping{mapping} {}
+layout::layout(const std::map<std::pair<pin::id_t, pin::id_t>, key_t::id_t> &mapping) noexcept : m_mapping{mapping} {}
 
-std::vector<kopinions::key_t> layout::mapping(const std::map<std::pair<pin::id, pin::id>, pin::status> &sequence) {
+std::vector<kopinions::key_t> layout::mapping(const std::map<std::pair<pin::id_t, pin::id_t>, pin::status> &sequence) {
   std::vector<kopinions::key_t> pressed;
   for (auto [coord, status] : sequence) {
     pressed.emplace_back(kopinions::key_t{

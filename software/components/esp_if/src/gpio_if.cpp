@@ -44,4 +44,4 @@ void kopinions::gpio_if::set(pin::status target) {
   gpio_set_level(gpio_no, target == pin::status::HIGH ? 1 : 0);
 }
 
-kopinions::gpio_if::gpio_if(const pin::id& id) noexcept : m_id(id) {}
+kopinions::gpio_if::gpio_if(const pin::id_t& id) noexcept : m_id(id) {}

@@ -16,7 +16,7 @@ int main() {
     auto lay = injector.create<layout>();
 
     auto esc_pressed =
-        std::map<std::pair<pin::id, pin::id>, pin::status>{{{pin::id::IO26, pin::id::IO2}, pin::status::HIGH}};
+        std::map<std::pair<pin::id_t, pin::id_t>, pin::status>{{{pin::id_t::IO26, pin::id_t::IO2}, pin::status::HIGH}};
     auto mapped = lay.mapping(std::move(esc_pressed));
 
     expect_that<int>(mapped.size(), matchers::eq(1));
@@ -28,10 +28,10 @@ int main() {
     auto injector = di::make_injector<mocks_provider>(mapping());
     auto lay = injector.create<layout>();
 
-    auto ctrl_alt_gui_shift_a = std::map<std::pair<pin::id, pin::id>, pin::status>{
-        {{pin::id::IO35, pin::id::IO4}, pin::status::HIGH}, {{pin::id::IO35, pin::id::IO12}, pin::status::HIGH},
-        {{pin::id::IO35, pin::id::IO5}, pin::status::HIGH}, {{pin::id::IO34, pin::id::IO2}, pin::status::HIGH},
-        {{pin::id::IO33, pin::id::IO4}, pin::status::HIGH},
+    auto ctrl_alt_gui_shift_a = std::map<std::pair<pin::id_t, pin::id_t>, pin::status>{
+        {{pin::id_t::IO35, pin::id_t::IO4}, pin::status::HIGH}, {{pin::id_t::IO35, pin::id_t::IO12}, pin::status::HIGH},
+        {{pin::id_t::IO35, pin::id_t::IO5}, pin::status::HIGH}, {{pin::id_t::IO34, pin::id_t::IO2}, pin::status::HIGH},
+        {{pin::id_t::IO33, pin::id_t::IO4}, pin::status::HIGH},
     };
     auto mapped = lay.mapping(std::move(ctrl_alt_gui_shift_a));
 

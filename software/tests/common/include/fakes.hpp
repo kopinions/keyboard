@@ -26,7 +26,7 @@ class fake_gpio : public kopinions::gpio {
 
 class fake_gpios : public kopinions::gpios {
  public:
-  gpio* select(pin::id p) override { return new fake_gpio(pin::status::HIGH); }
+  gpio* select(pin::id_t p) override { return new fake_gpio(pin::status::HIGH); }
 };
 
 class fake_scheduled : public kopinions::scheduled {

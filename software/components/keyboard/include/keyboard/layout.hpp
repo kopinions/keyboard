@@ -8,12 +8,12 @@ namespace kopinions {
 
 class layout {
  public:
-  explicit layout(const std::map<std::pair<pin::id, pin::id>, key_t::id_t> &) noexcept;
-  virtual std::vector<key_t> mapping(const std::map<std::pair<pin::id, pin::id>, pin::status> &);
+  explicit layout(const std::map<std::pair<pin::id_t, pin::id_t>, key_t::id_t> &) noexcept;
+  virtual std::vector<key_t> mapping(const std::map<std::pair<pin::id_t, pin::id_t>, pin::status> &);
   virtual ~layout();
 
  private:
-  std::map<std::pair<pin::id, pin::id>, key_t::id_t> m_mapping;
+  std::map<std::pair<pin::id_t, pin::id_t>, key_t::id_t> m_mapping;
 };
 
 }  // namespace kopinions

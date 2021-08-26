@@ -7,7 +7,6 @@ if [[ -z ${PORT} ]]; then
 fi
 
 pushd "$(git rev-parse --show-toplevel)/software" > /dev/null
-build
 
 pushd build > /dev/null
 python $IDF_PATH/components/esptool_py/esptool/esptool.py -p "${PORT}"  write_flash @flash_project_args

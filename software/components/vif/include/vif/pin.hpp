@@ -1,10 +1,10 @@
 #pragma once
 #include <cstdint>
-
+#include <iostream>
 namespace kopinions {
 class pin {
  public:
-  enum id : uint8_t {
+  enum id_t : uint8_t {
     IO0,
     IO1,
     IO2,
@@ -68,6 +68,11 @@ class pin {
   enum class status { HIGH, LOW };
 
  private:
-  id m_id;
+  id_t m_id;
 };
+
+static inline std::ostream& operator<<(std::ostream& o, const kopinions::pin::id_t& id) {
+  return o << std::hex << static_cast<uint8_t>(id);
+}
+
 }  // namespace kopinions

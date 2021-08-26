@@ -2,7 +2,7 @@
 
 #include "vif/pin.hpp"
 
-kopinions::gpio* kopinions::gpios_if::select(kopinions::pin::id p) {
+kopinions::gpio* kopinions::gpios_if::select(kopinions::pin::id_t p) {
   if (auto it = m_gpios.find(p); it != m_gpios.end()) {
     return it->second;
   }
