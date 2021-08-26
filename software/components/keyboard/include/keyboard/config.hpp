@@ -10,9 +10,9 @@ class matrix_config {
   matrix_config(const std::vector<pin::id> &row, const std::vector<pin::id> &col, unsigned int bounce);
 
  public:
-  [[nodiscard]] const std::vector<pin::id> &row() const noexcept;
+  [[nodiscard]] const std::vector<pin::id> &rows() const noexcept;
 
-  [[nodiscard]] const std::vector<pin::id> &col() const noexcept;
+  [[nodiscard]] const std::vector<pin::id> &cols() const noexcept;
 
   [[nodiscard]] unsigned int tolerance() const noexcept;
 

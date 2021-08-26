@@ -15,8 +15,8 @@ constexpr auto conf = []() {
   const std::vector<pin::id>& col = std::vector<pin::id>{
       pin::id::IO26, pin::id::IO27, pin::id::IO32, pin::id::IO33,
       // TODO: find another pin to replace these two column
-      //      pin::id::IO34,
-      //      pin::id::IO35,
+            pin::id::IO34,
+            pin::id::IO35,
   };
   return di::make_injector(di::bind<matrix_config>()(row, col, 4)[di::override]);
 };

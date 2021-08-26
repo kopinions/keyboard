@@ -6,8 +6,7 @@
 #include "vif/serializer.hpp"
 
 void fail(const std::string& message = "") {
-  std::cerr << message << std::endl;
-  std::exit(-1);
+  throw std::runtime_error(message);
 }
 
 template <typename T>
