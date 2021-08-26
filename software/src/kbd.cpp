@@ -27,57 +27,29 @@ extern "C" void app_main() {
     auto kbd = injector.create<std::shared_ptr<kopinions::keyboard>>();
     auto lg = injector.create<std::shared_ptr<kopinions::logging::logger>>();
     auto sedes = injector.create<std::shared_ptr<kopinions::sedes_t>>();
-    auto keyboard_definition = injector.create<bt::application_builder_t&>();
+    auto keyboard_definition = injector.create<bt::application_builder_t &>();
     auto links = new link_control_t();
 
     auto b = new bt::ble("Chaos", bt::appearance_t::KEYBOARD, *lg);
     auto hid = keyboard_definition.build();
     std::cout << hid;
     b->enroll(hid);
+    auto a = hid->select(bt::selector_t<bt::characteristic_t *>::$(
+        bt::ble_selector_t::profile(0x1)->service(bt::service_t::HID)->characteristic(hid_report_uuid)->nth(0)));
     while (true) {
-      lg->log(level::INFO, "%s %d", "xxx1111", 222);
-
-      auto &&res = kbd->scan();
+      auto &&pressed_keys = kbd->scan();
       auto link = links->select();
-
-      auto a = hid->select(bt::selector_t<bt::characteristic_t *>::$(
-          bt::ble_selector_t::profile(0x1)->service(bt::service_t::HID)->characteristic(hid_report_uuid)->nth(0)));
-
-      lg->log(level::INFO, "%d", a->id());
-      std::vector<kopinions::key_t> keys = {{kopinions::key_t::id_t::LALT, kopinions::key_t::status_t::PRESSED},
-                                            {kopinions::key_t::id_t::SPACE, kopinions::key_t::status_t::PRESSED}};
-
-      auto ptr = sedes->serialize(keys);
-
-      auto buff = ptr->payload();
-      ESP_LOGI("HID_LE_PRF_TAG", "buffer[0] = %x, buffer[1] = %x buff[2] =%x ", buff[0], buff[1], buff[2]);
+      auto report = sedes->serialize(pressed_keys);
+      auto pressed = report->payload();
+      lg->info("pressed[0] = %x, pressed[1] = %x pressed[2] = %x ", pressed[0], pressed[1], pressed[2]);
       if (hid->m_gatt != nullptr) {
         lg->log(level::INFO, "send indicate to the device");
 
-        hid->m_gatt->send_indicate(a->attributes()[1]->m_handle, HID_KEYBOARD_IN_RPT_LEN, const_cast<uint8_t *>(buff),
-                                   false);
+        hid->m_gatt->send_indicate(a->attributes()[1]->m_handle, HID_KEYBOARD_IN_RPT_LEN,
+                                   const_cast<uint8_t *>(pressed), false);
       }
-      link->send(std::move(ptr));
+      link->send(std::move(report));
       vTaskDelay(500 / portTICK_PERIOD_MS);
-      std::vector<kopinions::key_t> keys1 = {{kopinions::key_t::id_t::LALT, kopinions::key_t::status_t::RELEASED},
-                                             {kopinions::key_t::id_t::SPACE, kopinions::key_t::status_t::RELEASED}};
-      auto ptr1 = sedes->serialize(keys1);
-      auto buff1 = ptr1->payload();
-      ESP_LOGI("HID_LE_PRF_TAG", "buffer[0] = %x, buffer[1] = %x buff[2] =%x ", buff1[0], buff1[1], buff1[2]);
-      if (hid->m_gatt != nullptr) {
-        lg->log(level::INFO, "send indicate to the device");
-
-        hid->m_gatt->send_indicate(a->attributes()[1]->m_handle, HID_KEYBOARD_IN_RPT_LEN, const_cast<uint8_t *>(buff),
-                                   false);
-      }
-      link->send(std::move(ptr1));
-
-      for (auto b : res) {
-        auto status = b.sts;
-        lg->log(level::DEBUG, "%d", status);
-      }
-
-      vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
   });
 }
