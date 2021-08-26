@@ -65,7 +65,7 @@ class pin {
     mode_t mode;
     capability_t cap;
   };
-  enum class status { HIGH, LOW };
+  enum class status { LOW, HIGH };
 
  private:
   id_t m_id;
