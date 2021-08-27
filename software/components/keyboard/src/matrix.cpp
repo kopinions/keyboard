@@ -33,13 +33,21 @@ matrix::matrix(gpios &gpios, kopinions::clock &clk, kopinions::matrix_config con
     : m_gpios{&gpios}, m_clk{&clk}, m_logger{&logger}, m_conf{std::move(conf)} {
   for (auto row_id : m_conf.rows()) {
     auto io = m_gpios->select(row_id);
-    io->option(pin::opt{.mode = pin::mode_t::INPUT, .cap = pin::capability_t::STRONGER});
+    io->option(pin::option_t{
+        .dir = pin::direction_t::INPUT,
+        .cap = pin::capability_t::STRONGER,
+        .pull = pin::pull_mode_t::DOWN,
+    });
     io->set(pin::status::LOW);
   }
 
   for (auto col_id : m_conf.cols()) {
     auto io = m_gpios->select(col_id);
-    io->option(pin::opt{.mode = pin::mode_t::BIDIRECTIONAL, .cap = pin::capability_t::STRONGER});
+    io->option(pin::option_t{
+        .dir = pin::direction_t::BIDIRECTIONAL,
+        .cap = pin::capability_t::STRONGER,
+        .pull = pin::pull_mode_t::DOWN,
+    });
     io->set(pin::status::LOW);
   }
   for (auto row_id : m_conf.rows()) {

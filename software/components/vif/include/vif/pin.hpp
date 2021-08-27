@@ -48,7 +48,9 @@ class pin {
     IO40
   };
 
-  enum class mode_t {
+  enum class pull_mode_t { UP, DOWN, UPDOWN, FLOATING };
+
+  enum class direction_t {
     DISABLED,
     INPUT,
     OUTPUT,
@@ -61,9 +63,10 @@ class pin {
     MEDIUM,
     STRONGEST,
   };
-  struct opt {
-    mode_t mode;
+  struct option_t {
+    direction_t dir;
     capability_t cap;
+    pull_mode_t pull;
   };
   enum class status { LOW, HIGH };
 

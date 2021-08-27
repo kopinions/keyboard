@@ -16,7 +16,7 @@ class fake_gpio : public kopinions::gpio {
  public:
   explicit fake_gpio(pin::status status) : m_status{status} {}
   pin::status current() override { return m_status; }
-  void option(const pin::opt& opt) override {}
+  void option(const pin::option_t& opt) override {}
   void set(pin::status target) override {}
   ~fake_gpio() override = default;
 

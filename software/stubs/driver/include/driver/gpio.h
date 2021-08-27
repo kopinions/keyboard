@@ -125,6 +125,15 @@ typedef enum {
   /** @endcond */
 } gpio_num_t;
 
+
+typedef enum {
+  GPIO_PULLUP_ONLY,               /*!< Pad pull up            */
+  GPIO_PULLDOWN_ONLY,             /*!< Pad pull down          */
+  GPIO_PULLUP_PULLDOWN,           /*!< Pad pull up + pull down*/
+  GPIO_FLOATING,                  /*!< Pad floating           */
+} gpio_pull_mode_t;
+
+
 esp_err_t gpio_set_drive_capability(gpio_num_t gpio_num, gpio_drive_cap_t strength);
 
 int gpio_get_level(gpio_num_t gpio_num);
@@ -133,6 +142,7 @@ esp_err_t gpio_set_level(gpio_num_t gpio_num, uint32_t level);
 
 esp_err_t gpio_set_direction(gpio_num_t gpio_num, gpio_mode_t mode);
 
+esp_err_t gpio_set_pull_mode(gpio_num_t gpio_num, gpio_pull_mode_t pull);
 #ifdef __cplusplus
 }
 #endif

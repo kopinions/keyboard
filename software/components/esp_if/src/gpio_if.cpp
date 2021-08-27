@@ -1,4 +1,5 @@
 #include "esp_if/gpio_if.hpp"
+
 #include "driver/gpio.h"
 
 kopinions::gpio_if::~gpio_if() = default;
@@ -7,7 +8,7 @@ kopinions::pin::status kopinions::gpio_if::current() {
   return gpio_get_level(static_cast<gpio_num_t>(m_id)) > 0 ? pin::status::HIGH : pin::status::LOW;
 }
 
-void kopinions::gpio_if::option(const pin::opt& opt) {
+void kopinions::gpio_if::option(const pin::option_t& opt) {
   auto gpio_no = static_cast<gpio_num_t>(m_id);
   switch (opt.cap) {
     case pin::capability_t::WEAK:
@@ -24,18 +25,33 @@ void kopinions::gpio_if::option(const pin::opt& opt) {
       break;
   }
 
-  switch (opt.mode) {
-    case pin::mode_t::INPUT:
+  switch (opt.dir) {
+    case pin::direction_t::INPUT:
       gpio_set_direction(gpio_no, gpio_mode_t::GPIO_MODE_INPUT);
       break;
-    case pin::mode_t::OUTPUT:
+    case pin::direction_t::OUTPUT:
       gpio_set_direction(gpio_no, gpio_mode_t::GPIO_MODE_OUTPUT);
       break;
-    case pin::mode_t::BIDIRECTIONAL:
+    case pin::direction_t::BIDIRECTIONAL:
       gpio_set_direction(gpio_no, gpio_mode_t::GPIO_MODE_INPUT_OUTPUT);
       break;
     default:
       gpio_set_direction(gpio_no, gpio_mode_t::GPIO_MODE_DISABLE);
+  }
+
+  switch (opt.pull) {
+    case pin::pull_mode_t::UP:
+      gpio_set_pull_mode(gpio_no, gpio_pull_mode_t::GPIO_PULLUP_ONLY);
+      break;
+    case pin::pull_mode_t::DOWN:
+      gpio_set_pull_mode(gpio_no, gpio_pull_mode_t::GPIO_PULLDOWN_ONLY);
+      break;
+    case pin::pull_mode_t::UPDOWN:
+      gpio_set_pull_mode(gpio_no, gpio_pull_mode_t::GPIO_PULLUP_PULLDOWN);
+      break;
+    default:
+      gpio_set_pull_mode(gpio_no, gpio_pull_mode_t::GPIO_FLOATING);
+      break;
   }
 }
 
