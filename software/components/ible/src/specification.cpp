@@ -95,7 +95,7 @@ std::vector<bt::profile_t*>& bt::application_t::profiles() { return m_profiles; 
 bt::application_t::application_t(bt::application_t::id_t id, std::vector<bt::profile_t*> profiles)
     : m_id{id}, m_profiles{std::move(profiles)} {
   auto sink = new kopinions::logging::esp_log_sink();
-  m_logger = new kopinions::logging::logger(kopinions::logging::level::INFO, sink);
+  m_logger = new kopinions::logging::logger(kopinions::logging::level::INFO, *sink);
 }
 bt::profile_t* bt::application_t::profile(bt::profile_t::id_t id) const {
   for (auto profile : m_profiles) {

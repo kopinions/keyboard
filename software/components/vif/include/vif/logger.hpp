@@ -52,7 +52,7 @@ class sink {
 
 class logger {
  public:
-  logger(level root, sink* sk) noexcept : m_root{root}, m_sink{sk} {};
+  logger(level root, sink& sk) noexcept : m_root{root}, m_sink{&sk} {};
 
   template <typename... Args>
   void log(const level& lvl, const std::string& fmt, Args... args) const {

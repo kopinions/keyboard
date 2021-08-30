@@ -10,11 +10,10 @@ using namespace fakeit;
 
 int main() {
   "matrix_scan_change"_test = [] {
-    auto injector = di::make_injector<mocks_provider>(di::bind<>.to(std::make_shared<matrix_config>(
-        std::vector<pin::id_t>{
-            pin::id_t::IO0,
-        },
-        std::vector<pin::id_t>{pin::id_t::IO1}, 0)));
+    auto injector = di::make_injector<mocks_provider>(
+        di::bind<kopinions::logging::sink>.to<fake_sink>(),
+        di::bind<kopinions::matrix_config>.to(
+            matrix_config{std::vector<pin::id_t>{pin::id_t::IO0}, std::vector<pin::id_t>{pin::id_t::IO1}, 0}));
 
     auto&& gpios_stub = mock<gpios>(true);
     auto&& clk = mock<kopinions::clock>(true);
@@ -31,16 +30,17 @@ int main() {
   };
 
   "matrix_scan_change_for_multiple_gpios"_test = [] {
-    auto injector = di::make_injector<mocks_provider>(di::bind<>.to(std::make_shared<matrix_config>(
-        std::vector<pin::id_t>{
-            pin::id_t::IO0,
-            pin::id_t::IO1,
-        },
-        std::vector<pin::id_t>{
-            pin::id_t::IO3,
-            pin::id_t::IO4,
-        },
-        0)));
+    auto injector = di::make_injector<mocks_provider>(di::bind<kopinions::logging::sink>.to<fake_sink>(),
+                                                      di::bind<kopinions::matrix_config>.to(matrix_config(
+                                                          std::vector<pin::id_t>{
+                                                              pin::id_t::IO0,
+                                                              pin::id_t::IO1,
+                                                          },
+                                                          std::vector<pin::id_t>{
+                                                              pin::id_t::IO3,
+                                                              pin::id_t::IO4,
+                                                          },
+                                                          0)));
 
     auto&& gpios_stub = mock<gpios>(true);
     auto&& clk = mock<kopinions::clock>(true);
@@ -65,16 +65,17 @@ int main() {
   };
 
   "matrix_scan_ignore_debounce_in_tolerable_range"_test = [] {
-    auto injector = di::make_injector<mocks_provider>(di::bind<>.to(std::make_shared<matrix_config>(
-        std::vector<pin::id_t>{
-            pin::id_t::IO0,
-            pin::id_t::IO1,
-        },
-        std::vector<pin::id_t>{
-            pin::id_t::IO3,
-            pin::id_t::IO4,
-        },
-        4)));
+    auto injector = di::make_injector<mocks_provider>(di::bind<kopinions::logging::sink>.to<fake_sink>(),
+                                                      di::bind<kopinions::matrix_config>.to(matrix_config(
+                                                          std::vector<pin::id_t>{
+                                                              pin::id_t::IO0,
+                                                              pin::id_t::IO1,
+                                                          },
+                                                          std::vector<pin::id_t>{
+                                                              pin::id_t::IO3,
+                                                              pin::id_t::IO4,
+                                                          },
+                                                          4)));
 
     auto&& gpios_stub = mock<gpios>(true);
     auto&& clk = mock<kopinions::clock>(true);

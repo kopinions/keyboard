@@ -8,6 +8,7 @@ namespace kopinions {
 class matrix_config {
  public:
   matrix_config(const std::vector<pin::id_t>& row, const std::vector<pin::id_t>& col, unsigned int bounce);
+  matrix_config(std::vector<pin::id_t>&& row, std::vector<pin::id_t>&& col, unsigned int bounce);
   matrix_config(const matrix_config&) noexcept;
   matrix_config(matrix_config&&) noexcept;
 
@@ -19,8 +20,8 @@ class matrix_config {
   [[nodiscard]] unsigned int tolerance() const noexcept;
 
  private:
-  const std::vector<pin::id_t>& m_row;
-  const std::vector<pin::id_t>& m_col;
+  std::vector<pin::id_t> m_row;
+  std::vector<pin::id_t> m_col;
   unsigned int m_bounce;
 };
 
