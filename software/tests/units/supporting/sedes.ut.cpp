@@ -84,4 +84,31 @@ int main() {
       expect_that<uint8_t>(*(buf + i), matchers::eq((uint8_t)0x0));
     }
   };
+
+  "should_serialize_to_only_six_non_modifier_keys"_test = [] {
+    std::vector<kopinions::key_t> keys{
+        {kopinions::key_t::id_t::RALT, kopinions::key_t::status_t::PRESSED},
+        {kopinions::key_t::id_t::RCTRL, kopinions::key_t::status_t::PRESSED},
+        {kopinions::key_t::id_t::RGUI, kopinions::key_t::status_t::PRESSED},
+        {kopinions::key_t::id_t::A, kopinions::key_t::status_t::PRESSED},
+        {kopinions::key_t::id_t::B, kopinions::key_t::status_t::PRESSED},
+        {kopinions::key_t::id_t::C, kopinions::key_t::status_t::PRESSED},
+        {kopinions::key_t::id_t::D, kopinions::key_t::status_t::PRESSED},
+        {kopinions::key_t::id_t::E, kopinions::key_t::status_t::PRESSED},
+        {kopinions::key_t::id_t::F, kopinions::key_t::status_t::PRESSED},
+        {kopinions::key_t::id_t::G, kopinions::key_t::status_t::PRESSED},
+        {kopinions::key_t::id_t::H, kopinions::key_t::status_t::PRESSED},
+        {kopinions::key_t::id_t::RSHIFT, kopinions::key_t::status_t::PRESSED},
+    };
+    auto *s = new kopinions::sedes_t{};
+    auto ptr = s->serialize(keys);
+    const uint8_t *buf = ptr->payload();
+
+    expect_that<uint8_t>(*buf, matchers::eq((uint8_t)0b11110000));
+    expect_that<uint32_t>(ptr->size(), matchers::eq(8u));
+    for (auto i = 2u; i < 8; i++) {
+      expect_that<uint8_t>(*(buf + i),
+                           matchers::eq(static_cast<uint8_t>(static_cast<uint8_t>(kopinions::key_t::id_t::A) + i - 2)));
+    }
+  };
 }

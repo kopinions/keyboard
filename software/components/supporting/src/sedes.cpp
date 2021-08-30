@@ -10,6 +10,9 @@ std::unique_ptr<kopinions::message_t> kopinions::sedes_t::serialize(const std::v
         chars[0] |= mask;
       }
     } else {
+      if (cursor >= 8) {
+        continue;
+      }
       if (k.sts == kopinions::key_t::status_t::PRESSED) {
         chars[cursor++] = static_cast<uint8_t>(k.id);
       }
