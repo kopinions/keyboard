@@ -3,6 +3,7 @@ target_sources(kdb PRIVATE
         src/keyboard.cpp
         src/layout.cpp
         src/matrix.cpp
+        src/modifier.cpp
         src/config.cpp)
 target_include_directories(kdb PUBLIC include)
 target_compile_features(kdb PUBLIC cxx_std_17)

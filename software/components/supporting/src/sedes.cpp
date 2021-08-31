@@ -17,6 +17,11 @@ std::unique_ptr<kopinions::message_t> kopinions::sedes_t::serialize(const std::v
         chars[cursor++] = static_cast<uint8_t>(k.id);
       }
     }
+
+
+
+
+
   }
   return std::make_unique<kopinions::message_t>(std::move(chars), 8);
 }
