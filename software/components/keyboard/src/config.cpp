@@ -17,6 +17,5 @@ matrix_config::matrix_config(matrix_config&& o) noexcept
 matrix_config::matrix_config(const matrix_config& o) noexcept : m_col{o.m_col}, m_row{o.m_row}, m_bounce{o.m_bounce} {}
 
 matrix_config::matrix_config(std::vector<pin::id_t>&& row, std::vector<pin::id_t>&& col, unsigned int bounce)
-    : m_col{std::move(col)}, m_row{std::move(row)}, m_bounce{bounce} {
-  std::cout << row.size();
-}
+    : m_col{std::move(col)}, m_row{std::move(row)}, m_bounce{bounce} {}
+matrix_config::matrix_config() noexcept {}

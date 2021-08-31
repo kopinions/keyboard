@@ -26,31 +26,31 @@ class mocks_provider : public di::config {
       static constexpr auto value = true;
     };
 
-    template <class T, class... TArgs>
-    auto get(const di::type_traits::direct&, const di::type_traits::heap&, TArgs&&... args) {
-      return new T(static_cast<TArgs&&>(args)...);
+    template <class T, class TInitialization, class TMemory, class... TArgs>
+    std::enable_if_t<!std::is_polymorphic<T>::value, T*> get(const TInitialization&, const TMemory&,
+                                                             TArgs&&... args) const {
+      return new T{std::forward<TArgs>(args)...};
     }
 
-    template <class T, class... TArgs>
-    std::enable_if_t<!std::is_polymorphic<T>::value, T*> get(const di::type_traits::uniform&,
-                                                             const di::type_traits::heap&, TArgs&&... args) {
-      return new T{static_cast<TArgs&&>(args)...};
-    }
-
-    template <class T, class... TArgs>
-    std::enable_if_t<std::is_polymorphic<T>::value, T*> get(const di::type_traits::uniform&,
-                                                            const di::type_traits::heap&, TArgs&&...) {
+    template <class T, class TInitialization, class TMemory, class... TArgs>
+    std::enable_if_t<std::is_polymorphic<T>::value, T*> get(const TInitialization&, const TMemory&,
+                                                            TArgs&&... args) const {
       return &mock<T>(false).get();
     }
 
     template <class T, class... TArgs>
     auto get(const di::type_traits::direct&, const di::type_traits::stack&, TArgs&&... args) const noexcept {
-      return T(static_cast<TArgs&&>(args)...);
+      return T(std::forward<TArgs&&>(args)...);
     }
 
     template <class T, class... TArgs>
     auto get(const di::type_traits::uniform&, const di::type_traits::stack&, TArgs&&... args) const noexcept {
-      return T{static_cast<TArgs&&>(args)...};
+      return T{std::forward<TArgs&&>(args)...};
+    }
+
+    template <class T, class... TArgs>
+    auto get(const di::type_traits::direct&, const di::type_traits::heap&, TArgs&&... args) {
+      return new T(std::forward<TArgs&&>(args)...);
     }
   };
 

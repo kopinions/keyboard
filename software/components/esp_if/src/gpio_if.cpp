@@ -55,9 +55,9 @@ void kopinions::gpio_if::option(const pin::option_t& opt) {
   }
 }
 
-void kopinions::gpio_if::set(pin::status target) {
+void kopinions::gpio_if::set(kopinions::pin::status target) {
   auto gpio_no = static_cast<gpio_num_t>(m_id);
-  gpio_set_level(gpio_no, target == pin::status::HIGH ? 1 : 0);
+  gpio_set_level(gpio_no, target == kopinions::pin::status::HIGH ? 1 : 0);
 }
 
 kopinions::gpio_if::gpio_if(const pin::id_t& id) noexcept : m_id(id) {}

@@ -11,6 +11,7 @@ class matrix_config {
   matrix_config(std::vector<pin::id_t>&& row, std::vector<pin::id_t>&& col, unsigned int bounce);
   matrix_config(const matrix_config&) noexcept;
   matrix_config(matrix_config&&) noexcept;
+  matrix_config() noexcept;
 
  public:
   [[nodiscard]] const std::vector<pin::id_t>& rows() const noexcept;

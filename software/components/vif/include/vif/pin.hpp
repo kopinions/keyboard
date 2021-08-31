@@ -68,7 +68,7 @@ class pin {
     capability_t cap;
     pull_mode_t pull;
   };
-  enum class status { LOW, HIGH };
+  enum class status : uint8_t { LOW, HIGH };
 
  private:
   id_t m_id;

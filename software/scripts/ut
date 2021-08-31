@@ -6,7 +6,7 @@ pushd "$(git rev-parse --show-toplevel)/software" > /dev/null
 if [[ ! -f build-tests/Makefile ]]; then
   rm -rf build-tests && mkdir build-tests
   pushd build-tests > /dev/null
-  cmake ..
+  cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" ..
   popd > /dev/null
 fi
 cmake --build build-tests --target ut
