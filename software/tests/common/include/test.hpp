@@ -9,10 +9,17 @@ void fail(const std::string& message = "") {
   throw std::runtime_error(message);
 }
 
+
+template <typename T>
+constexpr void expect_that(T&& val, std::unique_ptr<matchers::matcher<T>> && m) {
+  (void)(m->match(val) || (fail(m->message(val)), 0));
+}
+
 template <typename T>
 constexpr void expect_that(const T& val, const std::unique_ptr<matchers::matcher<T>>& m) {
   (void)(m->match(val) || (fail(m->message(val)), 0));
 }
+
 
 class test {
  public:

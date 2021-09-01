@@ -13,11 +13,9 @@ std::vector<kopinions::key_t> modifier_t::modify(const std::vector<kopinions::ke
     return keys;
   }
 }
+modifier_t::modifier_t(std::function<bool(const std::vector<kopinions::key_t> &)> guard
+                       ) noexcept
+    : m_guard{std::move(guard)}{}
 
-modifier_t::modifier_t(std::function<bool(const std::vector<kopinions::key_t> &)> &&guard) noexcept
-    : m_guard{std::move(guard)} {}
-
-modifier_t::modifier_t(const std::function<bool(const std::vector<kopinions::key_t> &)> &guard) noexcept
-    : m_guard{guard} {}
 modifier_t::modifier_t() noexcept = default;
 modifier_t::~modifier_t() = default;
