@@ -10,19 +10,10 @@ using namespace fakeit;
 
 int main() {
   "modify_the_pressed_keys"_test = [] {
-    auto modifier = modifier_t(
-        [](auto const &keys) {
-          auto founded = std::find_if(keys.begin(), keys.end(), [](auto const &k) {
-            if (k.id == kopinions::key_t::id_t::FN && k.sts == kopinions::key_t::status_t::PRESSED) {
-              return true;
-            }
-          });
-          return founded != keys.end();
-        },
-        {
-            {F1, PLAY},
-            {FN, NONE},
-        });
+    auto modifier = modifier_t(std::make_unique<key_based_guardian_t>(FN), {
+                                             {F1, PLAY},
+                                             {FN, NONE},
+                                         });
     std::vector<kopinions::key_t> pressed{
         {kopinions::key_t::id_t::FN, kopinions::key_t::status_t::PRESSED},
         {kopinions::key_t::id_t::F1, kopinions::key_t::status_t::PRESSED},
